@@ -14,30 +14,6 @@ interface BrowsePDFViewerProps {
   title: string;
 }
 
-// Generate download URL with proper attachment headers
-const getDownloadUrl = (url: string, title: string): string => {
-  if (!url) return '';
-  
-  // Fix folder name first
-  if (url.includes('/student-notes/')) {
-    url = url.replace('/student-notes/', '/future_engineers/');
-  }
-  
-  // For downloads, add fl_attachment with filename to force download with proper name
-  if (url.includes('cloudinary.com') && url.includes('.pdf')) {
-    const parts = url.split('/upload/');
-    if (parts.length === 2) {
-      // Clean title for filename
-      const fileName = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
-      const downloadUrl = `${parts[0]}/upload/fl_attachment:${fileName}.pdf/${parts[1]}`;
-      console.log('Download URL:', downloadUrl);
-      return downloadUrl;
-    }
-  }
-  
-  return url;
-};
-
 export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -62,9 +38,14 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
       // Clean title for filename
       const fileName = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
       
-      // For downloads, use URL WITH fl_attachment to force download
-      const downloadUrl = getDownloadUrl(fileUrl, title);
+      // Fix folder name in URL
+      let downloadUrl = fileUrl;
+      if (downloadUrl.includes('/student-notes/')) {
+        downloadUrl = downloadUrl.replace('/student-notes/', '/future_engineers/');
+      }
+      
       console.log('🔽 Attempting download:', downloadUrl);
+      console.log('🔽 Filename:', fileName);
       
       try {
         // Try to fetch the file and create a proper download
@@ -75,6 +56,7 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
           const a = document.createElement('a');
           a.href = url;
           a.download = fileName;
+          a.style.display = 'none';
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
@@ -85,8 +67,16 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
         }
       } catch (fetchError) {
         console.log('Fetch method failed, trying direct download:', fetchError);
-        // Fallback to direct download
-        window.open(downloadUrl, '_blank');
+        // Fallback to direct download without Cloudinary flags
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = fileName;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         toast.success('✅ Download started!');
       }
     } catch (error) {

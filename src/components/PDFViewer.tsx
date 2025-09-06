@@ -26,65 +26,18 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
       // Clean title for filename
       const cleanFileName = (fileName || title || 'document').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
       
-      // For Cloudinary files, we need to handle them differently
-      if (fileUrl.includes('cloudinary.com')) {
-        // Ensure the URL has proper flags for download with filename
-        let downloadUrl = fileUrl;
-        
-        // If it's a Cloudinary URL, make sure it has the right flags
-        if (downloadUrl.includes('/upload/')) {
-          // Add download flag with filename if not present
-          if (!downloadUrl.includes('fl_attachment')) {
-            const cleanName = cleanFileName.replace('.pdf', '');
-            downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment:${cleanName}.pdf/`);
-          }
-        }
-        
-        console.log('Downloading from URL:', downloadUrl);
-        
-        // Try direct download first
-        try {
-          const response = await fetch(downloadUrl, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-              'Accept': 'application/pdf,*/*',
-            },
-          });
-          
-          if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = cleanFileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-          } else {
-            throw new Error('Fetch failed');
-          }
-        } catch (fetchError) {
-          // Fallback to direct link click
-          console.log('Fetch failed, trying direct link:', fetchError);
-          const link = document.createElement('a');
-          link.href = downloadUrl;
-          link.download = cleanFileName;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-        
-        toast.dismiss(loadingToast);
-        toast.success('✅ Download started successfully!', {
-          duration: 3000,
-        });
-      } else {
-        // For other URLs, use fetch method
-        const response = await fetch(fileUrl, {
+      // Fix folder name in URL
+      let downloadUrl = fileUrl;
+      if (downloadUrl.includes('/student-notes/')) {
+        downloadUrl = downloadUrl.replace('/student-notes/', '/future_engineers/');
+      }
+      
+      console.log('Downloading from URL:', downloadUrl);
+      console.log('Filename:', cleanFileName);
+      
+      // Try direct download first
+      try {
+        const response = await fetch(downloadUrl, {
           method: 'GET',
           mode: 'cors',
           headers: {
@@ -92,35 +45,38 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
           },
         });
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const blob = await response.blob();
-        
-        if (blob.size === 0) {
-          throw new Error('Downloaded file is empty');
-        }
-        
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName || 'document.pdf';
-        link.style.display = 'none';
-        
-        document.body.appendChild(link);
-        link.click();
-        
-        setTimeout(() => {
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = cleanFileName;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
           document.body.removeChild(link);
           window.URL.revokeObjectURL(url);
-        }, 100);
-        
-        toast.dismiss(loadingToast);
-        toast.success('✅ Download started successfully!', {
-          duration: 3000,
-        });
+        } else {
+          throw new Error('Fetch failed');
+        }
+      } catch (fetchError) {
+        // Fallback to direct link click
+        console.log('Fetch failed, trying direct link:', fetchError);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = cleanFileName;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
+      
+      toast.dismiss(loadingToast);
+      toast.success('✅ Download started successfully!', {
+        duration: 3000,
+      });
     } catch (error) {
       console.error('Download error:', error);
       toast.dismiss();
