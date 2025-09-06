@@ -1,0 +1,78 @@
+{
+  "pageTitle": "Academic Resources",
+  "semesters": [
+    {
+      "semester": 1,
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "resources": [
+            {
+              "title": "Introduction to C Programming Notes",
+              "type": "pdf",
+              "url": "/resources/sem1/cse/c_programming_notes.pdf"
+            },
+            {
+              "title": "Engineering Mathematics - 1 Question Bank",
+              "type": "pdf",
+              "url": "/resources/sem1/cse/maths1_qb.pdf"
+            }
+          ]
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "resources": [
+            {
+              "title": "Basic Electronics Lab Manual",
+              "type": "pdf",
+              "url": "/resources/sem1/ece/basic_electronics_lab.pdf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "semester": 2,
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "resources": [
+            {
+              "title": "Data Structures Video Lectures",
+              "type": "video_playlist",
+              "url": "https://example.com/playlist/ds_lectures"
+            }
+          ]
+        },
+        {
+          "name": "Mechanical Engineering",
+          "resources": []
+        }
+      ]
+    },
+    {
+      "semester": 3,
+      "branches": []
+    },
+    {
+      "semester": 4,
+      "branches": []
+    },
+    {
+      "semester": 5,
+      "branches": []
+    },
+    {
+      "semester": 6,
+      "branches": []
+    },
+    {
+      "semester": 7,
+      "branches": []
+    },
+    {
+      "semester": 8,
+      "branches": []
+    }
+  ]
+}

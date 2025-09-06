@@ -83,6 +83,9 @@ export function Header() {
               Home
             </Link>
             <Link href="/browse" className="text-gray-300 hover:text-white transition-colors duration-200 hover:scale-105">
+              Browse
+            </Link>
+            <Link href="/resources" className="text-gray-300 hover:text-white transition-colors duration-200 hover:scale-105">
               Resources
             </Link>
             <Link href="/contribute" className="text-gray-300 hover:text-white transition-colors duration-200 hover:scale-105">
