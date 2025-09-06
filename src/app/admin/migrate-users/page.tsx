@@ -262,7 +262,7 @@ export default function MigrateUsersToEmail() {
             <CheckCircle className="h-4 w-4 text-green-400" />
             <AlertDescription className="text-green-200">
               After migration, your Firebase console will show user emails as document IDs 
-              (e.g., "user@example.com" instead of "xTAyegEZxkZBUjzLdkGylAlu7tf2").
+              (e.g., &quot;user@example.com&quot; instead of &quot;xTAyegEZxkZBUjzLdkGylAlu7tf2&quot;).
             </AlertDescription>
           </Alert>
         </CardContent>

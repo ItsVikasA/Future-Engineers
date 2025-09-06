@@ -41,7 +41,6 @@ export default function Dashboard() {
   const { isAdmin } = useAdminStatus();
   const [pendingDocuments, setPendingDocuments] = useState<Document[]>([]);
   const [myDocuments, setMyDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
 
   // Helper function to handle Firestore timestamp conversion
   const getDateFromTimestamp = (timestamp: { toDate(): Date } | Date): Date => {
@@ -67,7 +66,6 @@ export default function Dashboard() {
         ...doc.data()
       })) as Document[];
       setPendingDocuments(documents);
-      setLoading(false);
     });
 
     // Listen to my documents - Use simple query without orderBy to avoid index issues
@@ -290,7 +288,7 @@ export default function Dashboard() {
                   <User className="w-5 h-5" />
                   My Uploads
                 </CardTitle>
-                <CardDescription className="text-gray-400">Documents you've contributed</CardDescription>
+                <CardDescription className="text-gray-400">Documents you&apos;ve contributed</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-2xl font-bold text-blue-400">{myDocuments.length}</p>
@@ -423,7 +421,7 @@ export default function Dashboard() {
               <Card className="bg-black/20 border-white/10">
                 <CardContent className="text-center py-8">
                   <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">You haven't uploaded any documents yet.</p>
+                  <p className="text-gray-400">You haven&apos;t uploaded any documents yet.</p>
                 </CardContent>
               </Card>
             ) : (

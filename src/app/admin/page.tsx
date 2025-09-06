@@ -10,7 +10,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
 import { collection, query, onSnapshot, doc, deleteDoc, updateDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Trash2, CheckCircle, XCircle, Search, Users, FileText, Database } from 'lucide-react';
+import { Trash2, CheckCircle, XCircle, Search, FileText, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Document {
@@ -38,7 +38,7 @@ interface Document {
 
 export default function AdminPage() {
   const { user, isAuthenticated } = useAuthStore();
-  const { isAdmin, loading: adminLoading } = useAdminStatus();
+  const { isAdmin } = useAdminStatus();
   const [allDocuments, setAllDocuments] = useState<Document[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
