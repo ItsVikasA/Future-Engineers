@@ -8,12 +8,141 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/stores/authStore';
-import { Camera, Save, X, User, Award } from 'lucide-react';
+import { Camera, Save, X, User, Award, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '@/lib/firebase';
 import { updateProfile } from 'firebase/auth';
+
+const KARNATAKA_UNIVERSITIES = [
+  "A J Institute of Engineering, Dakshin Kannad",
+  "Acharya Institute of Technology, Bengaluru",
+  "Acharyar NRV School of Architecture, Bengaluru",
+  "Adichunchanagiri Institute of Technology, Chikkamagaluru",
+  "Aditya Academy of Architecture, Bengaluru",
+  "Alvas Institute of Engineering, Dakshin Kannad",
+  "AMG Rural College of Engineering, Dharwad",
+  "ANJUMAN Institute of Technology, Uttar Kannad",
+  "APS College of Engineering, Bengaluru",
+  "Appa Institute of Engineering & Technology, Kalaburagi",
+  "B G S Institute of Technology, Mandya",
+  "B M S (Even) College of Engineering, Bengaluru",
+  "B M S College of Engineering, Bengaluru",
+  "B M S College of Architecture, Bengaluru",
+  "B N M Institute of Technology, Bengaluru",
+  "B T L Institute of Technology Management, Bengaluru",
+  "Bapuji Institute of Engineering, Davangere",
+  "Basava Kalyan Engineering College, Bidar",
+  "Basaveshwar Engineering College, Bagalkot",
+  "BASAV Engineering School of, Vijayapura",
+  "Bearys Institute of Technology, Dakshin Kannad",
+  "Biluru Gurubasava Mahaswamiji Institute of Technology,Mudhol, Bagalkot",
+  "BMS School of Architecture, Bengaluru",
+  "Brindavan College of Engg., Bengaluru Urban",
+  "C M R Institute of Technology, Bengaluru",
+  "Cauvery Institute of Technology, Mandya",
+  "Cambridge Institute of Technology, Bengaluru",
+  "Canara Engineering College, Dakshin Kannad",
+  "Channabasaveshwara Institute, Tumakuru",
+  "City Engineering College, Bengaluru",
+  "Dayananda Sagar College of, Bengaluru Urban",
+  "Dayananda Sagar College of Architecture, Bengaluru",
+  "Don Bosco Institute of Technology, Bengaluru",
+  "East Point College of Engg., Bengaluru",
+  "East West Institute of Technology, Bengaluru",
+  "East West School of Architecture, Bengaluru",
+  "East West College of Engineering, Bengaluru",
+  "Ekalavya Institute of Technology, Chamarajanagar",
+  "G M Institute of Technology, Davangere",
+  "G Madegowda Institute of, Mandya",
+  "G S S S Institute of Engineering, Mysuru",
+  "Gogte Institute of Technology, Belagavi",
+  "Gopalan College of Engineering, Bengaluru",
+  "Gopalan School of Architecture, Bengaluru",
+  "Govind B. P. Institute of Technology, Bidar",
+  "Government Engineering College, Ballari",
+  "Government Engineering College, Chamarajanagar",
+  "Government Engineering College, Dakshin Kannad",
+  "Government Engineering College, Hassan",
+  "Government Engineering College, Haveri",
+  "Government Engineering College, Koppal",
+  "Govt. S K S J Technological Institute, Bengaluru",
+  "Govt. Tool Room & Training, Bengaluru",
+  "H K B K College of Engineering, Bengaluru",
+  "H M S Institute of Technology, Tumkur",
+  "HMS School of Architecture, Tumakuru",
+  "Hirasugar Institute of Technology, Belagavi",
+  "Honeywell Technologies Solutions, Bengaluru",
+  "Impact College of Engineering, Bengaluru",
+  "Impact School of Architecture, Bengaluru",
+  "Islamiah Inst. of Technology, Bengaluru",
+  "J N N College of Engineering, Shivamogga",
+  "Jain Acharya Gundharnandi Maharaj, Bagalkot",
+  "Jain College of Engineering, Belagavi",
+  "Jain College of Engineering, Dharwad",
+  "Jain Institute of Technology, Davangere",
+  "JAIN COLLEGE OF ENGINEERING, Belagavi",
+  "JAIN COLLEGE OF ENGINEERING, Dharwad",
+  "Jnana Vikas Institute of Technology, Bengaluru",
+  "J S S Academy of Technical Education, Bengaluru",
+  "J S C Institute of Technology, Chickballapur",
+  "Jyothy Institute of Technology, Bengaluru",
+  "K L Es College of Engg. & Technology, Belagavi",
+  "K N S Institute of Technology, Bengaluru",
+  "K S Institute of Technology, Bengaluru",
+  "K S School of Architecture, Bengaluru",
+  "K S School of Engineering & Management, Bengaluru",
+  "K T C Engineering College, Kalaburagi",
+  "Kalpataru Institute of Technology, Tumakuru",
+  "Karavali Institute of Technology, Dakshin Kannad",
+  "KLE Institute of Technology, Hubli",
+  "KLEs College of Engineering & Technology, Belagavi",
+  "K V G College of Engineering, Dakshin Kannad"
+];
+
+const ENGINEERING_COURSES = [
+  "Computer Science Engineering",
+  "Electronics & Communication Engineering", 
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Information Technology",
+  "Electrical and Electronics Engineering",
+  "Chemical Engineering",
+  "Automobile Engineering",
+  "Aerospace Engineering",
+  "Agricultural Engineering",
+  "Biomedical Engineering",
+  "Biotechnology Engineering",
+  "Environmental Engineering",
+  "Industrial Engineering",
+  "Marine Engineering",
+  "Mining Engineering",
+  "Polymer Engineering",
+  "Ceramic Engineering",
+  "Textile Engineering",
+  "Food Technology Engineering",
+  "Artificial Intelligence and Machine Learning",
+  "Data Science and Big Data Analytics",
+  "Robotics Engineering",
+  "Mechatronics Engineering",
+  "Cybersecurity Engineering",
+  "Cloud Computing Engineering",
+  "Renewable Energy Engineering",
+  "Nanotechnology Engineering",
+  "Software Engineering",
+  "Structural Engineering",
+  "Power Engineering",
+  "Materials Science and Engineering",
+  "Petroleum Engineering",
+  "Water Resources Engineering",
+  "Transportation Engineering",
+  "Geotechnical Engineering",
+  "Wireless Communication Engineering",
+  "Embedded Systems Engineering",
+  "VLSI Design",
+  "Marine and Naval Architecture"
+];
 
 interface UserProfile {
   displayName: string;
@@ -35,6 +164,8 @@ export default function ProfileEditPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [showUniversityDropdown, setShowUniversityDropdown] = useState(false);
+  const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   
   const [profile, setProfile] = useState<UserProfile>({
     displayName: user?.displayName || '',
@@ -50,6 +181,26 @@ export default function ProfileEditPage() {
     uploads: 0,
     downloads: 0
   });
+
+  // Filter universities based on search input
+  const filteredUniversities = KARNATAKA_UNIVERSITIES.filter(university => 
+    university.toLowerCase().includes(profile.university.toLowerCase())
+  ).slice(0, 10);
+
+  // Filter courses based on search input
+  const filteredCourses = ENGINEERING_COURSES.filter(course => 
+    course.toLowerCase().includes(profile.course.toLowerCase())
+  ).slice(0, 10);
+
+  const handleSelectUniversity = (university: string) => {
+    setProfile(prev => ({ ...prev, university }));
+    setShowUniversityDropdown(false);
+  };
+
+  const handleSelectCourse = (course: string) => {
+    setProfile(prev => ({ ...prev, course }));
+    setShowCourseDropdown(false);
+  };
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -278,28 +429,70 @@ export default function ProfileEditPage() {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
-                    <div>
+                    <div className="relative">
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         University
                       </label>
-                      <Input
-                        value={profile.university}
-                        onChange={(e) => setProfile(prev => ({ ...prev, university: e.target.value }))}
-                        placeholder="Your university"
-                        className="bg-black/20 border-white/10 text-white placeholder-gray-500"
-                      />
+                      <div className="relative">
+                        <Input
+                          value={profile.university}
+                          onChange={(e) => {
+                            setProfile(prev => ({ ...prev, university: e.target.value }));
+                            setShowUniversityDropdown(e.target.value.length > 0);
+                          }}
+                          onFocus={() => setShowUniversityDropdown(profile.university.length > 0)}
+                          onBlur={() => setTimeout(() => setShowUniversityDropdown(false), 200)}
+                          placeholder="Start typing to search universities..."
+                          className="bg-black/20 border-white/10 text-white placeholder-gray-500 pr-10"
+                        />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                      </div>
+                      {showUniversityDropdown && filteredUniversities.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-white/20 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                          {filteredUniversities.map((university, index) => (
+                            <div
+                              key={index}
+                              onClick={() => handleSelectUniversity(university)}
+                              className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white text-sm border-b border-white/10 last:border-b-0"
+                            >
+                              {university}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     
-                    <div>
+                    <div className="relative">
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Course
                       </label>
-                      <Input
-                        value={profile.course}
-                        onChange={(e) => setProfile(prev => ({ ...prev, course: e.target.value }))}
-                        placeholder="Your course/degree"
-                        className="bg-black/20 border-white/10 text-white placeholder-gray-500"
-                      />
+                      <div className="relative">
+                        <Input
+                          value={profile.course}
+                          onChange={(e) => {
+                            setProfile(prev => ({ ...prev, course: e.target.value }));
+                            setShowCourseDropdown(e.target.value.length > 0);
+                          }}
+                          onFocus={() => setShowCourseDropdown(profile.course.length > 0)}
+                          onBlur={() => setTimeout(() => setShowCourseDropdown(false), 200)}
+                          placeholder="Start typing to search courses..."
+                          className="bg-black/20 border-white/10 text-white placeholder-gray-500 pr-10"
+                        />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                      </div>
+                      {showCourseDropdown && filteredCourses.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-white/20 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                          {filteredCourses.map((course, index) => (
+                            <div
+                              key={index}
+                              onClick={() => handleSelectCourse(course)}
+                              className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white text-sm border-b border-white/10 last:border-b-0"
+                            >
+                              {course}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
