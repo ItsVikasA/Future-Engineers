@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -156,9 +157,11 @@ export default function AcademicResourcesPage() {
                 <p className="text-gray-400 mb-6">
                   Resources for Semester {selectedSemester} are being prepared. Check back soon!
                 </p>
-                <Button className="bg-purple-600 hover:bg-purple-700">
-                  Contribute Resources
-                </Button>
+                <Link href="/contribute">
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    Contribute Resources
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ) : (
@@ -185,9 +188,11 @@ export default function AcademicResourcesPage() {
                         <div className="text-center py-8 text-gray-500">
                           <FileText className="h-12 w-12 mx-auto mb-3 text-gray-600" />
                           <p>No resources available yet for this branch</p>
-                          <Button variant="link" className="text-purple-400 mt-2">
-                            Be the first to contribute
-                          </Button>
+                          <Link href="/contribute">
+                            <Button variant="link" className="text-purple-400 mt-2">
+                              Be the first to contribute
+                            </Button>
+                          </Link>
                         </div>
                       ) : (
                         <div className="space-y-6">
