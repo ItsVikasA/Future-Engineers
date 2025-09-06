@@ -1,0 +1,14 @@
+Sample Mathematics Question Bank
+
+This is a placeholder file for demonstration purposes.
+The actual Engineering Mathematics - 1 question bank will be uploaded soon.
+
+Sample Topics:
+1. Differential Calculus
+2. Integral Calculus
+3. Matrices and Determinants
+4. Vector Calculus
+5. Partial Differentiation
+6. Multiple Integrals
+
+For more resources, visit: future-engineers.vercel.app

@@ -1,0 +1,15 @@
+Sample PDF Content for C Programming Notes
+
+This is a placeholder file for demonstration purposes.
+The actual C Programming notes will be uploaded soon.
+
+Topics to be covered:
+1. Introduction to C Programming
+2. Variables and Data Types
+3. Control Structures
+4. Functions
+5. Arrays and Pointers
+6. Structures and Unions
+7. File Handling
+
+For more resources, visit: future-engineers.vercel.app

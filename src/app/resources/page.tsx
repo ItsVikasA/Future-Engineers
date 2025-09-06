@@ -21,6 +21,7 @@ import {
   Heart,
   Calculator
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import academicResourcesData from '@/data/academicResources.json';
 
 interface Resource {
@@ -90,12 +91,48 @@ export default function AcademicResourcesPage() {
 
   const currentSemester = data.semesters.find(sem => sem.semester === selectedSemester);
 
-  const handleResourceClick = (resource: Resource) => {
+  const handleResourceClick = async (resource: Resource) => {
     if (resource.url.startsWith('http')) {
+      // External links
       window.open(resource.url, '_blank');
+      toast.success(`🔗 Opening ${resource.title}`, {
+        duration: 3000,
+      });
     } else {
       // Handle internal file downloads
-      window.open(resource.url, '_blank');
+      const loadingToast = toast.loading(`📄 Preparing download for ${resource.title}...`);
+      
+      try {
+        // Check if file exists first
+        const response = await fetch(resource.url, { method: 'HEAD' });
+        toast.dismiss(loadingToast);
+        
+        if (response.ok) {
+          // File exists, proceed with download
+          const link = document.createElement('a');
+          link.href = resource.url;
+          link.download = resource.title;
+          link.target = '_blank';
+          
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          toast.success(`✅ Download started: ${resource.title}`, {
+            duration: 4000,
+          });
+        } else {
+          toast.error(`❌ File not available: ${resource.title}`, {
+            duration: 5000,
+          });
+        }
+      } catch (error) {
+        toast.dismiss(loadingToast);
+        console.error('Download error:', error);
+        toast.error(`📋 Resource coming soon! "${resource.title}" will be available in the next update.`, {
+          duration: 5000,
+        });
+      }
     }
   };
 
