@@ -313,11 +313,27 @@ export default function AdminPage() {
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
+        {/* Modern Admin Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
-            Admin Dashboard
-          </h1>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
+              <p className="text-gray-400 mt-2">
+                Manage users, content, and platform settings
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 rounded-full">
+                <span className="text-black font-semibold text-sm flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Administrator
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
           <p className="text-lg text-gray-400">
             Manage documents, users, and platform content
           </p>
