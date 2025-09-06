@@ -6,26 +6,79 @@
       "branches": [
         {
           "name": "Computer Science & Engineering",
-          "resources": [
+          "categories": [
             {
-              "title": "Introduction to C Programming Notes",
-              "type": "pdf",
-              "url": "/resources/sem1/cse/c_programming_notes.pdf"
+              "name": "Notes",
+              "slug": "notes",
+              "resources": [
+                {
+                  "title": "Introduction to C Programming Notes",
+                  "type": "pdf",
+                  "url": "/resources/sem1/cse/notes/c_programming_notes.pdf"
+                }
+              ]
             },
             {
-              "title": "Engineering Mathematics - 1 Question Bank",
-              "type": "pdf",
-              "url": "/resources/sem1/cse/maths1_qb.pdf"
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": [
+                {
+                  "title": "Engineering Mathematics - 1 Question Bank",
+                  "type": "pdf",
+                  "url": "/resources/sem1/cse/qps/maths1_qb.pdf"
+                }
+              ]
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
             }
           ]
         },
         {
           "name": "Electronics & Communication Engineering",
-          "resources": [
+          "categories": [
             {
-              "title": "Basic Electronics Lab Manual",
-              "type": "pdf",
-              "url": "/resources/sem1/ece/basic_electronics_lab.pdf"
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": [
+                {
+                  "title": "Basic Electronics Lab Manual",
+                  "type": "pdf",
+                  "url": "/resources/sem1/ece/lab_manuals/basic_electronics_lab.pdf"
+                }
+              ]
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
             }
           ]
         }
@@ -36,17 +89,11 @@
       "branches": [
         {
           "name": "Computer Science & Engineering",
-          "resources": [
-            {
-              "title": "Data Structures Video Lectures",
-              "type": "video_playlist",
-              "url": "https://example.com/playlist/ds_lectures"
-            }
-          ]
+          "categories": []
         },
         {
           "name": "Mechanical Engineering",
-          "resources": []
+          "categories": []
         }
       ]
     },

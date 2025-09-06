@@ -28,9 +28,15 @@ interface Resource {
   url: string;
 }
 
+interface Category {
+  name: string;
+  slug: string;
+  resources: Resource[];
+}
+
 interface Branch {
   name: string;
-  resources: Resource[];
+  categories: Category[];
 }
 
 interface Semester {
@@ -59,6 +65,8 @@ const getResourceIcon = (type: string) => {
       return <FileText className="w-4 h-4" />;
     case 'video_playlist':
       return <Video className="w-4 h-4" />;
+    case 'category':
+      return <BookOpen className="w-4 h-4" />;
     default:
       return <BookOpen className="w-4 h-4" />;
   }
@@ -155,73 +163,92 @@ export default function AcademicResourcesPage() {
             </Card>
           ) : (
             <div className="grid gap-6">
-              {currentSemester?.branches.map((branch, branchIndex) => (
-                <Card key={branchIndex} className="bg-white/5 backdrop-blur-sm border-white/10">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-white">
-                      {branchIcons[branch.name] || <BookOpen className="w-5 h-5" />}
-                      {branch.name}
-                      <Badge variant="outline" className="ml-auto text-xs">
-                        {branch.resources.length} Resources
-                      </Badge>
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      Study materials and resources for {branch.name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    {branch.resources.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <FileText className="h-12 w-12 mx-auto mb-3 text-gray-600" />
-                        <p>No resources available yet for this branch</p>
-                        <Button variant="link" className="text-purple-400 mt-2">
-                          Be the first to contribute
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="grid gap-3">
-                        {branch.resources.map((resource, resourceIndex) => (
-                          <div
-                            key={resourceIndex}
-                            className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10 hover:bg-black/30 transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              {getResourceIcon(resource.type)}
-                              <div>
-                                <h4 className="font-medium text-white">{resource.title}</h4>
-                                <Badge 
-                                  variant="outline" 
-                                  className={`text-xs mt-1 ${getResourceColor(resource.type)}`}
-                                >
-                                  {resource.type.replace('_', ' ').toUpperCase()}
-                                </Badge>
+              {currentSemester?.branches.map((branch, branchIndex) => {
+                const totalResources = branch.categories.reduce((total, category) => total + category.resources.length, 0);
+                
+                return (
+                  <Card key={branchIndex} className="bg-white/5 backdrop-blur-sm border-white/10">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3 text-white">
+                        {branchIcons[branch.name] || <BookOpen className="w-5 h-5" />}
+                        {branch.name}
+                        <Badge variant="outline" className="ml-auto text-xs">
+                          {totalResources} Resources
+                        </Badge>
+                      </CardTitle>
+                      <CardDescription className="text-gray-400">
+                        Study materials and resources for {branch.name}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {branch.categories.length === 0 || totalResources === 0 ? (
+                        <div className="text-center py-8 text-gray-500">
+                          <FileText className="h-12 w-12 mx-auto mb-3 text-gray-600" />
+                          <p>No resources available yet for this branch</p>
+                          <Button variant="link" className="text-purple-400 mt-2">
+                            Be the first to contribute
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {branch.categories.map((category, categoryIndex) => (
+                            category.resources.length > 0 && (
+                              <div key={categoryIndex} className="space-y-3">
+                                <h4 className="text-lg font-semibold text-purple-300 flex items-center gap-2">
+                                  {getResourceIcon('category')}
+                                  {category.name}
+                                  <Badge variant="outline" className="text-xs">
+                                    {category.resources.length}
+                                  </Badge>
+                                </h4>
+                                <div className="grid gap-3 pl-4">
+                                  {category.resources.map((resource, resourceIndex) => (
+                                    <div
+                                      key={resourceIndex}
+                                      className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10 hover:bg-black/30 transition-colors"
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        {getResourceIcon(resource.type)}
+                                        <div>
+                                          <h5 className="font-medium text-white">{resource.title}</h5>
+                                          <Badge 
+                                            variant="outline" 
+                                            className={`text-xs mt-1 ${getResourceColor(resource.type)}`}
+                                          >
+                                            {resource.type.replace('_', ' ').toUpperCase()}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
+                                        onClick={() => handleResourceClick(resource)}
+                                      >
+                                        {resource.type === 'video_playlist' ? (
+                                          <>
+                                            <ExternalLink className="w-4 h-4 mr-1" />
+                                            Watch
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Download className="w-4 h-4 mr-1" />
+                                            Download
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
-                              onClick={() => handleResourceClick(resource)}
-                            >
-                              {resource.type === 'video_playlist' ? (
-                                <>
-                                  <ExternalLink className="w-4 h-4 mr-1" />
-                                  Watch
-                                </>
-                              ) : (
-                                <>
-                                  <Download className="w-4 h-4 mr-1" />
-                                  Download
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                            )
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </div>
@@ -244,7 +271,9 @@ export default function AcademicResourcesPage() {
               <div className="text-2xl font-bold text-white">
                 {data.semesters.reduce((total, sem) => 
                   total + sem.branches.reduce((branchTotal, branch) => 
-                    branchTotal + branch.resources.length, 0
+                    branchTotal + branch.categories.reduce((catTotal, category) => 
+                      catTotal + category.resources.length, 0
+                    ), 0
                   ), 0
                 )}
               </div>
