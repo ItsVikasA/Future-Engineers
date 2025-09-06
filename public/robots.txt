@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://future-engineers.vercel.app/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
+
+# Disallow admin pages
+Disallow: /admin/
+Disallow: /api/admin/
+
+# Allow important pages
+Allow: /
+Allow: /browse
+Allow: /contribute
+Allow: /dashboard
+Allow: /leaderboard
+Allow: /profile
+Allow: /resources
