@@ -37,8 +37,11 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    const body = window.document.body;
 
+    // Remove all theme classes
     root.classList.remove('light', 'dark');
+    body.classList.remove('light', 'dark');
 
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
@@ -47,10 +50,24 @@ export function ThemeProvider({
         : 'light';
 
       root.classList.add(systemTheme);
-      return;
+      body.classList.add(systemTheme);
+      
+      // Listen for system theme changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = (e: MediaQueryListEvent) => {
+        root.classList.remove('light', 'dark');
+        body.classList.remove('light', 'dark');
+        const newTheme = e.matches ? 'dark' : 'light';
+        root.classList.add(newTheme);
+        body.classList.add(newTheme);
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
     }
 
     root.classList.add(theme);
+    body.classList.add(theme);
   }, [theme]);
 
   const value = {
