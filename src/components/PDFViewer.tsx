@@ -23,16 +23,20 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
     try {
       const loadingToast = toast.loading('📥 Preparing download...');
       
+      // Clean title for filename
+      const cleanFileName = (fileName || title || 'document').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
+      
       // For Cloudinary files, we need to handle them differently
       if (fileUrl.includes('cloudinary.com')) {
-        // Ensure the URL has proper flags for download
+        // Ensure the URL has proper flags for download with filename
         let downloadUrl = fileUrl;
         
         // If it's a Cloudinary URL, make sure it has the right flags
         if (downloadUrl.includes('/upload/')) {
-          // Add download flag if not present
+          // Add download flag with filename if not present
           if (!downloadUrl.includes('fl_attachment')) {
-            downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
+            const cleanName = cleanFileName.replace('.pdf', '');
+            downloadUrl = downloadUrl.replace('/upload/', `/upload/fl_attachment:${cleanName}.pdf/`);
           }
         }
         
@@ -53,7 +57,7 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = fileName || 'document.pdf';
+            link.download = cleanFileName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -66,7 +70,7 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
           console.log('Fetch failed, trying direct link:', fetchError);
           const link = document.createElement('a');
           link.href = downloadUrl;
-          link.download = fileName || 'document.pdf';
+          link.download = cleanFileName;
           link.target = '_blank';
           link.rel = 'noopener noreferrer';
           document.body.appendChild(link);

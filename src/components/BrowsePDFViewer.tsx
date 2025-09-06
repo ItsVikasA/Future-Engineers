@@ -15,7 +15,7 @@ interface BrowsePDFViewerProps {
 }
 
 // Generate download URL with proper attachment headers
-const getDownloadUrl = (url: string): string => {
+const getDownloadUrl = (url: string, title: string): string => {
   if (!url) return '';
   
   // Fix folder name first
@@ -23,11 +23,13 @@ const getDownloadUrl = (url: string): string => {
     url = url.replace('/student-notes/', '/future_engineers/');
   }
   
-  // For downloads, add fl_attachment to force download behavior
+  // For downloads, add fl_attachment with filename to force download with proper name
   if (url.includes('cloudinary.com') && url.includes('.pdf')) {
     const parts = url.split('/upload/');
     if (parts.length === 2) {
-      const downloadUrl = `${parts[0]}/upload/fl_attachment/${parts[1]}`;
+      // Clean title for filename
+      const fileName = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
+      const downloadUrl = `${parts[0]}/upload/fl_attachment:${fileName}.pdf/${parts[1]}`;
       console.log('Download URL:', downloadUrl);
       return downloadUrl;
     }
@@ -57,12 +59,36 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
         downloads: increment(1)
       });
       
+      // Clean title for filename
+      const fileName = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
+      
       // For downloads, use URL WITH fl_attachment to force download
-      const downloadUrl = getDownloadUrl(fileUrl);
+      const downloadUrl = getDownloadUrl(fileUrl, title);
       console.log('🔽 Attempting download:', downloadUrl);
       
-      window.open(downloadUrl, '_blank');
-      toast.success('✅ Download started!');
+      try {
+        // Try to fetch the file and create a proper download
+        const response = await fetch(downloadUrl);
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          toast.success('✅ Download started!');
+        } else {
+          throw new Error('Fetch failed');
+        }
+      } catch (fetchError) {
+        console.log('Fetch method failed, trying direct download:', fetchError);
+        // Fallback to direct download
+        window.open(downloadUrl, '_blank');
+        toast.success('✅ Download started!');
+      }
     } catch (error) {
       console.error('Download error:', error);
       toast.error('❌ Download failed');
