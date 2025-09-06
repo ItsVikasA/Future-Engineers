@@ -1,64 +1,79 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Trophy, Medal, Award, TrendingUp, Crown, Star } from 'lucide-react';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
+interface UserStats {
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  contributions?: number;
+  downloads?: number;
+  reputation?: number;
+  badges?: string[];
+}
 
 export default function Leaderboard() {
-  // Mock leaderboard data
-  const topContributors = [
-    {
-      rank: 1,
-      name: 'Sarah Chen',
-      avatar: '/avatars/sarah.jpg',
-      reputation: 2840,
-      contributions: 45,
-      downloads: 12500,
-      badges: ['Top Contributor', 'Quality Content', 'Helper'],
-      trend: 'up',
-    },
-    {
-      rank: 2,
-      name: 'Alex Rodriguez',
-      avatar: '/avatars/alex.jpg',
-      reputation: 2650,
-      contributions: 38,
-      downloads: 9800,
-      badges: ['Top Contributor', 'Early Adopter'],
-      trend: 'up',
-    },
-    {
-      rank: 3,
-      name: 'Emily Johnson',
-      avatar: '/avatars/emily.jpg',
-      reputation: 2420,
-      contributions: 42,
-      downloads: 8900,
-      badges: ['Quality Content', 'Helper', 'Mentor'],
-      trend: 'down',
-    },
-    {
-      rank: 4,
-      name: 'Michael Kim',
-      avatar: '/avatars/michael.jpg',
-      reputation: 2180,
-      contributions: 31,
-      downloads: 7600,
-      badges: ['Helper', 'Consistent'],
-      trend: 'up',
-    },
-    {
-      rank: 5,
-      name: 'Lisa Wang',
-      avatar: '/avatars/lisa.jpg',
-      reputation: 1950,
-      contributions: 28,
-      downloads: 6800,
-      badges: ['Quality Content', 'Rising Star'],
-      trend: 'up',
-    },
-  ];
+  const [topContributors, setTopContributors] = useState<UserStats[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLeaderboardData();
+  }, []);
+
+  const fetchLeaderboardData = async () => {
+    try {
+      // Get users ordered by reputation/contributions
+      const usersQuery = query(
+        collection(db, 'users'),
+        orderBy('reputation', 'desc'),
+        limit(10)
+      );
+      
+      const usersSnapshot = await getDocs(usersQuery);
+      const users = usersSnapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data(),
+        contributions: doc.data().contributions || 0,
+        downloads: doc.data().downloads || 0,
+        reputation: doc.data().reputation || 0,
+        badges: doc.data().badges || []
+      })) as UserStats[];
+
+      setTopContributors(users);
+    } catch (error) {
+      console.error('Error fetching leaderboard data:', error);
+      setTopContributors([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRankIcon = (rank: number) => {
+    switch (rank) {
+      case 1: return <Crown className="w-6 h-6 text-yellow-500" />;
+      case 2: return <Medal className="w-6 h-6 text-gray-400" />;
+      case 3: return <Award className="w-6 h-6 text-amber-600" />;
+      default: return <Trophy className="w-6 h-6 text-blue-400" />;
+    }
+  };
+
+  const getUserDisplayName = (user: UserStats) => {
+    return user.displayName || user.email?.split('@')[0] || 'Anonymous User';
+  };
+
+  const getUserInitials = (user: UserStats) => {
+    const name = getUserDisplayName(user);
+    return name.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+  };
 
   const badges = [
     {
@@ -97,19 +112,6 @@ export default function Leaderboard() {
       holders: 89,
     },
   ];
-
-  const getRankIcon = (rank: number) => {
-    switch (rank) {
-      case 1:
-        return <Crown className="h-6 w-6 text-yellow-400" />;
-      case 2:
-        return <Medal className="h-6 w-6 text-gray-300" />;
-      case 3:
-        return <Award className="h-6 w-6 text-amber-400" />;
-      default:
-        return <span className="text-lg font-bold text-gray-400">#{rank}</span>;
-    }
-  };
 
   const getBadgeColor = (rarity: string) => {
     switch (rarity) {
@@ -151,77 +153,99 @@ export default function Leaderboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {topContributors.map((contributor) => (
-                    <div
-                      key={contributor.rank}
-                      className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
-                        contributor.rank <= 3 
-                          ? 'bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30' 
-                          : 'bg-white/5 border-white/10 hover:bg-white/10'
-                      }`}
-                    >
-                      {/* Rank */}
-                      <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
-                        {getRankIcon(contributor.rank)}
-                      </div>
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                    <p className="text-gray-400">Loading leaderboard...</p>
+                  </div>
+                ) : topContributors.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Trophy className="h-16 w-16 text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">No Contributors Yet</h3>
+                    <p className="text-gray-400 mb-6">
+                      Be the first to contribute and claim your spot on the leaderboard!
+                    </p>
+                    <Button className="bg-purple-600 hover:bg-purple-700">
+                      Start Contributing
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {topContributors.map((contributor, index) => {
+                      const rank = index + 1;
+                      const displayName = getUserDisplayName(contributor);
+                      const initials = getUserInitials(contributor);
+                      
+                      return (
+                        <div
+                          key={contributor.uid}
+                          className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02] ${
+                            rank <= 3 
+                              ? 'bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30' 
+                              : 'bg-white/5 border-white/10 hover:bg-white/10'
+                          }`}
+                        >
+                          {/* Rank */}
+                          <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
+                            {getRankIcon(rank)}
+                          </div>
 
-                      {/* Avatar */}
-                      <Avatar className="h-12 w-12 border-2 border-white/20">
-                        <AvatarImage src={contributor.avatar} alt={contributor.name} />
-                        <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
-                          {contributor.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
+                          {/* Avatar */}
+                          <Avatar className="h-12 w-12 border-2 border-white/20">
+                            <AvatarImage src={contributor.photoURL} alt={displayName} />
+                            <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
+                              {initials}
+                            </AvatarFallback>
+                          </Avatar>
 
-                      {/* Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-white">{contributor.name}</h3>
-                          <div className="flex items-center gap-1">
-                            <TrendingUp 
-                              className={`h-4 w-4 ${
-                                contributor.trend === 'up' ? 'text-green-500' : 'text-red-500'
-                              }`} 
-                            />
+                          {/* Info */}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-white">{displayName}</h3>
+                              <div className="flex items-center gap-1">
+                                <TrendingUp className="h-4 w-4 text-green-500" />
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-1 mb-2">
+                              {contributor.badges && contributor.badges.slice(0, 2).map((badge) => (
+                                <Badge key={badge} variant="secondary" className="text-xs">
+                                  {badge}
+                                </Badge>
+                              ))}
+                              {contributor.badges && contributor.badges.length > 2 && (
+                                <Badge variant="outline" className="text-xs">
+                                  +{contributor.badges.length - 2} more
+                                </Badge>
+                              )}
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
+                              <div>
+                                <span className="font-medium text-blue-600">{(contributor.reputation || 0).toLocaleString()}</span>
+                                <span className="block">Reputation</span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-green-600">{contributor.contributions || 0}</span>
+                                <span className="block">Contributions</span>
+                              </div>
+                              <div>
+                                <span className="font-medium text-purple-600">{(contributor.downloads || 0).toLocaleString()}</span>
+                                <span className="block">Downloads</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          {contributor.badges.slice(0, 2).map((badge) => (
-                            <Badge key={badge} variant="secondary" className="text-xs">
-                              {badge}
-                            </Badge>
-                          ))}
-                          {contributor.badges.length > 2 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{contributor.badges.length - 2} more
-                            </Badge>
-                          )}
-                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
-                        <div className="grid grid-cols-3 gap-4 text-sm text-gray-600">
-                          <div>
-                            <span className="font-medium text-blue-600">{contributor.reputation.toLocaleString()}</span>
-                            <span className="block">Reputation</span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-green-600">{contributor.contributions}</span>
-                            <span className="block">Contributions</span>
-                          </div>
-                          <div>
-                            <span className="font-medium text-purple-600">{contributor.downloads.toLocaleString()}</span>
-                            <span className="block">Downloads</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="text-center mt-6">
-                  <Button variant="outline">View Full Leaderboard</Button>
-                </div>
+                {topContributors.length > 0 && (
+                  <div className="text-center mt-6">
+                    <Button variant="outline">View Full Leaderboard</Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
