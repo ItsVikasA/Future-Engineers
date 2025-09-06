@@ -1,0 +1,80 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read their own profile and profiles of other users (limited fields)
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Universities are read-only for all authenticated users
+    match /universities/{universityId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin'];
+    }
+    
+    // Courses are read-only for all authenticated users
+    match /courses/{courseId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin'];
+    }
+    
+    // Documents: Read approved documents, write for contributors+
+    match /documents/{documentId} {
+      allow read: if request.auth != null && (
+        resource.data.status == 'approved' ||
+        request.auth.uid == resource.data.uploadedBy ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Moderator']
+      );
+      
+      allow create: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Student', 'Contributor', 'Moderator', 'Admin'] &&
+        request.resource.data.uploadedBy == request.auth.uid &&
+        request.resource.data.status == 'pending';
+        
+      allow update: if request.auth != null && (
+        // Author can update their own pending documents
+        (request.auth.uid == resource.data.uploadedBy && resource.data.status == 'pending') ||
+        // Moderators/Admins can update any document
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Moderator'])
+      );
+      
+      allow delete: if request.auth != null && (
+        request.auth.uid == resource.data.uploadedBy ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Moderator']
+      );
+    }
+    
+    // Comments: Authenticated users can read/write
+    match /comments/{commentId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && 
+        request.resource.data.authorId == request.auth.uid;
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.authorId ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Moderator']
+      );
+      allow delete: if request.auth != null && (
+        request.auth.uid == resource.data.authorId ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Admin', 'Moderator']
+      );
+    }
+    
+    // Notifications: Users can only read their own notifications
+    match /notifications/{notificationId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}
