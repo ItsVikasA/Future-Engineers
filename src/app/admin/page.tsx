@@ -54,7 +54,7 @@ export default function AdminPage() {
   };
 
   const handleViewAnalytics = () => {
-    toast.info('Advanced analytics coming soon!');
+    toast('Advanced analytics coming soon!');
   };
 
   const handleExportData = () => {
@@ -67,7 +67,7 @@ export default function AdminPage() {
   };
 
   const handleSystemConfig = () => {
-    toast.info('System configuration panel coming soon!');
+    toast('System configuration panel coming soon!');
   };
 
   const handleBackupData = () => {
