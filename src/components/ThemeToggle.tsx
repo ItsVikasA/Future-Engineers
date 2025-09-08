@@ -19,51 +19,51 @@ export function ThemeToggle() {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-9 w-9 px-0 bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm transition-all duration-200"
+          className="h-9 w-9 px-0 bg-accent/50 hover:bg-accent border border-border backdrop-blur-sm transition-all duration-200"
         >
-          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-white" />
-          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white" />
+          <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-foreground" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-foreground" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-56 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-xl backdrop-blur-xl bg-opacity-95 dark:bg-opacity-95"
+        className="w-56 bg-popover border border-border shadow-xl backdrop-blur-xl"
       >
         <DropdownMenuItem 
           onClick={() => setTheme('light')}
-          className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
-            theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+          className={`cursor-pointer hover:bg-accent transition-colors ${
+            theme === 'light' ? 'bg-primary/10 text-primary' : ''
           }`}
         >
           <Sun className="mr-3 h-4 w-4" />
           <span className="font-medium">Light</span>
           {theme === 'light' && (
-            <div className="ml-auto h-2 w-2 rounded-full bg-blue-500"></div>
+            <div className="ml-auto h-2 w-2 rounded-full bg-primary"></div>
           )}
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => setTheme('dark')}
-          className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
-            theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+          className={`cursor-pointer hover:bg-accent transition-colors ${
+            theme === 'dark' ? 'bg-primary/10 text-primary' : ''
           }`}
         >
           <Moon className="mr-3 h-4 w-4" />
           <span className="font-medium">Dark</span>
           {theme === 'dark' && (
-            <div className="ml-auto h-2 w-2 rounded-full bg-blue-500"></div>
+            <div className="ml-auto h-2 w-2 rounded-full bg-primary"></div>
           )}
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => setTheme('system')}
-          className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors ${
-            theme === 'system' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+          className={`cursor-pointer hover:bg-accent transition-colors ${
+            theme === 'system' ? 'bg-primary/10 text-primary' : ''
           }`}
         >
           <Monitor className="mr-3 h-4 w-4" />
           <span className="font-medium">System</span>
           {theme === 'system' && (
-            <div className="ml-auto h-2 w-2 rounded-full bg-blue-500"></div>
+            <div className="ml-auto h-2 w-2 rounded-full bg-primary"></div>
           )}
         </DropdownMenuItem>
       </DropdownMenuContent>

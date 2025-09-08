@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/stores/authStore';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
-import { collection, query, where, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { 
   Eye, 
@@ -28,7 +28,10 @@ import {
   Users,
   Settings,
   Shield,
-  Crown
+  Crown,
+  Linkedin,
+  Github,
+  Globe
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -60,23 +63,26 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-
-  // Mock profile data - in production, fetch from Firestore
-  const profileData = {
-    displayName: user?.displayName || 'Anonymous User',
-    email: user?.email || '',
-    photoURL: user?.photoURL || '',
-    bio: 'Engineering student passionate about learning and sharing knowledge.',
-    university: 'Example University',
-    course: 'Computer Science & Engineering',
-    semester: '6',
-    location: 'Mumbai, India',
-    joinedAt: new Date('2024-01-15'),
-    reputation: isAdmin ? 9999 : 456,
-    uploads: documents.filter(doc => doc.status === 'approved').length,
-    downloads: 89,
-    role: isAdmin ? 'Admin' : 'Student'
-  };
+  const [profileData, setProfileData] = useState({
+    displayName: '',
+    email: '',
+    photoURL: '',
+    bio: '',
+    university: '',
+    course: '',
+    semester: '',
+    location: '',
+    joinedAt: new Date(),
+    reputation: 0,
+    uploads: 0,
+    downloads: 0,
+    role: 'Student',
+    socialMedia: {
+      linkedin: '',
+      github: '',
+      portfolio: ''
+    }
+  });
 
   // Helper function to handle Firestore timestamp conversion
   const getDateFromTimestamp = (timestamp: { toDate(): Date } | Date): Date => {
@@ -92,6 +98,64 @@ export default function ProfilePage() {
       window.location.href = '/';
     }
   }, [isAuthenticated]);
+
+  // Load profile data from Firebase
+  useEffect(() => {
+    if (!user?.email) return;
+
+    const loadProfileData = async () => {
+      try {
+        const userDocRef = doc(db, 'users', user.email);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setProfileData(prev => ({
+            ...prev,
+            displayName: user.displayName || userData.displayName || 'Anonymous User',
+            email: user.email || '',
+            photoURL: user.photoURL || userData.photoURL || '',
+            bio: userData.bio || 'Engineering student passionate about learning and sharing knowledge.',
+            university: userData.university || '',
+            course: userData.course || '',
+            semester: userData.semester || '',
+            location: userData.location || 'India',
+            joinedAt: userData.createdAt ? userData.createdAt.toDate() : new Date(),
+            reputation: isAdmin ? 9999 : (userData.reputation || 0),
+            role: isAdmin ? 'Admin' : 'Student',
+            socialMedia: {
+              linkedin: userData.socialMedia?.linkedin || userData.linkedin || '',
+              github: userData.socialMedia?.github || userData.github || '',
+              portfolio: userData.socialMedia?.portfolio || userData.portfolio || ''
+            }
+          }));
+        } else {
+          // Set default values if no profile exists
+          setProfileData(prev => ({
+            ...prev,
+            displayName: user.displayName || 'Anonymous User',
+            email: user.email || '',
+            photoURL: user.photoURL || '',
+            bio: 'Engineering student passionate about learning and sharing knowledge.',
+            reputation: isAdmin ? 9999 : 0,
+            role: isAdmin ? 'Admin' : 'Student'
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+        // Set basic user data on error
+        setProfileData(prev => ({
+          ...prev,
+          displayName: user.displayName || 'Anonymous User',
+          email: user.email || '',
+          photoURL: user.photoURL || '',
+          role: isAdmin ? 'Admin' : 'Student'
+        }));
+      }
+    };
+
+    loadProfileData();
+  }, [user, isAdmin]);
 
   // Fetch user's documents and calculate stats
   useEffect(() => {
@@ -117,6 +181,17 @@ export default function ProfilePage() {
       });
       
       setDocuments(docs);
+      
+      // Update profile stats
+      const approvedDocs = docs.filter(doc => doc.status === 'approved');
+      const totalDownloads = docs.reduce((sum, doc) => sum + (doc.downloads || 0), 0);
+      
+      setProfileData(prev => ({
+        ...prev,
+        uploads: approvedDocs.length,
+        downloads: totalDownloads
+      }));
+      
       setLoading(false);
     });
 
@@ -169,13 +244,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Profile Header with Role Distinction */}
-          <Card className="bg-white/5 backdrop-blur-sm border-white/10 mb-8">
+          <Card className="bg-card/50 backdrop-blur-sm border-border mb-8">
             <CardContent className="p-8">
               <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
                 {/* Profile Picture and Basic Info */}
@@ -196,27 +271,27 @@ export default function ProfilePage() {
                   
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-bold text-white">{profileData.displayName}</h1>
+                      <h1 className="text-3xl font-bold text-foreground">{profileData.displayName}</h1>
                       {isAdmin ? (
                         <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1">
                           <Shield className="h-3 w-3" />
                           Administrator
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="border-purple-400 text-purple-400">
+                        <Badge variant="outline" className="border-primary text-primary">
                           <GraduationCap className="h-3 w-3 mr-1" />
                           Student
                         </Badge>
                       )}
                     </div>
                     
-                    <div className="flex items-center text-gray-300 gap-2">
+                    <div className="flex items-center text-muted-foreground gap-2">
                       <Mail className="h-4 w-4" />
                       {profileData.email}
                     </div>
                     
                     {profileData.location && (
-                      <div className="flex items-center text-gray-300 gap-2">
+                      <div className="flex items-center text-muted-foreground gap-2">
                         <MapPin className="h-4 w-4" />
                         {profileData.location}
                       </div>
@@ -259,32 +334,74 @@ export default function ProfilePage() {
 
               {/* Academic Info */}
               <div className="mt-6 pt-6 border-t border-white/10">
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {profileData.university && (
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <GraduationCap className="h-4 w-4 text-purple-400" />
-                      <span>{profileData.university}</span>
+                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
+                      <GraduationCap className="h-4 w-4 text-purple-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.university}</span>
                     </div>
                   )}
                   {profileData.course && (
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <FileText className="h-4 w-4 text-blue-400" />
-                      <span>{profileData.course}</span>
+                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
+                      <FileText className="h-4 w-4 text-blue-400 flex-shrink-0" />
+                      <span className="text-sm">{profileData.course}</span>
                     </div>
                   )}
                   {profileData.semester && (
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <Clock className="h-4 w-4 text-green-400" />
-                      <span>Semester {profileData.semester}</span>
+                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
+                      <Clock className="h-4 w-4 text-green-400 flex-shrink-0" />
+                      <span className="text-sm">Semester {profileData.semester}</span>
                     </div>
                   )}
                 </div>
               </div>
+
+              {/* Social Media Links */}
+              {(profileData.socialMedia.linkedin || profileData.socialMedia.github || profileData.socialMedia.portfolio) && (
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-4">Connect with me</h3>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    {profileData.socialMedia.linkedin && (
+                      <a
+                        href={profileData.socialMedia.linkedin.startsWith('http') ? profileData.socialMedia.linkedin : `https://${profileData.socialMedia.linkedin}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors text-sm font-medium"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                        <span>LinkedIn</span>
+                      </a>
+                    )}
+                    {profileData.socialMedia.github && (
+                      <a
+                        href={profileData.socialMedia.github.startsWith('http') ? profileData.socialMedia.github : `https://${profileData.socialMedia.github}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-gray-900 rounded-lg text-white transition-colors text-sm font-medium"
+                      >
+                        <Github className="h-4 w-4" />
+                        <span>GitHub</span>
+                      </a>
+                    )}
+                    {profileData.socialMedia.portfolio && (
+                      <a
+                        href={profileData.socialMedia.portfolio.startsWith('http') ? profileData.socialMedia.portfolio : `https://${profileData.socialMedia.portfolio}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors text-sm font-medium"
+                      >
+                        <Globe className="h-4 w-4" />
+                        <span>Portfolio</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Enhanced Stats Section */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
             <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
               <CardContent className="p-6 text-center">
                 <Award className="h-8 w-8 mx-auto mb-3 text-yellow-400" />

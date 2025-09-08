@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, Download } from 'lucide-react';
+import { Eye, Download, LogIn } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
 import toast from 'react-hot-toast';
 
 interface PDFViewerProps {
@@ -14,12 +15,19 @@ interface PDFViewerProps {
 
 export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
   const handlePreview = () => {
     setIsOpen(true);
   };
 
   const handleDownload = async () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.error('🔒 Please sign in to download files');
+      return;
+    }
+
     try {
       const loadingToast = toast.loading('📥 Preparing download...');
       

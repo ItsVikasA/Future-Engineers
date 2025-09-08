@@ -259,67 +259,67 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">
+          <h1 className="text-3xl font-bold mb-8 text-foreground">
             Dashboard
           </h1>
           
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-black/20 border-white/10">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-card-foreground flex items-center gap-2">
                   <FileText className="w-5 h-5" />
                   Pending Review
                 </CardTitle>
-                <CardDescription className="text-gray-400">Documents awaiting approval</CardDescription>
+                <CardDescription className="text-muted-foreground">Documents awaiting approval</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-orange-400">{pendingDocuments.length}</p>
+                <p className="text-2xl font-bold text-orange-500">{pendingDocuments.length}</p>
               </CardContent>
             </Card>
             
-            <Card className="bg-black/20 border-white/10">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-card-foreground flex items-center gap-2">
                   <User className="w-5 h-5" />
                   My Uploads
                 </CardTitle>
-                <CardDescription className="text-gray-400">Documents you&apos;ve contributed</CardDescription>
+                <CardDescription className="text-muted-foreground">Documents you&apos;ve contributed</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-blue-400">{myDocuments.length}</p>
+                <p className="text-2xl font-bold text-blue-500">{myDocuments.length}</p>
               </CardContent>
             </Card>
             
-            <Card className="bg-black/20 border-white/10">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-card-foreground flex items-center gap-2">
                   <Download className="w-5 h-5" />
                   Total Downloads
                 </CardTitle>
-                <CardDescription className="text-gray-400">Downloads of your content</CardDescription>
+                <CardDescription className="text-muted-foreground">Downloads of your content</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-green-400">
+                <p className="text-2xl font-bold text-green-500">
                   {myDocuments.reduce((sum, doc) => sum + (doc.downloads || 0), 0)}
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="bg-black/20 border-white/10">
+            <Card className="bg-card border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-card-foreground flex items-center gap-2">
                   <Eye className="w-5 h-5" />
                   Total Views
                 </CardTitle>
-                <CardDescription className="text-gray-400">Views on your documents</CardDescription>
+                <CardDescription className="text-muted-foreground">Views on your documents</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-bold text-purple-400">
+                <p className="text-2xl font-bold text-purple-500">
                   {myDocuments.reduce((sum, doc) => sum + (doc.views || 0), 0)}
                 </p>
               </CardContent>
@@ -329,29 +329,29 @@ export default function Dashboard() {
           {/* Pending Documents Section */}
           {pendingDocuments.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <Clock className="w-6 h-6 text-orange-400" />
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
+                <Clock className="w-6 h-6 text-orange-500" />
                 Pending Review ({pendingDocuments.length})
               </h2>
               
               <div className="grid gap-4">
                 {pendingDocuments.map((document) => (
-                  <Card key={document.id} className="bg-black/20 border-orange-500/30">
+                  <Card key={document.id} className="bg-card border-orange-500/30">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
-                          <CardTitle className="text-white">{document.title}</CardTitle>
-                          <CardDescription className="text-gray-400 mt-1">
+                          <CardTitle className="text-card-foreground">{document.title}</CardTitle>
+                          <CardDescription className="text-muted-foreground mt-1">
                             {document.description}
                           </CardDescription>
                           <div className="flex flex-wrap gap-2 mt-3">
-                            <Badge variant="outline" className="text-orange-400 border-orange-400">
+                            <Badge variant="outline" className="text-orange-500 border-orange-500">
                               {document.documentType}
                             </Badge>
-                            <Badge variant="outline" className="text-blue-400 border-blue-400">
+                            <Badge variant="outline" className="text-blue-500 border-blue-500">
                               {document.semester}
                             </Badge>
-                            <Badge variant="outline" className="text-purple-400 border-purple-400">
+                            <Badge variant="outline" className="text-purple-500 border-purple-500">
                               {formatFileSize(document.fileSize)}
                             </Badge>
                           </div>
@@ -366,7 +366,7 @@ export default function Dashboard() {
                             onClick={() => handleApprove(document.id)}
                             variant="outline" 
                             size="sm"
-                            className="border-green-400 text-green-400 hover:bg-green-400 hover:text-black"
+                            className="border-green-500 text-green-500 hover:bg-green-500 hover:text-green-50"
                           >
                             <CheckCircle className="w-4 h-4 mr-1" />
                             Approve
@@ -375,7 +375,7 @@ export default function Dashboard() {
                             onClick={() => handleReject(document.id)}
                             variant="outline" 
                             size="sm"
-                            className="border-red-400 text-red-400 hover:bg-red-400 hover:text-black"
+                            className="border-red-500 text-red-500 hover:bg-red-500 hover:text-red-50"
                           >
                             <XCircle className="w-4 h-4 mr-1" />
                             Reject
@@ -385,7 +385,7 @@ export default function Dashboard() {
                               onClick={() => handleDelete(document.id, document.title)}
                               variant="outline" 
                               size="sm"
-                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                              className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             >
                               <Trash2 className="w-4 h-4 mr-1" />
                               Delete
@@ -395,7 +395,7 @@ export default function Dashboard() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-muted-foreground">
                         <p><strong>Subject:</strong> {document.subject}</p>
                         <p><strong>Course:</strong> {document.course}</p>
                         <p><strong>University:</strong> {document.university}</p>
@@ -412,27 +412,27 @@ export default function Dashboard() {
 
           {/* My Documents Section */}
           <div>
-            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-              <User className="w-6 h-6 text-blue-400" />
+            <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-foreground">
+              <User className="w-6 h-6 text-blue-500" />
               My Documents ({myDocuments.length})
             </h2>
             
             {myDocuments.length === 0 ? (
-              <Card className="bg-black/20 border-white/10">
+              <Card className="bg-card border-border">
                 <CardContent className="text-center py-8">
-                  <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">You haven&apos;t uploaded any documents yet.</p>
+                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">You haven&apos;t uploaded any documents yet.</p>
                 </CardContent>
               </Card>
             ) : (
               <div className="grid gap-4">
                 {myDocuments.map((document) => (
-                  <Card key={document.id} className="bg-black/20 border-white/10">
+                  <Card key={document.id} className="bg-card border-border">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
-                          <CardTitle className="text-white">{document.title}</CardTitle>
-                          <CardDescription className="text-gray-400 mt-1">
+                          <CardTitle className="text-card-foreground">{document.title}</CardTitle>
+                          <CardDescription className="text-muted-foreground mt-1">
                             {document.description}
                           </CardDescription>
                           <div className="flex flex-wrap gap-2 mt-3">
@@ -440,10 +440,10 @@ export default function Dashboard() {
                               variant="outline" 
                               className={`${
                                 document.status === 'approved' 
-                                  ? 'text-green-400 border-green-400' 
+                                  ? 'text-green-500 border-green-500' 
                                   : document.status === 'rejected'
-                                  ? 'text-red-400 border-red-400'
-                                  : 'text-orange-400 border-orange-400'
+                                  ? 'text-red-500 border-red-500'
+                                  : 'text-orange-500 border-orange-500'
                               }`}
                             >
                               {document.status}
@@ -467,7 +467,7 @@ export default function Dashboard() {
                               onClick={() => handleDelete(document.id, document.title)}
                               variant="outline" 
                               size="sm"
-                              className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                              className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                             >
                               <Trash2 className="w-4 h-4 mr-1" />
                               Delete
@@ -477,7 +477,7 @@ export default function Dashboard() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-sm text-gray-400 grid grid-cols-2 gap-4">
+                      <div className="text-sm text-muted-foreground grid grid-cols-2 gap-4">
                         <div>
                           <p><strong>Subject:</strong> {document.subject}</p>
                           <p><strong>Course:</strong> {document.course}</p>

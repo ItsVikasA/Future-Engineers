@@ -21,6 +21,7 @@ const KARNATAKA_UNIVERSITIES = [
   "Aditya Academy of Architecture, Bengaluru",
   "Alvas Institute of Engineering, Dakshin Kannad",
   "AMG Rural College of Engineering, Dharwad",
+  "Amruta Institute of Engineering, Bidadi, Bengaluru",
   "ANJUMAN Institute of Technology, Uttar Kannad",
   "APS College of Engineering, Bengaluru",
   "Appa Institute of Engineering & Technology, Kalaburagi",
@@ -456,27 +457,27 @@ export default function Contribute() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <div className="min-h-screen bg-background text-foreground">
         <Header />
         <div className="container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Please Log In</h1>
-          <p className="text-gray-400">You need to be logged in to contribute content.</p>
+          <p className="text-muted-foreground">You need to be logged in to contribute content.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Share Engineering Knowledge
           </h1>
-          <p className="text-lg text-gray-400">
+          <p className="text-lg text-muted-foreground">
             Share your notes and help fellow engineers succeed. Your contributions build the future!
           </p>
         </div>

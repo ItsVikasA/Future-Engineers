@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useAuthStore } from '@/stores/authStore';
 import { 
   BookOpen, 
   FileText, 
@@ -18,6 +19,7 @@ import {
   Cog,
   Building,
   Atom,
+  LogIn,
   Heart,
   Calculator
 } from 'lucide-react';
@@ -86,6 +88,7 @@ const getResourceColor = (type: string) => {
 };
 
 export default function AcademicResourcesPage() {
+  const { isAuthenticated } = useAuthStore();
   const [selectedSemester, setSelectedSemester] = useState(1);
   const data = academicResourcesData as AcademicResourcesData;
 
@@ -99,6 +102,12 @@ export default function AcademicResourcesPage() {
         duration: 3000,
       });
     } else {
+      // Check authentication for file downloads
+      if (!isAuthenticated) {
+        toast.error('🔒 Please sign in to download files');
+        return;
+      }
+
       // Handle internal file downloads
       const loadingToast = toast.loading(`📄 Preparing download for ${resource.title}...`);
       
@@ -137,26 +146,26 @@ export default function AcademicResourcesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <GraduationCap className="h-8 w-8 text-purple-400" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <GraduationCap className="h-8 w-8 text-primary" />
+            <h1 className="text-4xl font-bold text-foreground">
               {data.pageTitle}
             </h1>
           </div>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Comprehensive study materials organized by semester and engineering branch
           </p>
         </div>
 
         {/* Semester Selector */}
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-white mb-4">Select Semester</h2>
+          <h2 className="text-2xl font-semibold text-foreground mb-4">Select Semester</h2>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
             {data.semesters.map((semester) => (
               <Button
@@ -164,8 +173,8 @@ export default function AcademicResourcesPage() {
                 variant={selectedSemester === semester.semester ? "default" : "outline"}
                 className={`h-12 ${
                   selectedSemester === semester.semester
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                    : 'border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black'
+                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                    : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
                 }`}
                 onClick={() => setSelectedSemester(semester.semester)}
               >
@@ -178,24 +187,24 @@ export default function AcademicResourcesPage() {
         {/* Resources Content */}
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-6">
-            <h2 className="text-2xl font-semibold text-white">
+            <h2 className="text-2xl font-semibold text-foreground">
               Semester {selectedSemester} Resources
             </h2>
-            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+            <Badge variant="secondary" className="bg-primary/20 text-primary">
               {currentSemester?.branches.length || 0} Branches
             </Badge>
           </div>
 
           {currentSemester?.branches.length === 0 ? (
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
               <CardContent className="text-center py-12">
-                <BookOpen className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">No Resources Available</h3>
-                <p className="text-gray-400 mb-6">
+                <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Resources Available</h3>
+                <p className="text-muted-foreground mb-6">
                   Resources for Semester {selectedSemester} are being prepared. Check back soon!
                 </p>
                 <Link href="/contribute">
-                  <Button className="bg-purple-600 hover:bg-purple-700">
+                  <Button className="bg-primary hover:bg-primary/90">
                     Contribute Resources
                   </Button>
                 </Link>
@@ -207,26 +216,26 @@ export default function AcademicResourcesPage() {
                 const totalResources = branch.categories.reduce((total, category) => total + category.resources.length, 0);
                 
                 return (
-                  <Card key={branchIndex} className="bg-white/5 backdrop-blur-sm border-white/10">
+                  <Card key={branchIndex} className="bg-card/50 backdrop-blur-sm border-border">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-3 text-white">
+                      <CardTitle className="flex items-center gap-3 text-foreground">
                         {branchIcons[branch.name] || <BookOpen className="w-5 h-5" />}
                         {branch.name}
                         <Badge variant="outline" className="ml-auto text-xs">
                           {totalResources} Resources
                         </Badge>
                       </CardTitle>
-                      <CardDescription className="text-gray-400">
+                      <CardDescription className="text-muted-foreground">
                         Study materials and resources for {branch.name}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       {branch.categories.length === 0 || totalResources === 0 ? (
-                        <div className="text-center py-8 text-gray-500">
-                          <FileText className="h-12 w-12 mx-auto mb-3 text-gray-600" />
+                        <div className="text-center py-8 text-muted-foreground">
+                          <FileText className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
                           <p>No resources available yet for this branch</p>
                           <Link href="/contribute">
-                            <Button variant="link" className="text-purple-400 mt-2">
+                            <Button variant="link" className="text-primary mt-2">
                               Be the first to contribute
                             </Button>
                           </Link>
@@ -236,7 +245,7 @@ export default function AcademicResourcesPage() {
                           {branch.categories.map((category, categoryIndex) => (
                             category.resources.length > 0 && (
                               <div key={categoryIndex} className="space-y-3">
-                                <h4 className="text-lg font-semibold text-purple-300 flex items-center gap-2">
+                                <h4 className="text-lg font-semibold text-primary flex items-center gap-2">
                                   {getResourceIcon('category')}
                                   {category.name}
                                   <Badge variant="outline" className="text-xs">
@@ -247,12 +256,12 @@ export default function AcademicResourcesPage() {
                                   {category.resources.map((resource, resourceIndex) => (
                                     <div
                                       key={resourceIndex}
-                                      className="flex items-center justify-between p-4 rounded-lg bg-black/20 border border-white/10 hover:bg-black/30 transition-colors"
+                                      className="flex items-center justify-between p-4 rounded-lg bg-card/30 border border-border hover:bg-card/50 transition-colors"
                                     >
                                       <div className="flex items-center gap-3">
                                         {getResourceIcon(resource.type)}
                                         <div>
-                                          <h5 className="font-medium text-white">{resource.title}</h5>
+                                          <h5 className="font-medium text-foreground">{resource.title}</h5>
                                           <Badge 
                                             variant="outline" 
                                             className={`text-xs mt-1 ${getResourceColor(resource.type)}`}
@@ -264,18 +273,33 @@ export default function AcademicResourcesPage() {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
+                                        className={`${
+                                          resource.type === 'video_playlist' || isAuthenticated || resource.url.startsWith('http')
+                                            ? 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
+                                            : 'border-gray-400 text-gray-400 hover:bg-gray-400 hover:text-black'
+                                        }`}
                                         onClick={() => handleResourceClick(resource)}
+                                        disabled={!resource.url.startsWith('http') && resource.type !== 'video_playlist' && !isAuthenticated}
                                       >
                                         {resource.type === 'video_playlist' ? (
                                           <>
                                             <ExternalLink className="w-4 h-4 mr-1" />
                                             Watch
                                           </>
-                                        ) : (
+                                        ) : resource.url.startsWith('http') ? (
+                                          <>
+                                            <ExternalLink className="w-4 h-4 mr-1" />
+                                            Open
+                                          </>
+                                        ) : isAuthenticated ? (
                                           <>
                                             <Download className="w-4 h-4 mr-1" />
                                             Download
+                                          </>
+                                        ) : (
+                                          <>
+                                            <LogIn className="w-4 h-4 mr-1" />
+                                            Sign in
                                           </>
                                         )}
                                       </Button>

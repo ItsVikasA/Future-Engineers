@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/stores/authStore';
-import { Camera, Save, X, User, Award, ChevronDown } from 'lucide-react';
+import { Camera, Save, X, User, Award, ChevronDown, Linkedin, Github, Globe, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '@/lib/firebase';
 import { updateProfile } from 'firebase/auth';
@@ -23,6 +24,7 @@ const KARNATAKA_UNIVERSITIES = [
   "Aditya Academy of Architecture, Bengaluru",
   "Alvas Institute of Engineering, Dakshin Kannad",
   "AMG Rural College of Engineering, Dharwad",
+  "Amruta Institute of Engineering, Bidadi, Bengaluru",
   "ANJUMAN Institute of Technology, Uttar Kannad",
   "APS College of Engineering, Bengaluru",
   "Appa Institute of Engineering & Technology, Kalaburagi",
@@ -153,6 +155,9 @@ interface UserProfile {
   course: string;
   semester: string;
   location: string;
+  linkedin: string;
+  github: string;
+  portfolio: string;
   joinedAt: Date;
   reputation: number;
   uploads: number;
@@ -161,6 +166,7 @@ interface UserProfile {
 
 export default function ProfileEditPage() {
   const { user } = useAuthStore();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
@@ -176,11 +182,47 @@ export default function ProfileEditPage() {
     course: '',
     semester: '',
     location: '',
+    linkedin: '',
+    github: '',
+    portfolio: '',
     joinedAt: new Date(),
     reputation: 0,
     uploads: 0,
     downloads: 0
   });
+
+  // Load existing profile data
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (!user?.email) return;
+      
+      try {
+        const userDocRef = doc(db, 'users', user.email);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setProfile(prev => ({
+            ...prev,
+            displayName: userData.displayName || user.displayName || '',
+            bio: userData.bio || '',
+            university: userData.university || '',
+            course: userData.course || '',
+            semester: userData.semester || '',
+            location: userData.location || '',
+            linkedin: userData.linkedin || '',
+            github: userData.github || '',
+            portfolio: userData.portfolio || '',
+            photoURL: userData.photoURL || user.photoURL || ''
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+      }
+    };
+
+    loadProfileData();
+  }, [user]);
 
   // Filter universities based on search input
   const filteredUniversities = KARNATAKA_UNIVERSITIES.filter(university => 
@@ -201,6 +243,29 @@ export default function ProfileEditPage() {
     setProfile(prev => ({ ...prev, course }));
     setShowCourseDropdown(false);
   };
+
+  // Calculate profile completion percentage
+  const calculateProfileCompletion = () => {
+    const fields = [
+      profile.displayName,
+      profile.bio,
+      profile.university,
+      profile.course,
+      profile.semester,
+      profile.location,
+      profile.linkedin,
+      profile.github,
+      profile.portfolio,
+      profile.photoURL
+    ];
+    
+    const filledFields = fields.filter(field => field && field.trim() !== '').length;
+    const totalFields = fields.length;
+    
+    return Math.round((filledFields / totalFields) * 100);
+  };
+
+  const completionPercentage = calculateProfileCompletion();
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -242,36 +307,87 @@ export default function ProfileEditPage() {
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return;
+    if (!user || !user.email) return;
     
     setLoading(true);
     
     try {
       // Update Firebase Auth profile
-      if (user?.uid) {
-        await updateProfile(auth.currentUser!, {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
           displayName: profile.displayName,
           photoURL: profile.photoURL
         });
-
-        // Update Firestore user document
-        const userDocRef = doc(db, 'users', user.uid);
-        await updateDoc(userDocRef, {
-          displayName: profile.displayName,
-          photoURL: profile.photoURL,
-          bio: profile.bio,
-          university: profile.university,
-          course: profile.course,
-          semester: profile.semester,
-          location: profile.location,
-          updatedAt: new Date()
-        });
-
-        toast.success('Profile updated successfully!');
       }
+
+      // Use email directly as document ID (matching AuthProvider pattern)
+      const userDocRef = doc(db, 'users', user.email);
+      
+      // Check if document exists
+      const userDoc = await getDoc(userDocRef);
+      
+      const userData = {
+        displayName: profile.displayName,
+        email: profile.email,
+        photoURL: profile.photoURL,
+        bio: profile.bio,
+        university: profile.university,
+        course: profile.course,
+        semester: profile.semester,
+        location: profile.location,
+        socialMedia: {
+          linkedin: profile.linkedin,
+          github: profile.github,
+          portfolio: profile.portfolio
+        },
+        // Keep individual fields for backward compatibility
+        linkedin: profile.linkedin,
+        github: profile.github,
+        portfolio: profile.portfolio,
+        updatedAt: new Date()
+      };
+
+      if (userDoc.exists()) {
+        // Update existing document
+        await updateDoc(userDocRef, userData);
+        toast.success('✅ Profile updated successfully!');
+        
+        // Redirect to profile page after a short delay
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1000);
+      } else {
+        // Create new document if it doesn't exist (shouldn't happen normally)
+        await setDoc(userDocRef, {
+          ...userData,
+          uid: user.uid,
+          role: 'Student',
+          reputation: 0,
+          badges: [],
+          joinedAt: new Date(),
+          lastActive: new Date(),
+          emailVerified: auth.currentUser?.emailVerified || false
+        });
+        toast.success('✅ Profile created and updated successfully!');
+        
+        // Redirect to profile page after a short delay
+        setTimeout(() => {
+          router.push('/profile');
+        }, 1000);
+      }
+
+      // Update the auth store to reflect changes immediately
+      useAuthStore.getState().setUser({
+        ...user,
+        displayName: profile.displayName,
+        photoURL: profile.photoURL
+      });
+      
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
+      toast.error('❌ Failed to update profile. Please try again.', {
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
     }
@@ -281,15 +397,48 @@ export default function ProfileEditPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">Edit Profile</h1>
-            <p className="text-gray-400">Update your profile information and preferences</p>
+          <div className="mb-6 lg:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Edit Profile</h1>
+            <p className="text-gray-400 text-sm sm:text-base">Update your profile information and preferences</p>
+            
+            {/* Profile Completion Bar */}
+            <div className="mt-6 p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Profile Completion
+                </span>
+                <span className="text-sm font-semibold text-white">{completionPercentage}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-500 ${
+                    completionPercentage === 100 
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
+                      : completionPercentage >= 70 
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500'
+                      : 'bg-gradient-to-r from-orange-500 to-red-500'
+                  }`}
+                  style={{ width: `${completionPercentage}%` }}
+                ></div>
+              </div>
+              {completionPercentage === 100 && (
+                <p className="text-green-400 text-xs mt-2 flex items-center gap-1">
+                  ✨ Congratulations! Your profile is 100% complete!
+                </p>
+              )}
+              {completionPercentage < 100 && (
+                <p className="text-gray-400 text-xs mt-2">
+                  Complete all fields including social links to reach 100%
+                </p>
+              )}
+            </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Profile Photo Section */}
             <div className="lg:col-span-1">
               <Card className="bg-white/5 backdrop-blur-sm border-white/10">
@@ -390,7 +539,7 @@ export default function ProfileEditPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         Display Name
@@ -428,7 +577,7 @@ export default function ProfileEditPage() {
                     />
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <label className="block text-sm font-medium text-gray-300 mb-2">
                         University
@@ -525,6 +674,55 @@ export default function ProfileEditPage() {
                         placeholder="City, Country"
                         className="bg-black/20 border-white/10 text-white placeholder-gray-500"
                       />
+                    </div>
+                  </div>
+
+                  {/* Social Media Links */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-purple-400" />
+                      Social Media & Portfolio Links
+                    </h3>
+                    
+                    <div className="grid md:grid-cols-1 gap-4">
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+                          <Linkedin className="h-4 w-4 text-blue-500" />
+                          LinkedIn Profile
+                        </label>
+                        <Input
+                          value={profile.linkedin}
+                          onChange={(e) => setProfile(prev => ({ ...prev, linkedin: e.target.value }))}
+                          placeholder="https://linkedin.com/in/yourprofile"
+                          className="bg-black/20 border-white/10 text-white placeholder-gray-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+                          <Github className="h-4 w-4 text-gray-400" />
+                          GitHub Profile
+                        </label>
+                        <Input
+                          value={profile.github}
+                          onChange={(e) => setProfile(prev => ({ ...prev, github: e.target.value }))}
+                          placeholder="https://github.com/yourusername"
+                          className="bg-black/20 border-white/10 text-white placeholder-gray-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+                          <Globe className="h-4 w-4 text-green-500" />
+                          Personal Portfolio
+                        </label>
+                        <Input
+                          value={profile.portfolio}
+                          onChange={(e) => setProfile(prev => ({ ...prev, portfolio: e.target.value }))}
+                          placeholder="https://yourportfolio.com"
+                          className="bg-black/20 border-white/10 text-white placeholder-gray-500"
+                        />
+                      </div>
                     </div>
                   </div>
 

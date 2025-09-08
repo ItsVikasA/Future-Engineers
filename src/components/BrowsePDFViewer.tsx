@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, Download } from 'lucide-react';
+import { Eye, Download, LogIn } from 'lucide-react';
 import { doc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useAuthStore } from '@/stores/authStore';
 import toast from 'react-hot-toast';
 
 interface BrowsePDFViewerProps {
@@ -16,6 +17,7 @@ interface BrowsePDFViewerProps {
 
 export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated } = useAuthStore();
 
   const handlePreview = async () => {
     try {
@@ -30,6 +32,12 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
   };
 
   const handleDownload = async () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast.error('🔒 Please sign in to download files');
+      return;
+    }
+
     try {
       await updateDoc(doc(db, 'documents', documentId), {
         downloads: increment(1)
@@ -119,10 +127,23 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
                   </p>
                   <Button
                     onClick={handleDownload}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    className={`w-full ${isAuthenticated 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-500 hover:bg-gray-600 text-white'
+                    }`}
+                    disabled={!isAuthenticated}
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
+                    {isAuthenticated ? (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download PDF
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="w-4 h-4 mr-2" />
+                        Sign in to Download
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -130,9 +151,25 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
           </div>
           
           <div className="flex gap-2 justify-end">
-            <Button onClick={handleDownload} className="bg-purple-600 hover:bg-purple-700 text-white">
-              <Download className="w-4 h-4 mr-1" />
-              Download
+            <Button 
+              onClick={handleDownload} 
+              className={`${isAuthenticated 
+                ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                : 'bg-gray-500 hover:bg-gray-600 text-white'
+              }`}
+              disabled={!isAuthenticated}
+            >
+              {isAuthenticated ? (
+                <>
+                  <Download className="w-4 h-4 mr-1" />
+                  Download
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4 mr-1" />
+                  Sign in to Download
+                </>
+              )}
             </Button>
           </div>
         </DialogContent>
@@ -142,10 +179,23 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
         onClick={handleDownload}
         size="sm"
         variant="outline"
-        className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
+        className={`${isAuthenticated 
+          ? 'border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black' 
+          : 'border-gray-400 text-gray-400 hover:bg-gray-400 hover:text-black'
+        }`}
+        disabled={!isAuthenticated}
       >
-        <Download className="w-4 h-4 mr-1" />
-        Download
+        {isAuthenticated ? (
+          <>
+            <Download className="w-4 h-4 mr-1" />
+            Download
+          </>
+        ) : (
+          <>
+            <LogIn className="w-4 h-4 mr-1" />
+            Sign in
+          </>
+        )}
       </Button>
     </div>
   );

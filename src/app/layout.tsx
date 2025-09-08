@@ -94,21 +94,22 @@ export default function RootLayout({
                 toastOptions={{
                   duration: 4000,
                   style: {
-                    background: '#363636',
-                    color: '#fff',
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--card-foreground))',
+                    border: '1px solid hsl(var(--border))',
                   },
                   success: {
                     duration: 3000,
                     iconTheme: {
-                      primary: '#10B981',
-                      secondary: '#fff',
+                      primary: 'hsl(var(--primary))',
+                      secondary: 'hsl(var(--primary-foreground))',
                     },
                   },
                   error: {
                     duration: 5000,
                     iconTheme: {
-                      primary: '#EF4444',
-                      secondary: '#fff',
+                      primary: 'hsl(var(--destructive))',
+                      secondary: 'hsl(var(--destructive-foreground))',
                     },
                   },
                 }}

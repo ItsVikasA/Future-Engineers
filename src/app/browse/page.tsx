@@ -169,7 +169,7 @@ export default function BrowseNotes() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <div className="min-h-screen bg-background text-foreground">
         <Header />
         <div className="container mx-auto px-4 py-8 text-center">
           <div className="text-lg">Loading documents...</div>
@@ -179,37 +179,37 @@ export default function BrowseNotes() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-4">Engineering Resources</h1>
-          <p className="text-lg text-gray-400">
+          <h1 className="text-4xl font-bold text-foreground mb-4">Engineering Resources</h1>
+          <p className="text-lg text-muted-foreground">
             Discover and download high-quality academic resources shared by future engineers
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6 mb-8">
+        <div className="bg-card/50 backdrop-blur-sm rounded-xl border border-border p-6 mb-8">
           <div className="flex flex-col lg:flex-row gap-4">
             {/* Search Bar */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   placeholder="Search notes, courses, topics..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15"
+                  className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus:bg-accent"
                 />
               </div>
             </div>
             
             {/* Filters */}
             <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2 border-white/30 text-white hover:bg-white/10">
+              <Button variant="outline" className="flex items-center gap-2 border-border text-foreground hover:bg-accent">
                 <Filter className="h-4 w-4" />
                 Filters
               </Button>
@@ -217,7 +217,7 @@ export default function BrowseNotes() {
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
                 title="Select semester"
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-md text-sm text-white"
+                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
               >
                 <option value="All Semesters">All Semesters</option>
                 <option value="1st Semester">1st Semester</option>
@@ -233,7 +233,7 @@ export default function BrowseNotes() {
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 title="Select document type"
-                className="px-3 py-2 bg-white/10 border border-white/20 rounded-md text-sm text-white"
+                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
               >
                 <option value="All Types">All Types</option>
                 <option value="Notes">Notes</option>
@@ -248,14 +248,14 @@ export default function BrowseNotes() {
 
         {/* Results Count */}
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-400">
-            Showing <span className="font-semibold text-white">{filteredDocuments.length}</span> results
+          <p className="text-muted-foreground">
+            Showing <span className="font-semibold text-foreground">{filteredDocuments.length}</span> results
           </p>
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             title="Sort by"
-            className="px-3 py-2 bg-white/10 border border-white/20 rounded-md text-sm text-white"
+            className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
           >
             <option value="Most Recent">Sort by: Most Recent</option>
             <option value="Most Downloaded">Sort by: Most Downloaded</option>
@@ -268,20 +268,20 @@ export default function BrowseNotes() {
         <div className="grid gap-6">
           {filteredDocuments.length > 0 ? (
             filteredDocuments.map((doc) => (
-              <Card key={doc.id} className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-[1.02] group">
+              <Card key={doc.id} className="bg-card/50 backdrop-blur-sm border-border hover:bg-card/80 transition-all duration-300 hover:scale-[1.02] group">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <CardTitle className="text-xl text-white group-hover:text-purple-200 transition-colors">{doc.title}</CardTitle>
+                        <CardTitle className="text-xl text-card-foreground group-hover:text-primary transition-colors">{doc.title}</CardTitle>
                       </div>
-                      <CardDescription className="text-sm text-gray-400 mb-3">
+                      <CardDescription className="text-sm text-muted-foreground mb-3">
                         {doc.description}
                       </CardDescription>
                       
                       {/* Document Meta */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                        <span className="text-purple-300">{doc.course} • {doc.semester}</span>
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
+                        <span className="text-primary">{doc.course} • {doc.semester}</span>
                         <span>•</span>
                         <span>{doc.university}</span>
                         <span>•</span>
@@ -292,8 +292,8 @@ export default function BrowseNotes() {
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">{doc.documentType}</Badge>
-                        <Badge variant="outline" className="text-xs border-white/30 text-gray-400 hover:bg-white/10">
+                        <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">{doc.documentType}</Badge>
+                        <Badge variant="outline" className="text-xs border-border text-muted-foreground hover:bg-accent">
                           {doc.subject}
                         </Badge>
                       </div>
@@ -304,7 +304,7 @@ export default function BrowseNotes() {
                 <CardContent>
                   <div className="flex items-center justify-between">
                     {/* Stats */}
-                    <div className="flex items-center gap-6 text-sm text-gray-400">
+                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Download className="h-4 w-4" />
                         <span>{doc.downloads || 0} downloads</span>
@@ -331,7 +331,7 @@ export default function BrowseNotes() {
                           onClick={() => handleDelete(doc.id, doc.title)}
                           variant="outline" 
                           size="sm"
-                          className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
+                          className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
                         >
                           <Trash2 className="w-4 h-4 mr-1" />
                           Delete
@@ -343,11 +343,11 @@ export default function BrowseNotes() {
               </Card>
             ))
           ) : (
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
               <CardContent className="p-8 text-center">
-                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg mb-2">No documents found</p>
-                <p className="text-gray-500">Try adjusting your search criteria or filters</p>
+                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-lg mb-2">No documents found</p>
+                <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
               </CardContent>
             </Card>
           )}
@@ -355,7 +355,7 @@ export default function BrowseNotes() {
 
         {/* Load More */}
         <div className="text-center mt-8">
-          <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+          <Button variant="outline" size="lg" className="border-border text-foreground hover:bg-accent">
             Load More Documents
           </Button>
         </div>
@@ -363,11 +363,11 @@ export default function BrowseNotes() {
         {/* Empty State (when no documents) */}
         {documents.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
+            <div className="text-muted-foreground mb-4">
               <Search className="h-16 w-16 mx-auto" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No documents found</h3>
-            <p className="text-gray-600 mb-4">
+            <h3 className="text-lg font-semibold text-foreground mb-2">No documents found</h3>
+            <p className="text-muted-foreground mb-4">
               Try adjusting your search criteria or filters
             </p>
             <Button>Clear Filters</Button>
