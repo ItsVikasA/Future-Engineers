@@ -1,5 +1,6 @@
 'use client';
 
+// Admin review page for document management and approval
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
