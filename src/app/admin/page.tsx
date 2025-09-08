@@ -40,7 +40,7 @@ export default function AdminPage() {
   };
 
   const handleManageRoles = () => {
-    toast.info('Role management coming soon!');
+    toast('Role management coming soon!');
   };
 
   const handleReviewContent = () => {
