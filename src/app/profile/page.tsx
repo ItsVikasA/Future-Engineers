@@ -250,7 +250,7 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Profile Header with Role Distinction */}
-          <Card className="bg-card/50 backdrop-blur-sm border-border mb-8">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-600 mb-8">
             <CardContent className="p-8">
               <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
                 {/* Profile Picture and Basic Info */}
@@ -271,7 +271,7 @@ export default function ProfilePage() {
                   
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-bold text-foreground">{profileData.displayName}</h1>
+                      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{profileData.displayName}</h1>
                       {isAdmin ? (
                         <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1">
                           <Shield className="h-3 w-3" />
@@ -285,19 +285,19 @@ export default function ProfilePage() {
                       )}
                     </div>
                     
-                    <div className="flex items-center text-muted-foreground gap-2">
+                    <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2">
                       <Mail className="h-4 w-4" />
                       {profileData.email}
                     </div>
                     
                     {profileData.location && (
-                      <div className="flex items-center text-muted-foreground gap-2">
+                      <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2">
                         <MapPin className="h-4 w-4" />
                         {profileData.location}
                       </div>
                     )}
                     
-                    <div className="flex items-center text-gray-300 gap-2">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 gap-2">
                       <Calendar className="h-4 w-4" />
                       Member since {profileData.joinedAt.toLocaleDateString()}
                     </div>
@@ -327,30 +327,30 @@ export default function ProfilePage() {
 
               {/* Bio Section */}
               {profileData.bio && (
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <p className="text-gray-300 text-lg leading-relaxed">{profileData.bio}</p>
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-gray-800 dark:text-gray-100 text-lg leading-relaxed font-medium">{profileData.bio}</p>
                 </div>
               )}
 
               {/* Academic Info */}
-              <div className="mt-6 pt-6 border-t border-white/10">
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {profileData.university && (
-                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
-                      <GraduationCap className="h-4 w-4 text-purple-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.university}</span>
+                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                      <GraduationCap className="h-4 w-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                      <span className="text-sm font-medium">{profileData.university}</span>
                     </div>
                   )}
                   {profileData.course && (
-                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
-                      <FileText className="h-4 w-4 text-blue-400 flex-shrink-0" />
-                      <span className="text-sm">{profileData.course}</span>
+                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                      <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                      <span className="text-sm font-medium">{profileData.course}</span>
                     </div>
                   )}
                   {profileData.semester && (
-                    <div className="flex items-center gap-2 text-gray-300 p-3 bg-white/5 rounded-lg">
-                      <Clock className="h-4 w-4 text-green-400 flex-shrink-0" />
-                      <span className="text-sm">Semester {profileData.semester}</span>
+                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                      <Clock className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      <span className="text-sm font-medium">Semester {profileData.semester}</span>
                     </div>
                   )}
                 </div>
@@ -358,8 +358,8 @@ export default function ProfilePage() {
 
               {/* Social Media Links */}
               {(profileData.socialMedia.linkedin || profileData.socialMedia.github || profileData.socialMedia.portfolio) && (
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <h3 className="text-lg font-semibold text-white mb-4">Connect with me</h3>
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connect with me</h3>
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     {profileData.socialMedia.linkedin && (
                       <a
@@ -402,52 +402,52 @@ export default function ProfilePage() {
 
           {/* Enhanced Stats Section */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <Award className="h-8 w-8 mx-auto mb-3 text-yellow-400" />
-                <div className="text-2xl font-bold text-white">{profileData.reputation}</div>
-                <div className="text-sm text-gray-400">Reputation</div>
-                {isAdmin && <Badge className="mt-2 bg-yellow-500/20 text-yellow-400 text-xs">MAX</Badge>}
+                <Award className="h-8 w-8 mx-auto mb-3 text-yellow-600 dark:text-yellow-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{profileData.reputation}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Reputation</div>
+                {isAdmin && <Badge className="mt-2 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-xs">MAX</Badge>}
               </CardContent>
             </Card>
             
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <FileText className="h-8 w-8 mx-auto mb-3 text-blue-400" />
-                <div className="text-2xl font-bold text-white">{stats.total}</div>
-                <div className="text-sm text-gray-400">Total Uploads</div>
+                <FileText className="h-8 w-8 mx-auto mb-3 text-blue-600 dark:text-blue-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Total Uploads</div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <Download className="h-8 w-8 mx-auto mb-3 text-green-400" />
-                <div className="text-2xl font-bold text-white">{stats.totalDownloads}</div>
-                <div className="text-sm text-gray-400">Downloads</div>
+                <Download className="h-8 w-8 mx-auto mb-3 text-green-600 dark:text-green-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDownloads}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Downloads</div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <Eye className="h-8 w-8 mx-auto mb-3 text-purple-400" />
-                <div className="text-2xl font-bold text-white">{stats.totalViews}</div>
-                <div className="text-sm text-gray-400">Views</div>
+                <Eye className="h-8 w-8 mx-auto mb-3 text-purple-600 dark:text-purple-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalViews}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Views</div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <Clock className="h-8 w-8 mx-auto mb-3 text-yellow-400" />
-                <div className="text-2xl font-bold text-white">{stats.pending}</div>
-                <div className="text-sm text-gray-400">Pending</div>
+                <Clock className="h-8 w-8 mx-auto mb-3 text-yellow-600 dark:text-yellow-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.pending}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Pending</div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors">
+            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
               <CardContent className="p-6 text-center">
-                <TrendingUp className="h-8 w-8 mx-auto mb-3 text-emerald-400" />
-                <div className="text-2xl font-bold text-white">{stats.approved}</div>
-                <div className="text-sm text-gray-400">Approved</div>
+                <TrendingUp className="h-8 w-8 mx-auto mb-3 text-emerald-600 dark:text-emerald-400" />
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.approved}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300">Approved</div>
               </CardContent>
             </Card>
           </div>
@@ -502,32 +502,32 @@ export default function ProfilePage() {
                 placeholder="Search your documents..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12"
+                className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 h-12"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-white/5 border border-white/10 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[150px]"
+              className="px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[150px]"
               aria-label="Filter documents by status"
             >
-              <option value="all" className="bg-gray-800">All Status</option>
-              <option value="pending" className="bg-gray-800">Pending</option>
-              <option value="approved" className="bg-gray-800">Approved</option>
-              <option value="rejected" className="bg-gray-800">Rejected</option>
+              <option value="all" className="bg-white dark:bg-gray-700">All Status</option>
+              <option value="pending" className="bg-white dark:bg-gray-700">Pending</option>
+              <option value="approved" className="bg-white dark:bg-gray-700">Approved</option>
+              <option value="rejected" className="bg-white dark:bg-gray-700">Rejected</option>
             </select>
           </div>
 
           {/* Enhanced Documents List */}
-          <Card className="bg-white/5 backdrop-blur-sm border-white/10">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-600">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-white flex items-center gap-2">
+                  <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
                     <FileText className="h-5 w-5" />
                     Your Documents ({filteredDocuments.length})
                   </CardTitle>
-                  <CardDescription className="text-gray-400">
+                  <CardDescription className="text-gray-600 dark:text-gray-300">
                     Manage and track your uploaded documents
                   </CardDescription>
                 </div>
@@ -542,13 +542,13 @@ export default function ProfilePage() {
               {loading ? (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                  <p className="text-gray-400">Loading your documents...</p>
+                  <p className="text-gray-600 dark:text-gray-300">Loading your documents...</p>
                 </div>
               ) : filteredDocuments.length === 0 ? (
                 <div className="text-center py-12">
-                  <FileText className="h-16 w-16 mx-auto text-gray-600 mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">No Documents Found</h3>
-                  <p className="text-gray-400 mb-6">
+                  <FileText className="h-16 w-16 mx-auto text-gray-500 dark:text-gray-400 mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Documents Found</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">
                     {searchTerm || statusFilter !== 'all' 
                       ? 'No documents match your current filters'
                       : 'You haven\'t uploaded any documents yet'
@@ -565,11 +565,11 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-4">
                   {filteredDocuments.map((document) => (
-                    <div key={document.id} className="bg-white/5 rounded-lg p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                    <div key={document.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-3">
-                            <h3 className="text-xl font-semibold text-white">{document.title}</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{document.title}</h3>
                             <Badge 
                               variant={
                                 document.status === 'approved' ? 'default' :
@@ -585,28 +585,28 @@ export default function ProfilePage() {
                             </Badge>
                           </div>
                           
-                          <p className="text-gray-300 mb-4 leading-relaxed">{document.description}</p>
+                          <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">{document.description}</p>
                           
                           <div className="grid md:grid-cols-2 gap-4 mb-4">
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-gray-400">
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                                 <FileText className="h-4 w-4" />
                                 <span className="font-medium">Subject:</span>
                                 <span>{document.subject}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-400">
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                                 <GraduationCap className="h-4 w-4" />
                                 <span className="font-medium">Course:</span>
                                 <span>{document.course}</span>
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-gray-400">
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                                 <Clock className="h-4 w-4" />
                                 <span className="font-medium">Semester:</span>
                                 <span>{document.semester}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-400">
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                                 <Calendar className="h-4 w-4" />
                                 <span className="font-medium">Uploaded:</span>
                                 <span>{getDateFromTimestamp(document.uploadedAt).toLocaleDateString()}</span>
@@ -614,7 +614,7 @@ export default function ProfilePage() {
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-6 text-sm text-gray-400">
+                          <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-300">
                             <div className="flex items-center gap-1">
                               <Eye className="h-4 w-4" />
                               <span>{document.views || 0} views</span>
