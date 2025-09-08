@@ -94,7 +94,7 @@ export default function ContentReview() {
         status: 'approved'
       });
       toast.success(`✅ Approved: ${title}`);
-    } catch (_error) {
+    } catch {
       toast.error('❌ Failed to approve document');
     }
   };
@@ -105,7 +105,7 @@ export default function ContentReview() {
         status: 'rejected'
       });
       toast.success(`❌ Rejected: ${title}`);
-    } catch (_error) {
+    } catch {
       toast.error('❌ Failed to reject document');
     }
   };
@@ -114,7 +114,7 @@ export default function ContentReview() {
     try {
       await deleteDoc(doc(db, 'documents', docId));
       toast.success(`🗑️ Deleted: ${title}`);
-    } catch (_error) {
+    } catch {
       toast.error('❌ Failed to delete document');
     }
   };
