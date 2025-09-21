@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 {/* Profile Picture and Basic Info */}
                 <div className="flex items-center gap-6">
                   <div className="relative">
-                    <Avatar className="h-32 w-32 border-4 border-purple-500/30">
+                    <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/30">
                       <AvatarImage src={profileData.photoURL} alt={profileData.displayName} />
                       <AvatarFallback className="text-3xl bg-gradient-to-r from-purple-600 to-blue-600 text-white">
                         {profileData.displayName.charAt(0).toUpperCase()}
@@ -270,8 +270,8 @@ export default function ProfilePage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{profileData.displayName}</h1>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profileData.displayName}</h1>
                       {isAdmin ? (
                         <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1">
                           <Shield className="h-3 w-3" />
@@ -306,16 +306,16 @@ export default function ProfilePage() {
 
                 {/* Quick Actions */}
                 <div className="flex-1 lg:flex lg:justify-end">
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <Link href="/profile/edit">
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2">
+                      <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2 w-full sm:w-auto justify-center">
                         <Edit3 className="h-4 w-4" />
                         Edit Profile
                       </Button>
                     </Link>
                     {isAdmin && (
                       <Link href="/admin">
-                        <Button variant="outline" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black flex items-center gap-2">
+                        <Button variant="outline" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black flex items-center gap-2 w-full sm:w-auto justify-center">
                           <Settings className="h-4 w-4" />
                           Admin Panel
                         </Button>
