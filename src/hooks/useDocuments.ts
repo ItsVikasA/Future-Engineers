@@ -103,7 +103,7 @@ export function useDocuments(filters: DocumentFilters = {}) {
     };
 
     fetchDocuments();
-  }, [filters.branch, filters.semester, filters.subject, filters.documentType, filters.university, filters.status]);
+  }, [filters]);
 
   return { documents, loading, error };
 }

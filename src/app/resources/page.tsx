@@ -2,6 +2,7 @@
 
 // Link not used in this file
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
