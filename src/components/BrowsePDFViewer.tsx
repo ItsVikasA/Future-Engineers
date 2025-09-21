@@ -43,8 +43,9 @@ export function BrowsePDFViewer({ documentId, fileUrl, title }: BrowsePDFViewerP
         downloads: increment(1)
       });
       
-      // Clean title for filename
-      const fileName = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
+      // Clean title for filename and append VICKY
+      const cleanTitle = title.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
+      const fileName = `${cleanTitle}_VICKY.pdf`;
       
       // Fix folder name in URL
       let downloadUrl = fileUrl;

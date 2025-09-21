@@ -81,6 +81,126 @@
               "resources": []
             }
           ]
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
         }
       ]
     },
@@ -92,34 +212,256 @@
           "categories": []
         },
         {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
           "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
           "categories": []
         }
       ]
     },
     {
       "semester": 3,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     },
     {
       "semester": 4,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     },
     {
       "semester": 5,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     },
     {
       "semester": 6,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     },
     {
       "semester": 7,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     },
     {
       "semester": 8,
-      "branches": []
+      "branches": [
+        {
+          "name": "Computer Science & Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electronics & Communication Engineering",
+          "categories": []
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": []
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": []
+        },
+        {
+          "name": "Electrical and Electronics Engineering",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Data Science",
+          "categories": []
+        },
+        {
+          "name": "Artificial Intelligence and Machine Learning",
+          "categories": []
+        },
+        {
+          "name": "Information Science Engineering",
+          "categories": []
+        }
+      ]
     }
   ]
 }
