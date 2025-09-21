@@ -65,6 +65,14 @@ export default function AcademicResourcesPage() {
   // Fetch all approved documents to get accurate counts
   const { documents } = useDocuments({ status: 'approved' });
 
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Resources Page Debug Info:');
+    console.log('Total Documents Found:', documents.length);
+    console.log('Documents:', documents);
+    console.log('Sample Document:', documents[0]);
+  }, [documents]);
+
   // Define the 8 branches we want to display
   const MAIN_BRANCHES = [
     'Computer Science & Engineering',
@@ -134,7 +142,7 @@ export default function AcademicResourcesPage() {
               // Calculate actual document counts for this branch
               const branchDocuments = documents.filter(doc => {
                 // Check both branch and course fields for compatibility
-                const docBranch = doc.branch || (doc as any).course || '';
+                const docBranch = doc.branch || (doc as Document & { course?: string }).course || '';
                 return docBranch === branchName;
               });
               const totalResources = branchDocuments.length;
@@ -150,15 +158,6 @@ export default function AcademicResourcesPage() {
                 }
               };
 
-              const semesterDocumentCounts = availableSemesters.reduce((acc, sem) => {
-                const semesterKey = `${ordinal(sem)} Semester`;
-                const count = branchDocuments.filter(doc => {
-                  const docSemester = doc.semester || '';
-                  return docSemester === semesterKey;
-                }).length;
-                acc[sem] = count;
-                return acc;
-              }, {} as Record<number, number>);
               
               // Also check for all semesters 1-8, not just available ones
               const allSemesterCounts = [1, 2, 3, 4, 5, 6, 7, 8].reduce((acc, sem) => {

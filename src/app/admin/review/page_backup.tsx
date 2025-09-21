@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/stores/authStore';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
-import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { 
   ArrowLeft,
@@ -21,7 +21,6 @@ import {
   Clock,
   Calendar,
   User,
-  Book,
   GraduationCap,
   Trash2
 } from 'lucide-react';
@@ -89,7 +88,7 @@ export default function ContentReview() {
         status: 'approved'
       });
       toast.success(`✅ Approved: ${title}`);
-    } catch (error) {
+    } catch {
       toast.error('❌ Failed to approve document');
     }
   };
@@ -100,7 +99,7 @@ export default function ContentReview() {
         status: 'rejected'
       });
       toast.success(`❌ Rejected: ${title}`);
-    } catch (error) {
+    } catch {
       toast.error('❌ Failed to reject document');
     }
   };
@@ -109,7 +108,7 @@ export default function ContentReview() {
     try {
       await deleteDoc(doc(db, 'documents', docId));
       toast.success(`🗑️ Deleted: ${title}`);
-    } catch (error) {
+    } catch {
       toast.error('❌ Failed to delete document');
     }
   };

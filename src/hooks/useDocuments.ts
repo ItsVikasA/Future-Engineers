@@ -87,6 +87,13 @@ export function useDocuments(filters: DocumentFilters = {}) {
         });
 
         setDocuments(docs);
+        
+        // Debug logging
+        console.log('🔍 useDocuments Hook Debug Info:');
+        console.log('Filters:', filters);
+        console.log('Query Constraints:', constraints);
+        console.log('Documents Found:', docs.length);
+        console.log('Sample Document:', docs[0]);
       } catch (err) {
         console.error('Error fetching documents:', err);
         setError('Failed to fetch documents');
@@ -96,7 +103,7 @@ export function useDocuments(filters: DocumentFilters = {}) {
     };
 
     fetchDocuments();
-  }, [filters]);
+  }, [filters.branch, filters.semester, filters.subject, filters.documentType, filters.university, filters.status]);
 
   return { documents, loading, error };
 }

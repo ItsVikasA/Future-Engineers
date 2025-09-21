@@ -113,6 +113,19 @@ export default function SemesterDetailPage() {
     semester: getSemesterFormat(semester),
     status: 'approved'
   });
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Debug Info:');
+    console.log('Branch Name:', branchName);
+    console.log('Semester Number:', semester);
+    console.log('Semester Format:', getSemesterFormat(semester));
+    console.log('Documents Found:', documents.length);
+    console.log('Documents:', documents);
+    console.log('Documents by Category:', documentsByCategory);
+    console.log('Loading:', documentsLoading);
+    console.log('Error:', error);
+  }, [branchName, semester, documents, documentsByCategory, documentsLoading, error]);
   
 
   useEffect(() => {

@@ -19,7 +19,7 @@ interface Document {
   description: string;
   subject: string;
   university: string;
-  course: string;
+  branch: string;
   semester: string;
   documentType: string;
   uploadedBy: string;
@@ -76,6 +76,12 @@ export default function BrowseNotes() {
       
       setDocuments(docs);
       setIsLoading(false);
+      
+      // Debug logging
+      console.log('🔍 Browse Page Debug Info:');
+      console.log('Total Documents Found:', docs.length);
+      console.log('Documents:', docs);
+      console.log('Sample Document:', docs[0]);
     });
 
     return () => unsubscribe();
@@ -91,7 +97,7 @@ export default function BrowseNotes() {
         doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.branch.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.university.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
@@ -178,7 +184,7 @@ export default function BrowseNotes() {
 
     const grouped: Record<string, { key: string; originals: Record<string, number>; docs: Document[] }> = {};
     filteredDocuments.forEach(d => {
-      const raw = d.course || 'Other';
+      const raw = d.branch || 'Other';
       const key = normalize(raw || 'Other') || 'other';
       if (!grouped[key]) grouped[key] = { key, originals: {}, docs: [] };
       grouped[key].docs.push(d);
@@ -228,7 +234,7 @@ export default function BrowseNotes() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
-                  placeholder="Search notes, courses, topics..." 
+                  placeholder="Search notes, branches, topics..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus:bg-accent"
@@ -293,7 +299,7 @@ export default function BrowseNotes() {
           </select>
         </div>
 
-        {/* Documents Grid grouped by course/branch */}
+        {/* Documents Grid grouped by branch */}
         <div className="space-y-6">
           {filteredDocuments.length > 0 ? (
             normalizedGroups.length > 0 ? (
@@ -301,7 +307,7 @@ export default function BrowseNotes() {
                 <div key={group.key}>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-lg font-semibold">{group.display} <span className="text-sm text-muted-foreground">({group.docs.length})</span></h2>
-                    {/* optional: course-level actions could be added here */}
+                    {/* optional: branch-level actions could be added here */}
                   </div>
                   <div className="grid gap-4">
                     {group.docs.map((doc) => (
@@ -316,7 +322,7 @@ export default function BrowseNotes() {
                                 {doc.description}
                               </CardDescription>
                               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                                <span className="text-primary">{doc.course} • {doc.semester}</span>
+                                <span className="text-primary">{doc.branch} • {doc.semester}</span>
                                 <span>•</span>
                                 <span>{doc.university}</span>
                                 <span>•</span>
