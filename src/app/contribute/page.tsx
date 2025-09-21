@@ -1929,8 +1929,59 @@ export default function Contribute() {
         body: JSON.stringify({ test: true })
       });
       console.log("📡 API test response status:", response.status);
+      const responseText = await response.text();
+      console.log("📡 API test response:", responseText);
+      
+      if (response.ok) {
+        toast.success("✅ Upload API is working!", { duration: 3000 });
+      } else {
+        toast.error(`❌ Upload API error: ${response.status}`, { duration: 5000 });
+      }
     } catch (error) {
       console.error("❌ API test failed:", error);
+      toast.error("❌ Upload API test failed - check console for details", { duration: 5000 });
+    }
+  };
+
+  // Check environment variables
+  const checkEnvironment = () => {
+    console.log("🔧 Environment Variables Check:");
+    console.log("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    console.log("CLOUDINARY_API_KEY:", process.env.CLOUDINARY_API_KEY ? "✅ Set" : "❌ Missing");
+    console.log("CLOUDINARY_API_SECRET:", process.env.CLOUDINARY_API_SECRET ? "✅ Set" : "❌ Missing");
+    
+    const hasCloudName = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const hasApiKey = !!process.env.CLOUDINARY_API_KEY;
+    const hasApiSecret = !!process.env.CLOUDINARY_API_SECRET;
+    
+    if (hasCloudName && hasApiKey && hasApiSecret) {
+      toast.success("✅ All Cloudinary credentials are set!", { duration: 3000 });
+    } else {
+      toast.error("❌ Missing Cloudinary credentials - check environment variables", { duration: 5000 });
+    }
+  };
+
+  // Create a test PDF file for testing
+  const createTestPDF = () => {
+    try {
+      // Create a simple text content
+      const content = "This is a test PDF file for upload testing.";
+      
+      // Create a blob with PDF-like content (this is just for testing)
+      const blob = new Blob([content], { type: 'application/pdf' });
+      const file = new File([blob], 'test-upload.pdf', { type: 'application/pdf' });
+      
+      console.log("📄 Created test PDF file:", {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+      
+      setSelectedFile(file);
+      toast.success("📄 Test PDF file created and selected!", { duration: 3000 });
+    } catch (error) {
+      console.error("❌ Failed to create test PDF:", error);
+      toast.error("❌ Failed to create test PDF file", { duration: 3000 });
     }
   };
 
@@ -2318,6 +2369,37 @@ export default function Contribute() {
                         ? `Uploading... ${uploadProgress.toFixed(0)}%`
                         : "Submit for Review"}
                     </Button>
+                    
+                    {/* Diagnostic Buttons - Remove in production */}
+                    <div className="mt-4 space-y-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={checkEnvironment}
+                        className="w-full text-xs"
+                      >
+                        🔧 Check Environment Variables
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={testUploadAPI}
+                        className="w-full text-xs"
+                      >
+                        📡 Test Upload API
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={createTestPDF}
+                        className="w-full text-xs"
+                      >
+                        📄 Create Test PDF
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </CardContent>
