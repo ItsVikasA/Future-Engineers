@@ -565,25 +565,27 @@ export default function ProfilePage() {
               ) : (
                 <div className="space-y-4">
                   {filteredDocuments.map((document) => (
-                    <div key={document.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{document.title}</h3>
-                            <Badge 
-                              variant={
-                                document.status === 'approved' ? 'default' :
-                                document.status === 'pending' ? 'secondary' : 'destructive'
-                              }
-                              className={
-                                document.status === 'approved' ? 'bg-green-600 hover:bg-green-700' :
-                                document.status === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700' :
-                                'bg-red-600 hover:bg-red-700'
-                              }
-                            >
-                              {document.status.charAt(0).toUpperCase() + document.status.slice(1)}
-                            </Badge>
-                          </div>
+                    <div key={document.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-start gap-3 mb-3 flex-col sm:flex-row sm:items-center">
+                              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white leading-snug">{document.title}</h3>
+                              <div className="mt-2 sm:mt-0">
+                                <Badge 
+                                  variant={
+                                    document.status === 'approved' ? 'default' :
+                                    document.status === 'pending' ? 'secondary' : 'destructive'
+                                  }
+                                  className={
+                                    document.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white' :
+                                    document.status === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700 text-white' :
+                                    'bg-red-600 hover:bg-red-700 text-white'
+                                  }
+                                >
+                                  {document.status.charAt(0).toUpperCase() + document.status.slice(1)}
+                                </Badge>
+                              </div>
+                            </div>
                           
                           <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">{document.description}</p>
                           
@@ -629,12 +631,12 @@ export default function ProfilePage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2 ml-4">
+                        <div className="flex items-center space-x-2 sm:ml-4">
                           <Button
                             size="sm"
                             variant="destructive"
                             onClick={() => handleDeleteDocument(document.id, document.title)}
-                            className="bg-red-600/80 hover:bg-red-600 border-0"
+                            className="bg-red-600/80 hover:bg-red-600 border-0 w-full sm:w-auto"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
