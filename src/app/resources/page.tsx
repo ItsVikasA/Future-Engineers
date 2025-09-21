@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+// Link not used in this file
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -131,13 +131,28 @@ export default function AcademicResourcesPage() {
               const semesterData = allBranches[branchName] || {};
               const availableSemesters = Object.keys(semesterData).map(Number).sort();
               
-              // Calculate actual document counts for this branch
-              const branchDocuments = documents.filter(doc => doc.branch === branchName);
+              // Calculate actual document counts for this branch.
+              // Some documents use `branch` while older documents may use `course`.
+              const getDocBranch = (doc: Document | unknown) => {
+                const d = doc as Document & Record<string, unknown>;
+                return (d.branch as string) || (d['course'] as string) || '';
+              };
+              const branchDocuments = documents.filter(doc => getDocBranch(doc) === branchName);
               const totalResources = branchDocuments.length;
               
               // Get semester-wise document counts
+              const ordinal = (n: number) => {
+                if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
+                switch (n % 10) {
+                  case 1: return `${n}st`;
+                  case 2: return `${n}nd`;
+                  case 3: return `${n}rd`;
+                  default: return `${n}th`;
+                }
+              };
+
               const semesterDocumentCounts = availableSemesters.reduce((acc, sem) => {
-                const semesterKey = `${sem}th Semester`;
+                const semesterKey = `${ordinal(sem)} Semester`;
                 const count = branchDocuments.filter(doc => doc.semester === semesterKey).length;
                 acc[sem] = count;
                 return acc;

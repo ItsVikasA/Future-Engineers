@@ -167,6 +167,35 @@ export default function BrowseNotes() {
     return date.toLocaleDateString();
   };
 
+  // Prepare normalized groups for rendering so JSX stays simple and syntax-safe.
+  const normalizedGroups = (() => {
+    const normalize = (s: string) => s
+      .toLowerCase()
+      .replace(/&/g, 'and')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const grouped: Record<string, { key: string; originals: Record<string, number>; docs: Document[] }> = {};
+    filteredDocuments.forEach(d => {
+      const raw = d.course || 'Other';
+      const key = normalize(raw || 'Other') || 'other';
+      if (!grouped[key]) grouped[key] = { key, originals: {}, docs: [] };
+      grouped[key].docs.push(d);
+      grouped[key].originals[raw] = (grouped[key].originals[raw] || 0) + 1;
+    });
+
+    const displayNameFor = (group: { key: string; originals: Record<string, number> }) => {
+      const originals = group.originals;
+      const entries = Object.entries(originals);
+      if (entries.length === 0) return group.key.replace(/\b\w/g, c => c.toUpperCase());
+      entries.sort((a, b) => b[1] - a[1]);
+      return entries[0][0];
+    };
+
+    return Object.values(grouped).map(g => ({ key: g.key, display: displayNameFor(g), docs: g.docs }));
+  })();
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background text-foreground">
@@ -264,84 +293,85 @@ export default function BrowseNotes() {
           </select>
         </div>
 
-        {/* Documents Grid */}
-        <div className="grid gap-6">
+        {/* Documents Grid grouped by course/branch */}
+        <div className="space-y-6">
           {filteredDocuments.length > 0 ? (
-            filteredDocuments.map((doc) => (
-              <Card key={doc.id} className="bg-card/50 backdrop-blur-sm border-border hover:bg-card/80 transition-all duration-300 hover:scale-[1.02] group">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CardTitle className="text-xl text-card-foreground group-hover:text-primary transition-colors">{doc.title}</CardTitle>
-                      </div>
-                      <CardDescription className="text-sm text-muted-foreground mb-3">
-                        {doc.description}
-                      </CardDescription>
-                      
-                      {/* Document Meta */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                        <span className="text-primary">{doc.course} • {doc.semester}</span>
-                        <span>•</span>
-                        <span>{doc.university}</span>
-                        <span>•</span>
-                        <span>by {doc.uploaderEmail || doc.uploaderName}</span>
-                        <span>•</span>
-                        <span>{formatDate(doc.uploadedAt)}</span>
-                      </div>
-
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">{doc.documentType}</Badge>
-                        <Badge variant="outline" className="text-xs border-border text-muted-foreground hover:bg-accent">
-                          {doc.subject}
-                        </Badge>
-                      </div>
-                    </div>
+            normalizedGroups.length > 0 ? (
+              normalizedGroups.map((group) => (
+                <div key={group.key}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-semibold">{group.display} <span className="text-sm text-muted-foreground">({group.docs.length})</span></h2>
+                    {/* optional: course-level actions could be added here */}
                   </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    {/* Stats */}
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Download className="h-4 w-4" />
-                        <span>{doc.downloads || 0} downloads</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        <span>{doc.views || 0} views</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
-                        <span>{doc.likes || 0} likes</span>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
-                      <BrowsePDFViewer 
-                        documentId={doc.id}
-                        fileUrl={doc.fileUrl}
-                        title={doc.title}
-                      />
-                      {isAdmin && (
-                        <Button 
-                          onClick={() => handleDelete(doc.id, doc.title)}
-                          variant="outline" 
-                          size="sm"
-                          className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        >
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          Delete
-                        </Button>
-                      )}
-                    </div>
+                  <div className="grid gap-4">
+                    {group.docs.map((doc) => (
+                      <Card key={doc.id} className="bg-card/50 backdrop-blur-sm border-border hover:bg-card/80 transition-all duration-300 hover:scale-[1.02] group">
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <CardTitle className="text-xl text-card-foreground group-hover:text-primary transition-colors">{doc.title}</CardTitle>
+                              </div>
+                              <CardDescription className="text-sm text-muted-foreground mb-3">
+                                {doc.description}
+                              </CardDescription>
+                              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
+                                <span className="text-primary">{doc.course} • {doc.semester}</span>
+                                <span>•</span>
+                                <span>{doc.university}</span>
+                                <span>•</span>
+                                <span>by {doc.uploaderEmail || doc.uploaderName}</span>
+                                <span>•</span>
+                                <span>{formatDate(doc.uploadedAt)}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">{doc.documentType}</Badge>
+                                <Badge variant="outline" className="text-xs border-border text-muted-foreground hover:bg-accent">{doc.subject}</Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Download className="h-4 w-4" />
+                                <span>{doc.downloads || 0} downloads</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Eye className="h-4 w-4" />
+                                <span>{doc.views || 0} views</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Heart className="h-4 w-4" />
+                                <span>{doc.likes || 0} likes</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <BrowsePDFViewer documentId={doc.id} fileUrl={doc.fileUrl} title={doc.title} />
+                              {isAdmin && (
+                                <Button onClick={() => handleDelete(doc.id, doc.title)} variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
+                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  Delete
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
+                </div>
+              ))
+            ) : (
+              <Card className="bg-card/50 backdrop-blur-sm border-border">
+                <CardContent className="p-8 text-center">
+                  <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground text-lg mb-2">No documents found</p>
+                  <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
                 </CardContent>
               </Card>
-            ))
+            )
           ) : (
             <Card className="bg-card/50 backdrop-blur-sm border-border">
               <CardContent className="p-8 text-center">
