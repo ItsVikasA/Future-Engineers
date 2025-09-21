@@ -254,7 +254,7 @@ export default function ProfilePage() {
             <CardContent className="p-8">
               <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
                 {/* Profile Picture and Basic Info */}
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full">
                   <div className="relative">
                     <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/30">
                       <AvatarImage src={profileData.photoURL} alt={profileData.displayName} />
@@ -269,7 +269,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   
-                  <div className="space-y-2">
+                  <div className="space-y-2 w-full text-center sm:text-left">
                     <div className="flex items-center gap-3 min-w-0">
                       <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profileData.displayName}</h1>
                       {isAdmin ? (
@@ -285,19 +285,19 @@ export default function ProfilePage() {
                       )}
                     </div>
                     
-                    <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2">
+                    <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2 justify-center sm:justify-start">
                       <Mail className="h-4 w-4" />
                       {profileData.email}
                     </div>
                     
                     {profileData.location && (
-                      <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2">
+                      <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2 justify-center sm:justify-start">
                         <MapPin className="h-4 w-4" />
                         {profileData.location}
                       </div>
                     )}
                     
-                    <div className="flex items-center text-gray-600 dark:text-gray-300 gap-2">
+                    <div className="flex items-center text-gray-600 dark:text-gray-300 gap-2 justify-center sm:justify-start">
                       <Calendar className="h-4 w-4" />
                       Member since {profileData.joinedAt.toLocaleDateString()}
                     </div>
