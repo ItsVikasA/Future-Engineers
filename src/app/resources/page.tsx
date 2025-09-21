@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useDocuments } from '@/hooks/useDocuments';
+import type { Document } from '@/hooks/useDocuments';
 import { 
   BookOpen, 
   FileText, 
@@ -24,7 +25,7 @@ import academicResourcesData from '@/data/academicResources.json';
 interface Category {
   name: string;
   slug: string;
-  resources: any[];
+  resources: Document[];
 }
 
 interface Branch {
@@ -59,7 +60,7 @@ const branchIcons: { [key: string]: React.ReactNode } = {
 
 export default function AcademicResourcesPage() {
   const router = useRouter();
-  const data = academicResourcesData as AcademicResourcesData;
+  const data = academicResourcesData as unknown as AcademicResourcesData;
   
   // Fetch all approved documents to get accurate counts
   const { documents } = useDocuments({ status: 'approved' });

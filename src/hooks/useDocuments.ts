@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, query, where, orderBy, getDocs, QueryConstraint } from 'firebase/firestore';
+import type { Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 export interface Document {
@@ -15,7 +16,7 @@ export interface Document {
   nestedSubject?: string;
   university: string;
   uploadedBy: string;
-  uploadedAt: any; // Firestore timestamp
+  uploadedAt: Timestamp | null; // Firestore timestamp
   status: 'pending' | 'approved' | 'rejected';
   publicId: string;
   fileId: string;
@@ -41,8 +42,8 @@ export function useDocuments(filters: DocumentFilters = {}) {
         setLoading(true);
         setError(null);
 
-        // Build query constraints
-        const constraints = [];
+  // Build query constraints
+  const constraints: QueryConstraint[] = [];
         
         if (filters.branch) {
           constraints.push(where('branch', '==', filters.branch));
