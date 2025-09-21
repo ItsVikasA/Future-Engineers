@@ -219,40 +219,40 @@ export default function BrowseNotes() {
       
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Engineering Resources</h1>
-          <p className="text-lg text-muted-foreground">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-4">Engineering Resources</h1>
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
             Discover and download high-quality academic resources shared by future engineers
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-card/50 backdrop-blur-sm rounded-xl border border-border p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="bg-card/50 backdrop-blur-sm rounded-xl border border-border p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="flex flex-col gap-4">
             {/* Search Bar */}
-            <div className="flex-1">
+            <div className="w-full">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   placeholder="Search notes, branches, topics..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus:bg-accent"
+                  className="pl-10 bg-input border-border text-foreground placeholder:text-muted-foreground focus:bg-accent w-full"
                 />
               </div>
             </div>
             
             {/* Filters */}
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2 border-border text-foreground hover:bg-accent">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Button variant="outline" className="flex items-center justify-center gap-2 border-border text-foreground hover:bg-accent w-full sm:w-auto">
                 <Filter className="h-4 w-4" />
-                Filters
+                <span className="hidden sm:inline">Filters</span>
               </Button>
               <select 
                 value={selectedSemester}
                 onChange={(e) => setSelectedSemester(e.target.value)}
                 title="Select semester"
-                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
+                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground w-full sm:w-auto"
               >
                 <option value="All Semesters">All Semesters</option>
                 <option value="1st Semester">1st Semester</option>
@@ -268,7 +268,7 @@ export default function BrowseNotes() {
                 value={selectedType}
                 onChange={(e) => setSelectedType(e.target.value)}
                 title="Select document type"
-                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
+                className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground w-full sm:w-auto"
               >
                 <option value="All Types">All Types</option>
                 <option value="Notes">Notes</option>
@@ -282,15 +282,15 @@ export default function BrowseNotes() {
         </div>
 
         {/* Results Count */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-muted-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Showing <span className="font-semibold text-foreground">{filteredDocuments.length}</span> results
           </p>
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             title="Sort by"
-            className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground"
+            className="px-3 py-2 bg-input border border-border rounded-md text-sm text-foreground w-full sm:w-auto"
           >
             <option value="Most Recent">Sort by: Most Recent</option>
             <option value="Most Downloaded">Sort by: Most Downloaded</option>
@@ -305,51 +305,51 @@ export default function BrowseNotes() {
             normalizedGroups.length > 0 ? (
               normalizedGroups.map((group) => (
                 <div key={group.key}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-lg font-semibold">{group.display} <span className="text-sm text-muted-foreground">({group.docs.length})</span></h2>
+                  <div className="flex items-center justify-between mb-3 sm:mb-2">
+                    <h2 className="text-base sm:text-lg font-semibold">{group.display} <span className="text-xs sm:text-sm text-muted-foreground">({group.docs.length})</span></h2>
                     {/* optional: branch-level actions could be added here */}
                   </div>
-                  <div className="grid gap-4">
+                  <div className="grid gap-3 sm:gap-4">
                     {group.docs.map((doc) => (
-                      <Card key={doc.id} className="bg-card/50 backdrop-blur-sm border-border hover:bg-card/80 transition-all duration-300 hover:scale-[1.02] group">
-                        <CardHeader>
-                          <div className="flex items-start justify-between">
+                      <Card key={doc.id} className="bg-card/50 backdrop-blur-sm border-border hover:bg-card/80 transition-all duration-300 hover:scale-[1.01] sm:hover:scale-[1.02] group">
+                        <CardHeader className="p-4 sm:p-6">
+                          <div className="flex flex-col gap-3">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <CardTitle className="text-xl text-card-foreground group-hover:text-primary transition-colors">{doc.title}</CardTitle>
+                              <div className="flex items-start gap-2 mb-2">
+                                <CardTitle className="text-lg sm:text-xl text-card-foreground group-hover:text-primary transition-colors leading-tight">{doc.title}</CardTitle>
                               </div>
-                              <CardDescription className="text-sm text-muted-foreground mb-3">
+                              <CardDescription className="text-sm text-muted-foreground mb-3 line-clamp-2">
                                 {doc.description}
                               </CardDescription>
-                              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
-                                <span className="text-primary">{doc.branch} • {doc.semester}</span>
-                                <span>•</span>
-                                <span>{doc.university}</span>
-                                <span>•</span>
-                                <span>by {doc.uploaderEmail || doc.uploaderName}</span>
-                                <span>•</span>
+                              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-3">
+                                <span className="text-primary font-medium">{doc.branch} • {doc.semester}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="truncate">{doc.university}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="truncate">by {doc.uploaderEmail || doc.uploaderName}</span>
+                                <span className="hidden sm:inline">•</span>
                                 <span>{formatDate(doc.uploadedAt)}</span>
                               </div>
                               <div className="flex flex-wrap gap-2 mb-4">
-                                <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">{doc.documentType}</Badge>
+                                <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30 text-xs">{doc.documentType}</Badge>
                                 <Badge variant="outline" className="text-xs border-border text-muted-foreground hover:bg-accent">{doc.subject}</Badge>
                               </div>
                             </div>
                           </div>
                         </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                        <CardContent className="p-4 sm:p-6 pt-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+                            <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
-                                <Download className="h-4 w-4" />
+                                <Download className="h-3 w-3 sm:h-4 sm:w-4" />
                                 <span>{doc.downloads || 0} downloads</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Eye className="h-4 w-4" />
+                                <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                                 <span>{doc.views || 0} views</span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Heart className="h-4 w-4" />
+                                <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
                                 <span>{doc.likes || 0} likes</span>
                               </div>
                             </div>
@@ -357,8 +357,8 @@ export default function BrowseNotes() {
                               <BrowsePDFViewer documentId={doc.id} fileUrl={doc.fileUrl} title={doc.title} />
                               {isAdmin && (
                                 <Button onClick={() => handleDelete(doc.id, doc.title)} variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
-                                  <Trash2 className="w-4 h-4 mr-1" />
-                                  Delete
+                                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+                                  <span className="hidden sm:inline">Delete</span>
                                 </Button>
                               )}
                             </div>
@@ -371,42 +371,42 @@ export default function BrowseNotes() {
               ))
             ) : (
               <Card className="bg-card/50 backdrop-blur-sm border-border">
-                <CardContent className="p-8 text-center">
-                  <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground text-lg mb-2">No documents found</p>
-                  <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
+                <CardContent className="p-6 sm:p-8 text-center">
+                  <Search className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground text-base sm:text-lg mb-2">No documents found</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">Try adjusting your search criteria or filters</p>
                 </CardContent>
               </Card>
             )
           ) : (
             <Card className="bg-card/50 backdrop-blur-sm border-border">
-              <CardContent className="p-8 text-center">
-                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground text-lg mb-2">No documents found</p>
-                <p className="text-muted-foreground">Try adjusting your search criteria or filters</p>
+              <CardContent className="p-6 sm:p-8 text-center">
+                <Search className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-base sm:text-lg mb-2">No documents found</p>
+                <p className="text-sm sm:text-base text-muted-foreground">Try adjusting your search criteria or filters</p>
               </CardContent>
             </Card>
           )}
         </div>
 
         {/* Load More */}
-        <div className="text-center mt-8">
-          <Button variant="outline" size="lg" className="border-border text-foreground hover:bg-accent">
+        <div className="text-center mt-6 sm:mt-8">
+          <Button variant="outline" size="lg" className="border-border text-foreground hover:bg-accent w-full sm:w-auto">
             Load More Documents
           </Button>
         </div>
 
         {/* Empty State (when no documents) */}
         {documents.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12">
             <div className="text-muted-foreground mb-4">
-              <Search className="h-16 w-16 mx-auto" />
+              <Search className="h-12 w-12 sm:h-16 sm:w-16 mx-auto" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No documents found</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">No documents found</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 px-4">
               Try adjusting your search criteria or filters
             </p>
-            <Button>Clear Filters</Button>
+            <Button className="w-full sm:w-auto">Clear Filters</Button>
           </div>
         )}
       </div>

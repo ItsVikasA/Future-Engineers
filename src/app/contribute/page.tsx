@@ -1701,7 +1701,16 @@ export default function Contribute() {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("📁 File selected:", file);
+    
     if (file) {
+      console.log("📄 File details:", {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        sizeMB: (file.size / 1024 / 1024).toFixed(2) + "MB"
+      });
+      
       if (file.type === "application/pdf" && file.size <= 50 * 1024 * 1024) {
         // 50MB limit for Cloudinary
         setSelectedFile(file);
@@ -1714,10 +1723,26 @@ export default function Contribute() {
           }
         );
       } else {
-        toast.error("❌ Please select a PDF file under 50MB", {
+        let errorMsg = "❌ Please select a PDF file under 50MB";
+        if (file.type !== "application/pdf") {
+          errorMsg = `❌ Invalid file type: ${file.type}. Only PDF files are allowed.`;
+        } else if (file.size > 50 * 1024 * 1024) {
+          errorMsg = `❌ File too large: ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximum size is 50MB.`;
+        }
+        
+        console.error("❌ File validation failed:", {
+          type: file.type,
+          size: file.size,
+          expectedType: "application/pdf",
+          maxSize: 50 * 1024 * 1024
+        });
+        
+        toast.error(errorMsg, {
           duration: 4000,
         });
       }
+    } else {
+      console.log("❌ No file selected");
     }
   };
 
@@ -1757,15 +1782,16 @@ export default function Contribute() {
       return;
     }
 
-    console.log("Starting upload process...");
-    console.log("User:", user.uid);
-    console.log(
-      "File:",
-      selectedFile.name,
-      selectedFile.size,
-      selectedFile.type
-    );
-    console.log("Environment check:", {
+    console.log("🚀 Starting upload process...");
+    console.log("👤 User:", user.uid, user.email);
+    console.log("📄 File:", {
+      name: selectedFile.name,
+      size: selectedFile.size,
+      type: selectedFile.type,
+      sizeMB: (selectedFile.size / 1024 / 1024).toFixed(2) + "MB"
+    });
+    console.log("📝 Form Data:", formData);
+    console.log("🔧 Environment check:", {
       cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
     });
@@ -1860,9 +1886,26 @@ export default function Contribute() {
         }
       );
     } catch (error: unknown) {
-      console.error("Upload error:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error("❌ Upload error:", error);
+      console.error("❌ Error details:", {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      
+      let errorMessage = "Unknown error occurred";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        // Provide more specific error messages
+        if (error.message.includes('Network')) {
+          errorMessage = "Network error. Please check your internet connection.";
+        } else if (error.message.includes('Cloudinary')) {
+          errorMessage = "Upload service error. Please try again.";
+        } else if (error.message.includes('Firestore')) {
+          errorMessage = "Database error. Please try again.";
+        }
+      }
+      
       toast.error(`❌ Failed to upload document: ${errorMessage}`, {
         duration: 5000,
       });
@@ -1871,6 +1914,23 @@ export default function Contribute() {
       setUploadProgress(0);
       setUploadSpeed(0);
       setEstimatedTime(0);
+    }
+  };
+
+  // Test upload API connectivity
+  const testUploadAPI = async () => {
+    try {
+      console.log("🔍 Testing upload API connectivity...");
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ test: true })
+      });
+      console.log("📡 API test response status:", response.status);
+    } catch (error) {
+      console.error("❌ API test failed:", error);
     }
   };
 
@@ -2198,24 +2258,26 @@ export default function Contribute() {
                       <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base break-words">
                         {selectedFile
                           ? selectedFile.name
-                          : "Select a PDF file to upload (Max 10MB)"}
+                          : "Select a PDF file to upload (Max 50MB)"}
                       </p>
                       <input
                         type="file"
-                        accept=".pdf"
+                        accept=".pdf,application/pdf"
                         onChange={handleFileSelect}
                         className="hidden"
                         id="file-upload"
+                        disabled={isUploading}
                       />
                       <label htmlFor="file-upload">
                         <Button
                           type="button"
-                          className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
+                          className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() =>
                             document.getElementById("file-upload")?.click()
                           }
+                          disabled={isUploading}
                         >
-                          Choose File
+                          {isUploading ? "Uploading..." : "Choose File"}
                         </Button>
                       </label>
                     </div>
