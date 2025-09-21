@@ -252,37 +252,39 @@ export default function ProfilePage() {
           {/* Profile Header with Role Distinction */}
           <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-600 mb-8">
             <CardContent className="p-8">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
+              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-8">
                 {/* Profile Picture and Basic Info */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 w-full">
                   <div className="relative">
-                    <Avatar className="h-24 w-24 sm:h-32 sm:w-32 border-4 border-purple-500/30">
+                    <Avatar className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 border-4 border-purple-500/30">
                       <AvatarImage src={profileData.photoURL} alt={profileData.displayName} />
-                      <AvatarFallback className="text-3xl bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                      <AvatarFallback className="text-2xl sm:text-3xl bg-gradient-to-r from-purple-600 to-blue-600 text-white">
                         {profileData.displayName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     {isAdmin && (
-                      <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2">
-                        <Crown className="h-5 w-5 text-white" />
+                      <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 sm:p-2">
+                        <Crown className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
                       </div>
                     )}
                   </div>
                   
                   <div className="space-y-2 w-full text-center sm:text-left">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">{profileData.displayName}</h1>
-                      {isAdmin ? (
-                        <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1">
-                          <Shield className="h-3 w-3" />
-                          Administrator
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="border-primary text-primary">
-                          <GraduationCap className="h-3 w-3 mr-1" />
-                          Student
-                        </Badge>
-                      )}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 min-w-0">
+                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white truncate">{profileData.displayName}</h1>
+                      <div className="flex justify-center sm:justify-start">
+                        {isAdmin ? (
+                          <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1 text-xs sm:text-sm">
+                            <Shield className="h-3 w-3" />
+                            Administrator
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="border-primary text-primary text-xs sm:text-sm">
+                            <GraduationCap className="h-3 w-3 mr-1" />
+                            Student
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     
                     <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2 justify-center sm:justify-start">
@@ -305,17 +307,17 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="flex-1 lg:flex lg:justify-end">
+                <div className="flex-1 lg:flex lg:justify-end w-full">
                   <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <Link href="/profile/edit">
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2 w-full sm:w-auto justify-center">
+                    <Link href="/profile/edit" className="w-full sm:w-auto">
+                      <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2 w-full justify-center">
                         <Edit3 className="h-4 w-4" />
                         Edit Profile
                       </Button>
                     </Link>
                     {isAdmin && (
-                      <Link href="/admin">
-                        <Button variant="outline" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black flex items-center gap-2 w-full sm:w-auto justify-center">
+                      <Link href="/admin" className="w-full sm:w-auto">
+                        <Button variant="outline" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black flex items-center gap-2 w-full justify-center">
                           <Settings className="h-4 w-4" />
                           Admin Panel
                         </Button>
@@ -328,7 +330,7 @@ export default function ProfilePage() {
               {/* Bio Section */}
               {profileData.bio && (
                 <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-gray-800 dark:text-gray-100 text-lg leading-relaxed font-medium">{profileData.bio}</p>
+                  <p className="text-gray-800 dark:text-gray-100 text-sm sm:text-base md:text-lg leading-relaxed font-medium break-words">{profileData.bio}</p>
                 </div>
               )}
 
@@ -401,53 +403,53 @@ export default function ProfilePage() {
           </Card>
 
           {/* Enhanced Stats Section */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-8">
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <Award className="h-8 w-8 mx-auto mb-3 text-yellow-600 dark:text-yellow-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{profileData.reputation}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Reputation</div>
-                {isAdmin && <Badge className="mt-2 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-xs">MAX</Badge>}
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <Award className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-yellow-600 dark:text-yellow-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{profileData.reputation}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Reputation</div>
+                {isAdmin && <Badge className="mt-1 sm:mt-2 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-xs">MAX</Badge>}
               </CardContent>
             </Card>
             
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <FileText className="h-8 w-8 mx-auto mb-3 text-blue-600 dark:text-blue-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Total Uploads</div>
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-blue-600 dark:text-blue-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Total Uploads</div>
               </CardContent>
             </Card>
             
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <Download className="h-8 w-8 mx-auto mb-3 text-green-600 dark:text-green-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDownloads}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Downloads</div>
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <Download className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-green-600 dark:text-green-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDownloads}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Downloads</div>
               </CardContent>
             </Card>
             
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <Eye className="h-8 w-8 mx-auto mb-3 text-purple-600 dark:text-purple-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalViews}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Views</div>
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <Eye className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-purple-600 dark:text-purple-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalViews}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Views</div>
               </CardContent>
             </Card>
             
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <Clock className="h-8 w-8 mx-auto mb-3 text-yellow-600 dark:text-yellow-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.pending}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Pending</div>
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <Clock className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-yellow-600 dark:text-yellow-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.pending}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Pending</div>
               </CardContent>
             </Card>
             
             <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-6 text-center">
-                <TrendingUp className="h-8 w-8 mx-auto mb-3 text-emerald-600 dark:text-emerald-400" />
-                <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.approved}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Approved</div>
+              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-emerald-600 dark:text-emerald-400" />
+                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.approved}</div>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Approved</div>
               </CardContent>
             </Card>
           </div>
@@ -566,20 +568,20 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   {filteredDocuments.map((document) => (
                     <div key={document.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
+                        <div className="flex flex-col gap-4">
                           <div className="flex-1">
-                            <div className="flex items-start gap-3 mb-3 flex-col sm:flex-row sm:items-center">
-                              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white leading-snug">{document.title}</h3>
-                              <div className="mt-2 sm:mt-0">
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-3 mb-3">
+                              <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white leading-snug break-words">{document.title}</h3>
+                              <div className="flex justify-start sm:justify-end">
                                 <Badge 
                                   variant={
                                     document.status === 'approved' ? 'default' :
                                     document.status === 'pending' ? 'secondary' : 'destructive'
                                   }
                                   className={
-                                    document.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white' :
-                                    document.status === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700 text-white' :
-                                    'bg-red-600 hover:bg-red-700 text-white'
+                                    document.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white text-xs' :
+                                    document.status === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700 text-white text-xs' :
+                                    'bg-red-600 hover:bg-red-700 text-white text-xs'
                                   }
                                 >
                                   {document.status.charAt(0).toUpperCase() + document.status.slice(1)}
@@ -587,51 +589,51 @@ export default function ProfilePage() {
                               </div>
                             </div>
                           
-                          <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed">{document.description}</p>
+                          <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed text-sm sm:text-base break-words">{document.description}</p>
                           
-                          <div className="grid md:grid-cols-2 gap-4 mb-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                <FileText className="h-4 w-4" />
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                <FileText className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                 <span className="font-medium">Subject:</span>
-                                <span>{document.subject}</span>
+                                <span className="truncate">{document.subject}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                <GraduationCap className="h-4 w-4" />
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                 <span className="font-medium">Course:</span>
-                                <span>{document.course}</span>
+                                <span className="truncate">{document.course}</span>
                               </div>
                             </div>
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                <Clock className="h-4 w-4" />
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                 <span className="font-medium">Semester:</span>
-                                <span>{document.semester}</span>
+                                <span className="truncate">{document.semester}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                                <Calendar className="h-4 w-4" />
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                                 <span className="font-medium">Uploaded:</span>
-                                <span>{getDateFromTimestamp(document.uploadedAt).toLocaleDateString()}</span>
+                                <span className="truncate">{getDateFromTimestamp(document.uploadedAt).toLocaleDateString()}</span>
                               </div>
                             </div>
                           </div>
                           
-                          <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-300">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
                             <div className="flex items-center gap-1">
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
                               <span>{document.views || 0} views</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Download className="h-4 w-4" />
+                              <Download className="h-3 w-3 sm:h-4 sm:w-4" />
                               <span>{document.downloads || 0} downloads</span>
                             </div>
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs w-fit">
                               {document.documentType}
                             </Badge>
                           </div>
                         </div>
                         
-                        <div className="flex items-center space-x-2 sm:ml-4">
+                        <div className="flex justify-end">
                           <Button
                             size="sm"
                             variant="destructive"

@@ -96,12 +96,24 @@ export default function SemesterDetailPage() {
   const branchName = decodeURIComponent(params.branch as string);
   const semester = parseInt(params.semester as string);
 
+  // Get the correct semester format
+  const getSemesterFormat = (sem: number) => {
+    if (sem % 100 >= 11 && sem % 100 <= 13) return `${sem}th Semester`;
+    switch (sem % 10) {
+      case 1: return `${sem}st Semester`;
+      case 2: return `${sem}nd Semester`;
+      case 3: return `${sem}rd Semester`;
+      default: return `${sem}th Semester`;
+    }
+  };
+
   // Fetch uploaded documents for this branch and semester
   const { documentsByCategory, documents, loading: documentsLoading, error } = useDocumentsByCategory({
     branch: branchName,
-    semester: `${semester}th Semester`,
+    semester: getSemesterFormat(semester),
     status: 'approved'
   });
+  
 
   useEffect(() => {
     const data = academicResourcesData as AcademicResourcesData;
@@ -161,38 +173,38 @@ export default function SemesterDetailPage() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
             <Link href="/resources">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Back to Resources
               </Button>
             </Link>
           </div>
           
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-4 rounded-full bg-primary/20">
-              {branchIcons[branchName] || <GraduationCap className="w-8 h-8" />}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="p-3 sm:p-4 rounded-full bg-primary/20">
+              {branchIcons[branchName] || <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8" />}
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
+            <div className="flex-1">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground break-words">
                 {branchName}
               </h1>
-              <div className="flex items-center gap-4 mt-2">
-                <Badge variant="secondary" className="bg-primary/20 text-primary">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2">
+                <Badge variant="secondary" className="bg-primary/20 text-primary w-fit">
                   Semester {semester}
                 </Badge>
-                <Badge variant="outline">
+                <Badge variant="outline" className="w-fit">
                   {totalResources} Resources
                 </Badge>
               </div>
             </div>
           </div>
           
-          <p className="text-lg text-muted-foreground">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
             Study materials and resources for {branchName} - Semester {semester}
           </p>
         </div>
@@ -253,37 +265,37 @@ export default function SemesterDetailPage() {
                     {categoryDocuments.map((doc) => (
                       <div
                         key={doc.id}
-                        className="flex items-center justify-between p-4 rounded-lg bg-card/30 border border-border/50 hover:bg-card/50 transition-colors"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg bg-card/30 border border-border/50 hover:bg-card/50 transition-colors gap-3 sm:gap-4"
                       >
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div className="p-2 rounded bg-primary/10">
-                            <FileText className="w-5 h-5" />
+                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded bg-primary/10 flex-shrink-0">
+                            <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <h4 className="font-semibold text-foreground mb-1">
+                            <h4 className="font-semibold text-foreground mb-1 text-sm sm:text-base break-words">
                               {doc.title}
                             </h4>
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                               <Badge 
                                 variant="outline" 
-                                className="bg-blue-500/20 text-blue-300 border-blue-500/30"
+                                className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs w-fit"
                               >
                                 {doc.documentType.toUpperCase()}
                               </Badge>
                               <div className="flex items-center gap-1">
                                 <User className="w-3 h-3" />
-                                {doc.uploadedBy}
+                                <span className="truncate">{doc.uploadedBy}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
-                                {doc.uploadedAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}
+                                <span className="truncate">{doc.uploadedAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <CheckCircle className="w-3 h-3 text-green-500" />
-                                Approved
+                                <span>Approved</span>
                               </div>
                             </div>
-                            <div className="text-sm text-muted-foreground mt-1">
+                            <div className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
                               <span className="font-medium">{doc.subject}</span>
                               {doc.nestedSubject && (
                                 <span> • {doc.nestedSubject}</span>
@@ -292,20 +304,20 @@ export default function SemesterDetailPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => window.open(doc.fileUrl, '_blank')}
-                            className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                            className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white flex-1 sm:flex-none text-xs"
                           >
-                            <Eye className="w-4 h-4 mr-2" />
+                            <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             View
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
-                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground flex-1 sm:flex-none text-xs"
                             onClick={() => {
           // Clean filename and append VICKY
           const cleanFileName = doc.fileName.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
@@ -320,7 +332,7 @@ export default function SemesterDetailPage() {
           document.body.removeChild(link);
                             }}
                           >
-                            <Download className="w-4 h-4 mr-2" />
+                            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                             Download
                           </Button>
                         </div>
@@ -334,18 +346,18 @@ export default function SemesterDetailPage() {
         )}
 
         {/* Contribute Section */}
-        <Card className="mt-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-          <CardContent className="text-center py-8">
-            <BookOpen className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+        <Card className="mt-6 sm:mt-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+          <CardContent className="text-center py-6 sm:py-8">
+            <BookOpen className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-primary" />
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
               Have Study Materials?
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
               Help fellow students by contributing your notes, lab manuals, and question papers.
             </p>
             <Link href="/contribute">
-              <Button size="lg">
-                <BookOpen className="w-5 h-5 mr-2" />
+              <Button size="lg" className="w-full sm:w-auto">
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Contribute Resources
               </Button>
             </Link>

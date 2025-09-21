@@ -1901,33 +1901,33 @@ export default function Contribute() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-4">
             Share Engineering Knowledge
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
             Share your notes and help fellow engineers succeed. Your
             contributions build the future!
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Upload Form */}
           <div className="lg:col-span-2">
             <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white">Upload Document</CardTitle>
-                <CardDescription className="text-gray-400">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="text-white text-lg sm:text-xl">Upload Document</CardTitle>
+                <CardDescription className="text-gray-400 text-sm sm:text-base">
                   Fill in the details below to share your academic resources
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Basic Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-foreground">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground">
                       Basic Information
                     </h3>
                     {/* Semester Selection */}
@@ -2185,17 +2185,17 @@ export default function Contribute() {
                   </div>
 
                   {/* File Upload */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-white">
                       File Upload
                     </h3>
 
-                    <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center bg-white/5">
-                      <Upload className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-                      <h4 className="text-lg font-medium text-white mb-2">
+                    <div className="border-2 border-dashed border-white/20 rounded-lg p-4 sm:p-6 md:p-8 text-center bg-white/5">
+                      <Upload className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-purple-400 mx-auto mb-3 sm:mb-4" />
+                      <h4 className="text-base sm:text-lg font-medium text-white mb-2">
                         Upload your PDF
                       </h4>
-                      <p className="text-gray-400 mb-4">
+                      <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base break-words">
                         {selectedFile
                           ? selectedFile.name
                           : "Select a PDF file to upload (Max 10MB)"}
@@ -2210,7 +2210,7 @@ export default function Contribute() {
                       <label htmlFor="file-upload">
                         <Button
                           type="button"
-                          className="bg-purple-600 hover:bg-purple-700 text-white"
+                          className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto"
                           onClick={() =>
                             document.getElementById("file-upload")?.click()
                           }

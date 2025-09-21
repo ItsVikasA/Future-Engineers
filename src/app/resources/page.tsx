@@ -100,44 +100,43 @@ export default function AcademicResourcesPage() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold text-foreground">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
               {data.pageTitle}
             </h1>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Comprehensive study materials organized by engineering branches
           </p>
         </div>
 
         {/* Resources Content - 7 Branch Grid Layout */}
-        <div className="space-y-8">
-          <div className="flex items-center gap-2 mb-6">
-            <h2 className="text-2xl font-semibold text-foreground">
+        <div className="space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
               Engineering Branches
             </h2>
-            <Badge variant="secondary" className="bg-primary/20 text-primary">
+            <Badge variant="secondary" className="bg-primary/20 text-primary w-fit">
               {MAIN_BRANCHES.length} Branches
             </Badge>
           </div>
 
           {/* 7 Branch Grid - Side by Side */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {MAIN_BRANCHES.map((branchName) => {
               const semesterData = allBranches[branchName] || {};
               const availableSemesters = Object.keys(semesterData).map(Number).sort();
               
-              // Calculate actual document counts for this branch.
-              // Some documents use `branch` while older documents may use `course`.
-              const getDocBranch = (doc: Document | unknown) => {
-                const d = doc as Document & Record<string, unknown>;
-                return (d.branch as string) || (d['course'] as string) || '';
-              };
-              const branchDocuments = documents.filter(doc => getDocBranch(doc) === branchName);
+              // Calculate actual document counts for this branch
+              const branchDocuments = documents.filter(doc => {
+                // Check both branch and course fields for compatibility
+                const docBranch = doc.branch || (doc as any).course || '';
+                return docBranch === branchName;
+              });
               const totalResources = branchDocuments.length;
               
               // Get semester-wise document counts
@@ -153,19 +152,33 @@ export default function AcademicResourcesPage() {
 
               const semesterDocumentCounts = availableSemesters.reduce((acc, sem) => {
                 const semesterKey = `${ordinal(sem)} Semester`;
-                const count = branchDocuments.filter(doc => doc.semester === semesterKey).length;
+                const count = branchDocuments.filter(doc => {
+                  const docSemester = doc.semester || '';
+                  return docSemester === semesterKey;
+                }).length;
+                acc[sem] = count;
+                return acc;
+              }, {} as Record<number, number>);
+              
+              // Also check for all semesters 1-8, not just available ones
+              const allSemesterCounts = [1, 2, 3, 4, 5, 6, 7, 8].reduce((acc, sem) => {
+                const semesterKey = `${ordinal(sem)} Semester`;
+                const count = branchDocuments.filter(doc => {
+                  const docSemester = doc.semester || '';
+                  return docSemester === semesterKey;
+                }).length;
                 acc[sem] = count;
                 return acc;
               }, {} as Record<number, number>);
               
               return (
                 <Card key={branchName} className="bg-card/50 backdrop-blur-sm border-border h-fit">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex flex-col items-center gap-3 text-foreground text-center">
-                      <div className="p-3 rounded-full bg-primary/20">
-                        {branchIcons[branchName] || <BookOpen className="w-6 h-6" />}
+                  <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
+                    <CardTitle className="flex flex-col items-center gap-2 sm:gap-3 text-foreground text-center">
+                      <div className="p-2 sm:p-3 rounded-full bg-primary/20">
+                        {branchIcons[branchName] || <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
                       </div>
-                      <h3 className="text-sm font-semibold leading-tight">
+                      <h3 className="text-xs sm:text-sm font-semibold leading-tight break-words">
                         {branchName}
                       </h3>
                       <Badge variant="outline" className="text-xs">
@@ -173,18 +186,18 @@ export default function AcademicResourcesPage() {
                       </Badge>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pt-0">
+                  <CardContent className="pt-0 p-4 sm:p-6">
                     {/* All Semesters Grid for this Branch */}
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-foreground text-center mb-3">
+                    <div className="space-y-3 sm:space-y-4">
+                      <h4 className="text-xs sm:text-sm font-medium text-foreground text-center mb-2 sm:mb-3">
                         Select Semester
                       </h4>
                       
                       {/* 8 Semester Grid - 2x4 layout */}
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                         {[1, 2, 3, 4, 5, 6, 7, 8].map((semester) => {
                           const hasData = availableSemesters.includes(semester);
-                          const semesterResources = semesterDocumentCounts[semester] || 0;
+                          const semesterResources = allSemesterCounts[semester] || 0;
                           const hasDocuments = semesterResources > 0;
                           
                           return (
@@ -198,12 +211,12 @@ export default function AcademicResourcesPage() {
                                   : hasData
                                     ? 'border-muted-foreground text-muted-foreground hover:bg-muted hover:text-muted-foreground'
                                     : 'border-gray-400 text-gray-400 opacity-50 cursor-not-allowed'
-                              } h-8 text-xs flex flex-col items-center justify-center p-1`}
+                              } h-7 sm:h-8 text-xs flex flex-col items-center justify-center p-1`}
                               onClick={() => handleSemesterSelect(branchName, semester)}
                               disabled={!hasData}
                             >
-                              <span>Sem {semester}</span>
-                              <span className="text-[10px] opacity-70">
+                              <span className="text-xs">Sem {semester}</span>
+                              <span className="text-[9px] sm:text-[10px] opacity-70">
                                 {semesterResources}
                               </span>
                             </Button>
@@ -212,10 +225,10 @@ export default function AcademicResourcesPage() {
                       </div>
 
                       {/* Semester Selection Info */}
-                      <div className="border-t border-border pt-4 mt-4">
-                        <div className="text-center py-4 text-muted-foreground">
-                          <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                          <p className="text-xs mb-2">Click on a semester to view resources</p>
+                      <div className="border-t border-border pt-3 sm:pt-4 mt-3 sm:mt-4">
+                        <div className="text-center py-3 sm:py-4 text-muted-foreground">
+                          <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 opacity-50" />
+                          <p className="text-xs mb-1 sm:mb-2">Click on a semester to view resources</p>
                           <p className="text-xs text-primary">
                             {totalResources} resources available
                           </p>
@@ -230,32 +243,32 @@ export default function AcademicResourcesPage() {
         </div>
 
         {/* Statistics Section */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
+        <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-6">
-              <BookOpen className="h-8 w-8 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">
+            <CardContent className="text-center py-4 sm:py-6">
+              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground">
                 {MAIN_BRANCHES.length}
               </div>
-              <div className="text-sm text-muted-foreground">Total Branches</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Total Branches</div>
             </CardContent>
           </Card>
           
           <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-6">
-              <FileText className="h-8 w-8 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">
+            <CardContent className="text-center py-4 sm:py-6">
+              <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground">
                 {documents.length}
               </div>
-              <div className="text-sm text-muted-foreground">Total Resources</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Total Resources</div>
             </CardContent>
           </Card>
           
           <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-6">
-              <GraduationCap className="h-8 w-8 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold text-foreground">8</div>
-              <div className="text-sm text-muted-foreground">Semesters</div>
+            <CardContent className="text-center py-4 sm:py-6">
+              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-foreground">8</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Semesters</div>
             </CardContent>
           </Card>
         </div>
