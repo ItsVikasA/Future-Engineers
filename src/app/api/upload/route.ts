@@ -10,11 +10,20 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('📤 Upload API called');
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const userId = formData.get('userId') as string;
 
+    console.log('📄 File details:', {
+      name: file?.name,
+      size: file?.size,
+      type: file?.type,
+      userId: userId
+    });
+
     if (!file) {
+      console.log('❌ No file provided');
       return NextResponse.json(
         { success: false, error: 'No file provided' },
         { status: 400 }
@@ -22,6 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!userId) {
+      console.log('❌ No user ID provided');
       return NextResponse.json(
         { success: false, error: 'No user ID provided' },
         { status: 400 }
@@ -38,7 +48,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check Cloudinary credentials
+    console.log('🔑 Checking Cloudinary credentials...');
+    console.log('Cloud name:', process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
+    console.log('API key exists:', !!process.env.CLOUDINARY_API_KEY);
+    console.log('API secret exists:', !!process.env.CLOUDINARY_API_SECRET);
+    
     if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      console.log('❌ Cloudinary credentials missing');
       return NextResponse.json(
         { success: false, error: 'Cloudinary not configured.' },
         { status: 500 }
@@ -50,6 +66,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // Upload to Cloudinary
+    console.log('☁️ Starting Cloudinary upload...');
     const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadOptions: UploadApiOptions = {
         resource_type: 'raw',
@@ -59,14 +76,23 @@ export async function POST(request: NextRequest) {
         unique_filename: true,
       };
 
+      console.log('📁 Upload options:', uploadOptions);
+
       cloudinary.uploader.upload_stream(
         uploadOptions,
         (error, result) => {
           if (error) {
+            console.error('❌ Cloudinary upload error:', error);
             reject(error);
           } else if (result) {
+            console.log('✅ Cloudinary upload success:', {
+              public_id: result.public_id,
+              secure_url: result.secure_url,
+              asset_id: result.asset_id
+            });
             resolve(result);
           } else {
+            console.error('❌ Cloudinary upload failed - no result');
             reject(new Error('Upload failed'));
           }
         }
@@ -81,9 +107,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('❌ Upload error:', error);
     return NextResponse.json(
-      { success: false, error: 'Upload failed. Please try again.' },
+      { success: false, error: `Upload failed: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }

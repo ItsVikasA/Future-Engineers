@@ -31,9 +31,8 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
     try {
       const loadingToast = toast.loading('📥 Preparing download...');
       
-      // Clean title for filename and append VICKY
-      const cleanTitle = (fileName || title || 'document').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
-      const cleanFileName = `${cleanTitle}_VICKY.pdf`;
+      // Clean title for filename
+      const cleanFileName = (fileName || title || 'document').replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50) + '.pdf';
       
       // Fix folder name in URL
       let downloadUrl = fileUrl;

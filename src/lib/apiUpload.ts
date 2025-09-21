@@ -32,15 +32,15 @@ export const uploadViaAPI = async (
       });
 
       xhr.addEventListener('load', () => {
-        console.log('Upload completed, status:', xhr.status);
-        console.log('Response:', xhr.responseText);
+        console.log('📤 Upload completed, status:', xhr.status);
+        console.log('📄 Response:', xhr.responseText);
         
         try {
           const result = JSON.parse(xhr.responseText);
-          console.log('Parsed result:', result);
+          console.log('✅ Parsed result:', result);
           resolve(result);
         } catch (parseError) {
-          console.error('Failed to parse response:', parseError);
+          console.error('❌ Failed to parse response:', parseError);
           resolve({
             success: false,
             error: 'Failed to parse server response'
@@ -49,7 +49,7 @@ export const uploadViaAPI = async (
       });
 
       xhr.addEventListener('error', (event) => {
-        console.error('Network error during upload:', event);
+        console.error('❌ Network error during upload:', event);
         resolve({
           success: false,
           error: 'Network error during upload'
