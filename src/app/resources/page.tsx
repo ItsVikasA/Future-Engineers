@@ -254,7 +254,7 @@ export default function AcademicResourcesPage() {
                     
                     {/* Branch Name */}
                     <CardTitle className="text-center">
-                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-tight min-h-[2.5rem] flex items-center justify-center">
+                      <h3 className="text-xs sm:text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-tight min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center px-2">
                         {branchName}
                       </h3>
                     </CardTitle>
@@ -263,22 +263,22 @@ export default function AcademicResourcesPage() {
                     <div className="flex items-center justify-center gap-2 mt-3">
                       <Badge 
                         variant="outline" 
-                        className="border-primary/30 text-primary bg-primary/5 group-hover:bg-primary/10 transition-colors text-xs"
+                        className="border-primary/30 text-primary bg-primary/5 group-hover:bg-primary/10 transition-colors text-[10px] sm:text-xs px-2 py-1"
                       >
                         {availableSemesters.length} Sem • {totalResources} Files
                       </Badge>
                     </div>
                   </CardHeader>
 
-                  <CardContent className="relative space-y-3 pt-4 border-t border-border/50 p-5">
+                  <CardContent className="relative space-y-3 pt-4 border-t border-border/50 p-3 sm:p-5">
                     {/* Semester Selection Title */}
-                    <div className="flex items-center justify-center gap-2 text-sm font-semibold text-muted-foreground mb-3">
-                      <FileText className="w-4 h-4" />
+                    <div className="flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold text-muted-foreground mb-2 sm:mb-3">
+                      <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>Select Semester</span>
                     </div>
                     
                     {/* Semester Grid - 2 columns, 4 rows */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
                         const hasData = availableSemesters.includes(sem);
                         const semesterResources = allSemesterCounts[sem] || 0;
@@ -290,7 +290,7 @@ export default function AcademicResourcesPage() {
                             onClick={() => hasData && handleSemesterSelect(branchName, sem)}
                             disabled={!hasData}
                             className={`
-                              relative group/btn overflow-hidden rounded-lg border-2 transition-all duration-200 p-3
+                              relative group/btn overflow-hidden rounded-lg border-2 transition-all duration-200 p-2 sm:p-3
                               ${hasDocuments
                                 ? 'border-primary/40 bg-gradient-to-br from-primary/10 to-purple-500/10 hover:border-primary hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 hover:scale-105 cursor-pointer' 
                                 : hasData
@@ -301,12 +301,12 @@ export default function AcademicResourcesPage() {
                           >
                             <div className="relative text-center">
                               {/* Sem Number */}
-                              <div className={`text-sm font-bold mb-1 ${hasDocuments ? 'text-primary' : hasData ? 'text-foreground' : 'text-muted-foreground'}`}>
+                              <div className={`text-xs sm:text-sm font-bold mb-0.5 sm:mb-1 ${hasDocuments ? 'text-primary' : hasData ? 'text-foreground' : 'text-muted-foreground'}`}>
                                 Sem {sem}
                               </div>
                               
                               {/* Resource Count */}
-                              <div className={`text-[10px] font-medium ${hasDocuments ? 'text-primary' : 'text-muted-foreground'}`}>
+                              <div className={`text-[9px] sm:text-[10px] font-medium ${hasDocuments ? 'text-primary' : 'text-muted-foreground'}`}>
                                 {hasDocuments ? `${semesterResources} files` : hasData ? 'Available' : 'Soon'}
                               </div>
                               
@@ -321,9 +321,9 @@ export default function AcademicResourcesPage() {
                     </div>
                     
                     {/* Bottom Total */}
-                    <div className="flex items-center justify-center pt-3 mt-2 border-t border-border/30">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        <Heart className="w-3 h-3 inline mr-1 text-red-500" />
+                    <div className="flex items-center justify-center pt-2 sm:pt-3 mt-2 border-t border-border/30">
+                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground">
+                        <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 inline mr-1 text-red-500" />
                         {totalResources} total resources
                       </span>
                     </div>

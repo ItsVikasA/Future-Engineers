@@ -271,30 +271,30 @@ export default function SemesterDetailPage() {
           
           <div className="text-center space-y-5">
             {/* Branch Icon Badge */}
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 backdrop-blur-sm ring-4 ring-primary/5 animate-in zoom-in duration-700">
-              {branchIcons[branchName] || <GraduationCap className="w-8 h-8 text-primary" />}
+            <div className="inline-flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-primary/10 backdrop-blur-sm ring-4 ring-primary/5 animate-in zoom-in duration-700">
+              {branchIcons[branchName] || <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />}
             </div>
             
             {/* Branch Name - Gradient Text */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700 px-4 leading-tight">
               {branchName}
             </h1>
             
             {/* Semester Badge */}
-            <div className="inline-flex items-center px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-              <BookOpen className="h-4 w-4 mr-2 text-primary" />
-              <span className="text-sm font-medium text-primary">{formatSemester(semester)}</span>
+            <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 backdrop-blur-sm rounded-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+              <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-primary" />
+              <span className="text-xs sm:text-sm font-medium text-primary">{formatSemester(semester)}</span>
             </div>
             
             {/* Description */}
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 px-4">
               Study materials and resources for {branchName}
             </p>
             
             {/* Stats Badge */}
-            <div className="inline-flex items-center px-4 py-2 rounded-full border border-primary/20 bg-card/50 backdrop-blur-sm">
-              <FileText className="h-4 w-4 mr-2 text-primary" />
-              <span className="text-sm font-medium">
+            <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-primary/20 bg-card/50 backdrop-blur-sm">
+              <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-2 text-primary" />
+              <span className="text-xs sm:text-sm font-medium">
                 {documents.length} {documents.length === 1 ? 'Resource' : 'Resources'} Available
               </span>
             </div>
@@ -325,12 +325,14 @@ export default function SemesterDetailPage() {
             {Object.entries(documentsByType).map(([docType, docs]) => (
               <Card key={docType} className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg hover:shadow-xl hover:border-primary/20 transition-all duration-300">
                 <CardHeader className="border-b border-border/50 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      {getResourceIcon(docType)}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        {getResourceIcon(docType)}
+                      </div>
+                      <CardTitle className="text-lg sm:text-xl">{docType}</CardTitle>
                     </div>
-                    <CardTitle className="text-xl">{docType}</CardTitle>
-                    <Badge variant="secondary" className="ml-auto bg-primary/10 text-primary border-primary/20">
+                    <Badge variant="secondary" className="ml-auto sm:ml-0 bg-primary/10 text-primary border-primary/20 text-xs sm:text-sm w-fit">
                       {docs.length} {docs.length === 1 ? 'Resource' : 'Resources'}
                     </Badge>
                   </div>
@@ -339,64 +341,64 @@ export default function SemesterDetailPage() {
                   <div className="grid gap-4">
                     {docs.map((doc) => (
                       <Card key={doc.id} className="bg-background/50 backdrop-blur-sm border-primary/10 hover:border-primary/30 hover:shadow-lg transition-all duration-300 group">
-                        <CardHeader className="pb-4">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 min-w-0 space-y-3">
-                              <CardTitle className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
+                        <CardHeader className="pb-4 p-4 sm:p-6">
+                          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0 space-y-2 sm:space-y-3 w-full">
+                              <CardTitle className="text-base sm:text-lg md:text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-2 break-words">
                                 {doc.title || doc.fileName}
                               </CardTitle>
                               {doc.description && (
-                                <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                                <CardDescription className="text-xs sm:text-sm text-muted-foreground line-clamp-2 break-words">
                                   {doc.description}
                                 </CardDescription>
                               )}
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white border-0">
+                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white border-0 text-[10px] sm:text-xs px-2 py-0.5">
                                   {doc.documentType}
                                 </Badge>
-                                <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/5">
+                                <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/5 text-[10px] sm:text-xs px-2 py-0.5">
                                   {doc.subject}
                                 </Badge>
                                 {doc.nestedSubject && (
-                                  <Badge variant="outline" className="border-blue-500/30 text-blue-500 bg-blue-500/5 text-xs">
+                                  <Badge variant="outline" className="border-blue-500/30 text-blue-500 bg-blue-500/5 text-[9px] sm:text-[10px] px-1.5 py-0.5">
                                     {doc.nestedSubject}
                                   </Badge>
                                 )}
                               </div>
-                              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                                <span className="truncate max-w-[200px]">{doc.university}</span>
-                                <span>•</span>
-                                <span className="truncate max-w-[200px]">by {doc.uploaderEmail || doc.uploaderName}</span>
-                                <span>•</span>
-                                <span>{formatDate(doc.uploadedAt)}</span>
+                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-muted-foreground">
+                                <span className="truncate max-w-[150px] sm:max-w-[200px]">{doc.university}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="truncate max-w-[120px] sm:max-w-[200px]">by {doc.uploaderEmail || doc.uploaderName}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="text-[9px] sm:text-xs">{formatDate(doc.uploadedAt)}</span>
                               </div>
                             </div>
-                            <div className="shrink-0">
+                            <div className="shrink-0 w-full sm:w-auto flex justify-end">
                               <BrowsePDFViewer documentId={doc.id} fileUrl={doc.fileUrl} title={doc.title || doc.fileName} />
                             </div>
                           </div>
                         </CardHeader>
-                        <CardContent className="pt-0 border-t border-border/30">
-                          <div className="flex items-center gap-6 text-sm pt-4">
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                                <Download className="h-4 w-4 text-green-500" />
+                        <CardContent className="pt-0 border-t border-border/30 px-4 sm:px-6">
+                          <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm pt-3 sm:pt-4">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                                <Download className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
                               </div>
-                              <span className="text-muted-foreground">{doc.downloads || 0}</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">{doc.downloads || 0}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                                <Eye className="h-4 w-4 text-blue-500" />
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <Eye className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
                               </div>
-                              <span className="text-muted-foreground">{doc.views || 0}</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">{doc.views || 0}</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <div className="h-8 w-8 rounded-full bg-pink-500/10 flex items-center justify-center">
-                                <Heart className="h-4 w-4 text-pink-500" />
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-pink-500/10 flex items-center justify-center">
+                                <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-pink-500" />
                               </div>
-                              <span className="text-muted-foreground">{doc.likes || 0}</span>
+                              <span className="text-muted-foreground text-xs sm:text-sm">{doc.likes || 0}</span>
                             </div>
-                            <div className="ml-auto text-xs text-muted-foreground font-medium px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10">
+                            <div className="ml-auto text-[10px] sm:text-xs text-muted-foreground font-medium px-2 sm:px-3 py-1 sm:py-1.5 rounded-full bg-primary/5 border border-primary/10">
                               {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
                             </div>
                           </div>
