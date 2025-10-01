@@ -2560,7 +2560,7 @@ export default function Contribute() {
                   </li>
                   <li className="flex items-start gap-2 text-muted-foreground">
                     <span className="text-primary font-bold mt-0.5">•</span>
-                    <span>Maximum file size: <span className="text-foreground font-medium">10MB</span></span>
+                    <span>Maximum file size: <span className="text-foreground font-medium">4MB</span></span>
                   </li>
                   <li className="flex items-start gap-2 text-muted-foreground">
                     <span className="text-primary font-bold mt-0.5">•</span>
