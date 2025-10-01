@@ -1589,6 +1589,7 @@ export default function Contribute() {
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
   const [showNestedSubjectDropdown, setShowNestedSubjectDropdown] =
     useState(false);
+  const [showModuleDropdown, setShowModuleDropdown] = useState(false);
   const [formData, setFormData] = useState({
     university: "",
     semester: "",
@@ -1596,6 +1597,7 @@ export default function Contribute() {
     subject: "",
     nestedSubject: "",
     documentType: "Notes",
+    module: "",
   });
 
   // Filter universities based on search input
@@ -1705,6 +1707,11 @@ export default function Contribute() {
     setShowNestedSubjectDropdown(false);
   };
 
+  const handleSelectModule = (module: string) => {
+    setFormData((prev) => ({ ...prev, module }));
+    setShowModuleDropdown(false);
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     console.log("📁 File selected:", file);
@@ -1788,6 +1795,14 @@ export default function Contribute() {
       return;
     }
 
+    // Check if module is required for Notes
+    if (formData.documentType === "Notes" && !formData.module) {
+      toast.error("📖 Please select a Module (1-5) for Notes", {
+        duration: 4000,
+      });
+      return;
+    }
+
     console.log("🚀 Starting upload process...");
     console.log("👤 User:", user.uid, user.email);
     console.log("📄 File:", {
@@ -1860,8 +1875,13 @@ export default function Contribute() {
         ...formData,
         semester: semesterNumber, // Store as number for consistency
         subject: finalSubject, // Use the nested subject if available, otherwise use the main subject
-        title: `${finalSubject} - ${formData.documentType}`, // Generate title from final subject and type
-        description: `${formData.documentType} for ${finalSubject} - ${formData.branch}`, // Add description for search
+        module: formData.documentType === "Notes" ? formData.module : undefined,
+        title: formData.documentType === "Notes" && formData.module 
+          ? `${finalSubject} - ${formData.module} - ${formData.documentType}` 
+          : `${finalSubject} - ${formData.documentType}`,
+        description: formData.documentType === "Notes" && formData.module
+          ? `${formData.documentType} - ${formData.module} for ${finalSubject} - ${formData.branch}`
+          : `${formData.documentType} for ${finalSubject} - ${formData.branch}`,
         uploadedBy: user.email, // Use email instead of UID for consistency
         uploaderName: user.displayName || user.email.split("@")[0],
         uploaderEmail: user.email,
@@ -1891,6 +1911,7 @@ export default function Contribute() {
         subject: "",
         nestedSubject: "",
         documentType: "Notes",
+        module: "",
       });
       setSelectedFile(null);
 
@@ -2303,6 +2324,40 @@ export default function Contribute() {
                         </select>
                       </div>
                     </div>
+
+                    {formData.documentType === "Notes" && (
+                      <div className="group relative">
+                        <Label className="text-foreground font-medium mb-2 inline-block">
+                          Module <span className="text-red-500">*</span>
+                        </Label>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setShowModuleDropdown(!showModuleDropdown)}
+                            className="w-full h-11 px-4 bg-background/50 border border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-md focus:outline-none transition-all duration-200 text-left flex items-center justify-between text-foreground"
+                          >
+                            <span className={formData.module ? "text-foreground" : "text-muted-foreground"}>
+                              {formData.module || "Select Module"}
+                            </span>
+                            <ChevronDown className={showModuleDropdown ? "w-4 h-4 transition-transform duration-200 rotate-180" : "w-4 h-4 transition-transform duration-200"} />
+                          </button>
+                          {showModuleDropdown && (
+                            <div className="absolute z-50 w-full mt-2 bg-card border border-primary/20 rounded-md shadow-2xl max-h-60 overflow-auto">
+                              {["Module 1", "Module 2", "Module 3", "Module 4", "Module 5"].map((module) => (
+                                <button
+                                  key={module}
+                                  type="button"
+                                  onClick={() => handleSelectModule(module)}
+                                  className={formData.module === module ? "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 bg-primary/10 text-primary font-medium" : "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 text-foreground"}
+                                >
+                                  {module}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* File Upload Section */}

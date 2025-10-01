@@ -37,6 +37,7 @@ interface Document {
   semester: string | number;
   subject: string;
   nestedSubject?: string;
+  module?: string; // Module 1-5 for Notes
   university: string;
   uploadedBy: string;
   uploaderName?: string;
@@ -362,6 +363,11 @@ export default function SemesterDetailPage() {
                                 {doc.nestedSubject && (
                                   <Badge variant="outline" className="border-blue-500/30 text-blue-500 bg-blue-500/5 text-[9px] sm:text-[10px] px-1.5 py-0.5">
                                     {doc.nestedSubject}
+                                  </Badge>
+                                )}
+                                {doc.module && (
+                                  <Badge variant="outline" className="border-orange-500/30 text-orange-500 bg-orange-500/5 text-[9px] sm:text-[10px] px-1.5 py-0.5">
+                                    📖 {doc.module}
                                   </Badge>
                                 )}
                               </div>
