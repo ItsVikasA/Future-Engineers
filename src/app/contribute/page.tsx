@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { collection, addDoc } from "firebase/firestore";
 import { uploadViaAPI } from "@/lib/apiUpload";
+import { uploadDirectlyToCloudinary } from "@/lib/directCloudinaryUpload";
 import toast from "react-hot-toast";
 import { db } from "@/lib/firebase";
 
@@ -1831,28 +1832,55 @@ export default function Contribute() {
     const startTime = Date.now(); // Track upload start time
 
     try {
-      // Use API-based upload to Cloudinary (since we have credentials)
-      const uploadResult = await uploadViaAPI(
-        selectedFile,
-        user.uid,
-        (progress: number) => {
-          setUploadProgress(progress);
-          // Update upload speed and time estimates based on progress
-          const currentTime = Date.now();
-          const elapsed = (currentTime - startTime) / 1000; // seconds
-          if (elapsed > 0 && progress > 0) {
-            const bytesUploaded = (selectedFile.size * progress) / 100;
-            const speed = bytesUploaded / elapsed; // bytes per second
-            setUploadSpeed(speed);
+      // Use direct Cloudinary upload for files > 5MB to bypass server limits
+      // Use API route for smaller files (better error handling and logging)
+      const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB in bytes
+      const useDirectUpload = selectedFile.size > FILE_SIZE_LIMIT;
+      
+      console.log(`📦 File size: ${(selectedFile.size / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`🚀 Upload method: ${useDirectUpload ? 'Direct to Cloudinary' : 'Via API route'}`);
+      
+      const uploadResult = useDirectUpload
+        ? await uploadDirectlyToCloudinary(
+            selectedFile,
+            user.uid,
+            (progress: number) => {
+              setUploadProgress(progress);
+              const currentTime = Date.now();
+              const elapsed = (currentTime - startTime) / 1000; // seconds
+              if (elapsed > 0 && progress > 0) {
+                const bytesUploaded = (selectedFile.size * progress) / 100;
+                const speed = bytesUploaded / elapsed; // bytes per second
+                setUploadSpeed(speed);
 
-            if (progress < 100) {
-              const remainingBytes = selectedFile.size - bytesUploaded;
-              const remainingTime = remainingBytes / speed;
-              setEstimatedTime(remainingTime);
+                if (progress < 100) {
+                  const remainingBytes = selectedFile.size - bytesUploaded;
+                  const remainingTime = remainingBytes / speed;
+                  setEstimatedTime(remainingTime);
+                }
+              }
             }
-          }
-        }
-      );
+          )
+        : await uploadViaAPI(
+            selectedFile,
+            user.uid,
+            (progress: number) => {
+              setUploadProgress(progress);
+              const currentTime = Date.now();
+              const elapsed = (currentTime - startTime) / 1000; // seconds
+              if (elapsed > 0 && progress > 0) {
+                const bytesUploaded = (selectedFile.size * progress) / 100;
+                const speed = bytesUploaded / elapsed; // bytes per second
+                setUploadSpeed(speed);
+
+                if (progress < 100) {
+                  const remainingBytes = selectedFile.size - bytesUploaded;
+                  const remainingTime = remainingBytes / speed;
+                  setEstimatedTime(remainingTime);
+                }
+              }
+            }
+          );
 
       console.log("Upload result:", uploadResult);
 
