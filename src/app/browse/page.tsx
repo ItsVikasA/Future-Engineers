@@ -23,6 +23,7 @@ interface Document {
   branch: string;
   semester: string | number; // Support both for backward compatibility
   documentType: string;
+  module?: string; // Module 1-5 for Notes
   uploadedBy: string;
   uploaderName: string;
   uploaderEmail: string;
@@ -451,6 +452,11 @@ export default function BrowseNotes() {
                                 <Badge variant="outline" className="border-green-500/30 text-green-600">
                                   {formatSemester(doc.semester)}
                                 </Badge>
+                                {doc.module && (
+                                  <Badge variant="outline" className="border-orange-500/30 text-orange-500 bg-orange-500/5">
+                                    📖 {doc.module}
+                                  </Badge>
+                                )}
                               </div>
                               
                               <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">

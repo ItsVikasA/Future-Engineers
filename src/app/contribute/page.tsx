@@ -1589,6 +1589,7 @@ export default function Contribute() {
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
   const [showNestedSubjectDropdown, setShowNestedSubjectDropdown] =
     useState(false);
+  const [showDocumentTypeDropdown, setShowDocumentTypeDropdown] = useState(false);
   const [showModuleDropdown, setShowModuleDropdown] = useState(false);
   const [formData, setFormData] = useState({
     university: "",
@@ -1710,6 +1711,11 @@ export default function Contribute() {
   const handleSelectModule = (module: string) => {
     setFormData((prev) => ({ ...prev, module }));
     setShowModuleDropdown(false);
+  };
+
+  const handleSelectDocumentType = (documentType: string) => {
+    setFormData((prev) => ({ ...prev, documentType, module: "" })); // Reset module when changing doc type
+    setShowDocumentTypeDropdown(false);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1871,11 +1877,15 @@ export default function Contribute() {
       } else if (typeof formData.semester === 'number') {
         semesterNumber = formData.semester;
       }
-      const docData = {
-        ...formData,
+      
+      // Build docData conditionally to avoid undefined fields
+      // Destructure to exclude module from spread
+      const { module: _, ...formDataWithoutModule } = formData;
+      
+      const docData: Record<string, unknown> = {
+        ...formDataWithoutModule,
         semester: semesterNumber, // Store as number for consistency
         subject: finalSubject, // Use the nested subject if available, otherwise use the main subject
-        module: formData.documentType === "Notes" ? formData.module : undefined,
         title: formData.documentType === "Notes" && formData.module 
           ? `${finalSubject} - ${formData.module} - ${formData.documentType}` 
           : `${finalSubject} - ${formData.documentType}`,
@@ -1898,6 +1908,11 @@ export default function Contribute() {
         views: 0,
         storageType: "cloudinary", // Indicate this is stored in Cloudinary
       };
+      
+      // Only add module field if it exists (for Notes documents)
+      if (formData.documentType === "Notes" && formData.module) {
+        docData.module = formData.module;
+      }
 
       setUploadProgress(90);
       await addDoc(collection(db, "documents"), docData);
@@ -2303,25 +2318,36 @@ export default function Contribute() {
                           )}
                       </div>
 
-                      <div className="group">
+                      <div className="group relative">
                         <Label htmlFor="documentType" className="text-foreground font-medium mb-2 inline-block">
                           Document Type
                         </Label>
-                        <select
-                          id="documentType"
-                          name="documentType"
-                          value={formData.documentType}
-                          onChange={handleInputChange}
-                          title="Select document type"
-                          aria-label="Select document type"
-                          className="w-full h-11 px-4 bg-background/50 border border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-md focus:outline-none transition-all duration-200 text-foreground"
-                        >
-                          <option value="Notes">Notes</option>
-                          <option value="Lab Manual">Lab Manual</option>
-                          <option value="Question Paper">Question Paper</option>
-                          <option value="Assignment">Assignment</option>
-                          <option value="Syllabus">Syllabus</option>
-                        </select>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setShowDocumentTypeDropdown(!showDocumentTypeDropdown)}
+                            className="w-full h-11 px-4 bg-background/50 border border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-md focus:outline-none transition-all duration-200 text-left flex items-center justify-between text-foreground"
+                          >
+                            <span className="text-foreground">
+                              {formData.documentType || "Select Document Type"}
+                            </span>
+                            <ChevronDown className={showDocumentTypeDropdown ? "w-4 h-4 transition-transform duration-200 rotate-180" : "w-4 h-4 transition-transform duration-200"} />
+                          </button>
+                          {showDocumentTypeDropdown && (
+                            <div className="absolute z-50 w-full mt-2 bg-card border border-primary/20 rounded-md shadow-2xl max-h-60 overflow-auto">
+                              {["Notes", "Lab Manual", "Question Paper", "Assignment", "Syllabus"].map((docType) => (
+                                <button
+                                  key={docType}
+                                  type="button"
+                                  onClick={() => handleSelectDocumentType(docType)}
+                                  className={formData.documentType === docType ? "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 bg-primary/10 text-primary font-medium" : "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 text-foreground"}
+                                >
+                                  {docType}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 

@@ -35,15 +35,26 @@ export const uploadViaAPI = async (
         console.log('📤 Upload completed, status:', xhr.status);
         console.log('📄 Response:', xhr.responseText);
         
+        // Check if request was successful
+        if (xhr.status < 200 || xhr.status >= 300) {
+          console.error('❌ Upload failed with status:', xhr.status);
+          resolve({
+            success: false,
+            error: `Upload failed with status ${xhr.status}: ${xhr.responseText}`
+          });
+          return;
+        }
+        
         try {
           const result = JSON.parse(xhr.responseText);
           console.log('✅ Parsed result:', result);
           resolve(result);
         } catch (parseError) {
           console.error('❌ Failed to parse response:', parseError);
+          console.error('Response text:', xhr.responseText);
           resolve({
             success: false,
-            error: 'Failed to parse server response'
+            error: `Server returned invalid JSON (status ${xhr.status})`
           });
         }
       });

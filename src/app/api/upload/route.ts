@@ -131,10 +131,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '50mb' // increase as needed (e.g. '100mb')
-    }
-  }
-};
+// Configure route segment for App Router
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+// Note: Body size limit is configured in next.config.ts

@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Configure body size limits for API routes
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
+  },
   // Exclude firebase functions from build
   webpack: (config) => {
     config.externals = config.externals || {};
