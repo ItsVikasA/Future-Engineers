@@ -1731,8 +1731,10 @@ export default function Contribute() {
         sizeMB: (file.size / 1024 / 1024).toFixed(2) + "MB"
       });
       
-      if (file.type === "application/pdf" && file.size <= 50 * 1024 * 1024) {
-        // 50MB limit for Cloudinary
+      // Enforce 4MB limit for stability
+      const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB in bytes
+      
+      if (file.type === "application/pdf" && file.size <= MAX_FILE_SIZE) {
         setSelectedFile(file);
         toast.success(
           `📄 Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(
@@ -1743,18 +1745,19 @@ export default function Contribute() {
           }
         );
       } else {
-        let errorMsg = "❌ Please select a PDF file under 50MB";
+        let errorMsg = "❌ Please select a PDF file under 4MB";
         if (file.type !== "application/pdf") {
           errorMsg = `❌ Invalid file type: ${file.type}. Only PDF files are allowed.`;
-        } else if (file.size > 50 * 1024 * 1024) {
-          errorMsg = `❌ File too large: ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximum size is 50MB.`;
+        } else if (file.size > MAX_FILE_SIZE) {
+          errorMsg = `❌ File too large: ${(file.size / 1024 / 1024).toFixed(1)}MB. Maximum size is 4MB for stability.`;
         }
         
         console.error("❌ File validation failed:", {
           type: file.type,
           size: file.size,
+          sizeMB: (file.size / 1024 / 1024).toFixed(2),
           expectedType: "application/pdf",
-          maxSize: 50 * 1024 * 1024
+          maxSize: "4MB"
         });
         
         toast.error(errorMsg, {
@@ -2445,8 +2448,13 @@ export default function Contribute() {
                             <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                               {selectedFile
                                 ? selectedFile.name
-                                : "Select a PDF file to upload (Max 50MB)"}
+                                : "Select a PDF file to upload (Max 4MB)"}
                             </p>
+                            {!selectedFile && (
+                              <p className="text-xs text-muted-foreground/70 mt-1">
+                                Maximum file size: 4MB for optimal performance
+                              </p>
+                            )}
                           </div>
                           <input
                             type="file"
