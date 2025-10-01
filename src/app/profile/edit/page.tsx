@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { Camera, Save, X, User, Award, ChevronDown, Linkedin, Github, Globe, BarChart3 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage, auth } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { updateProfile } from 'firebase/auth';
 
 const KARNATAKA_UNIVERSITIES = [
@@ -150,6 +150,7 @@ interface UserProfile {
   displayName: string;
   email: string;
   photoURL: string;
+  bannerURL: string; // Add banner URL
   bio: string;
   university: string;
   course: string;
@@ -168,8 +169,10 @@ export default function ProfileEditPage() {
   const { user } = useAuthStore();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null); // Add banner input ref
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [bannerUploading, setBannerUploading] = useState(false); // Add banner uploading state
   const [showUniversityDropdown, setShowUniversityDropdown] = useState(false);
   const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   
@@ -177,6 +180,7 @@ export default function ProfileEditPage() {
     displayName: user?.displayName || '',
     email: user?.email || '',
     photoURL: user?.photoURL || '',
+    bannerURL: '', // Add banner URL
     bio: '',
     university: '',
     course: '',
@@ -213,7 +217,8 @@ export default function ProfileEditPage() {
             linkedin: userData.linkedin || '',
             github: userData.github || '',
             portfolio: userData.portfolio || '',
-            photoURL: userData.photoURL || user.photoURL || ''
+            photoURL: userData.photoURL || user.photoURL || '',
+            bannerURL: userData.bannerURL || '' // Load banner URL
           }));
         }
       } catch (error) {
@@ -285,24 +290,87 @@ export default function ProfileEditPage() {
     setPhotoUploading(true);
     
     try {
-      // Create a reference to the user's profile image
-      const imageRef = ref(storage, `profile-images/${user.uid}`);
+      // Upload to Cloudinary via API route
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('userId', user.uid);
+      formData.append('uploadType', 'profile'); // Add upload type for differentiation
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const result = await response.json();
       
-      // Upload the file
-      await uploadBytes(imageRef, file);
-      
-      // Get the download URL
-      const downloadURL = await getDownloadURL(imageRef);
-      
-      // Update profile state
-      setProfile(prev => ({ ...prev, photoURL: downloadURL }));
-      
-      toast.success('Photo uploaded successfully!');
+      if (result.success && result.fileUrl) {
+        // Update profile state with Cloudinary URL
+        setProfile(prev => ({ ...prev, photoURL: result.fileUrl }));
+        toast.success('Photo uploaded successfully!');
+      } else {
+        throw new Error('Upload failed - no URL returned');
+      }
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error('Failed to upload photo');
+      toast.error(error instanceof Error ? error.message : 'Failed to upload photo');
     } finally {
       setPhotoUploading(false);
+    }
+  };
+
+  const handleBannerUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) { // 10MB limit for banner
+      toast.error('Banner image size should be less than 10MB');
+      return;
+    }
+
+    setBannerUploading(true);
+    
+    try {
+      // Upload to Cloudinary via API route
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('userId', user.uid);
+      formData.append('uploadType', 'banner'); // Add upload type for differentiation
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+
+      const result = await response.json();
+      
+      if (result.success && result.fileUrl) {
+        // Update profile state with Cloudinary URL
+        setProfile(prev => ({ ...prev, bannerURL: result.fileUrl }));
+        toast.success('Banner uploaded successfully!');
+      } else {
+        throw new Error('Upload failed - no URL returned');
+      }
+    } catch (error) {
+      console.error('Error uploading banner:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to upload banner');
+    } finally {
+      setBannerUploading(false);
     }
   };
 
@@ -330,6 +398,7 @@ export default function ProfileEditPage() {
         displayName: profile.displayName,
         email: profile.email,
         photoURL: profile.photoURL,
+        bannerURL: profile.bannerURL, // Add banner URL
         bio: profile.bio,
         university: profile.university,
         course: profile.course,
@@ -491,6 +560,68 @@ export default function ProfileEditPage() {
                   
                   <p className="text-xs text-gray-500 mt-2">
                     Max size: 5MB • JPG, PNG, GIF
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Banner Photo Section */}
+              <Card className="bg-white/5 backdrop-blur-sm border-white/10 mt-6">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Camera className="h-5 w-5" />
+                    Profile Banner
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Upload a banner image for your profile (4:1 ratio recommended)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative mb-4 rounded-lg overflow-hidden border-2 border-dashed border-purple-500/30 hover:border-purple-500/60 transition-colors" style={{ paddingTop: '25%' }}>
+                    {profile.bannerURL ? (
+                      <Image 
+                        src={profile.bannerURL} 
+                        alt="Profile Banner Preview" 
+                        fill
+                        className="object-cover absolute top-0 left-0"
+                        sizes="400px"
+                      />
+                    ) : (
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                        <span className="text-gray-400 text-sm">No banner uploaded</span>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => bannerInputRef.current?.click()}
+                      disabled={bannerUploading}
+                      className="absolute bottom-2 right-2 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 p-2 rounded-lg border border-white/20 transition-colors z-10"
+                      title="Change banner"
+                      aria-label="Change profile banner"
+                    >
+                      <Camera className="h-4 w-4 text-white" />
+                    </button>
+                  </div>
+                  
+                  <input
+                    ref={bannerInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerUpload}
+                    className="hidden"
+                    title="Select banner image"
+                    aria-label="Select banner image file"
+                  />
+                  
+                  <Button
+                    onClick={() => bannerInputRef.current?.click()}
+                    disabled={bannerUploading}
+                    variant="outline"
+                    className="w-full border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-black"
+                  >
+                    {bannerUploading ? 'Uploading...' : profile.bannerURL ? 'Change Banner' : 'Upload Banner'}
+                  </Button>
+                  
+                  <p className="text-xs text-gray-500 mt-2">
+                    Max size: 10MB • JPG, PNG, WebP • Recommended: 1584x396px
                   </p>
                 </CardContent>
               </Card>

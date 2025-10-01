@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, getDocs, QueryConstraint } from 'firebase/firestore';
+import { collection, query, where, getDocs, QueryConstraint } from 'firebase/firestore';
 import type { Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -11,7 +11,7 @@ export interface Document {
   fileSize: number;
   documentType: string;
   branch: string;
-  semester: string;
+  semester: string | number; // Support both for backward compatibility
   subject: string;
   nestedSubject?: string;
   university: string;
@@ -24,7 +24,7 @@ export interface Document {
 
 export interface DocumentFilters {
   branch?: string;
-  semester?: string;
+  semester?: string | number; // Support both for backward compatibility
   subject?: string;
   documentType?: string;
   university?: string;
@@ -35,6 +35,9 @@ export function useDocuments(filters: DocumentFilters = {}) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Create a stable string key from filters to avoid infinite loop
+  const filtersKey = JSON.stringify(filters);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -72,8 +75,9 @@ export function useDocuments(filters: DocumentFilters = {}) {
           constraints.push(where('status', '==', 'approved'));
         }
 
-        // Add ordering
-        constraints.push(orderBy('uploadedAt', 'desc'));
+        // Remove orderBy to avoid composite index requirement
+        // We'll sort client-side instead
+        // constraints.push(orderBy('uploadedAt', 'desc'));
 
         const q = query(collection(db, 'documents'), ...constraints);
         const querySnapshot = await getDocs(q);
@@ -84,6 +88,13 @@ export function useDocuments(filters: DocumentFilters = {}) {
             id: doc.id,
             ...doc.data(),
           } as Document);
+        });
+
+        // Sort client-side by uploadedAt descending
+        docs.sort((a, b) => {
+          const dateA = a.uploadedAt?.toMillis?.() || 0;
+          const dateB = b.uploadedAt?.toMillis?.() || 0;
+          return dateB - dateA;
         });
 
         setDocuments(docs);
@@ -103,7 +114,8 @@ export function useDocuments(filters: DocumentFilters = {}) {
     };
 
     fetchDocuments();
-  }, [filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filtersKey]); // Use stringified filters to avoid infinite loop
 
   return { documents, loading, error };
 }

@@ -90,26 +90,54 @@ export default function RootLayout({
               <StructuredData />
               {children}
               <Toaster 
-                position="top-right"
+                position="top-center"
+                reverseOrder={false}
+                gutter={8}
+                containerStyle={{
+                  top: 80,
+                }}
                 toastOptions={{
-                  duration: 4000,
+                  duration: 3000,
                   style: {
                     background: 'hsl(var(--card))',
                     color: 'hsl(var(--card-foreground))',
                     border: '1px solid hsl(var(--border))',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                    maxWidth: '500px',
                   },
                   success: {
-                    duration: 3000,
+                    duration: 2500,
+                    style: {
+                      background: '#10B981',
+                      color: '#ffffff',
+                      border: 'none',
+                    },
                     iconTheme: {
-                      primary: 'hsl(var(--primary))',
-                      secondary: 'hsl(var(--primary-foreground))',
+                      primary: '#ffffff',
+                      secondary: '#10B981',
                     },
                   },
                   error: {
-                    duration: 5000,
+                    duration: 4000,
+                    style: {
+                      background: '#EF4444',
+                      color: '#ffffff',
+                      border: 'none',
+                    },
                     iconTheme: {
-                      primary: 'hsl(var(--destructive))',
-                      secondary: 'hsl(var(--destructive-foreground))',
+                      primary: '#ffffff',
+                      secondary: '#EF4444',
+                    },
+                  },
+                  loading: {
+                    style: {
+                      background: '#3B82F6',
+                      color: '#ffffff',
+                      border: 'none',
                     },
                   },
                 }}

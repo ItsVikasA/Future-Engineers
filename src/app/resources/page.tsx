@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +20,10 @@ import {
   Building,
   Atom,
   Heart,
-  Calculator
+  Calculator,
+  Layers,
+  Code,
+  Lightbulb
 } from 'lucide-react';
 import academicResourcesData from '@/data/academicResources.json';
 
@@ -106,49 +110,106 @@ export default function AcademicResourcesPage() {
 
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <Header />
       
-      <main className="container mx-auto px-4 py-4 sm:py-8">
-        {/* Header Section */}
-        <div className="text-center mb-8 sm:mb-12">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-            <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-              {data.pageTitle}
-            </h1>
+      {/* Floating Decorative Elements - Enhanced with Many More Icons */}
+      <div className="absolute top-20 right-16 opacity-10 animate-float pointer-events-none">
+        <GraduationCap className="w-32 h-32 text-blue-500" />
+      </div>
+      <div className="absolute top-1/4 left-12 opacity-10 animate-float-delayed pointer-events-none">
+        <BookOpen className="w-28 h-28 text-green-500" />
+      </div>
+      <div className="absolute bottom-24 right-24 opacity-10 animate-float pointer-events-none">
+        <Layers className="w-26 h-26 text-purple-500" />
+      </div>
+      <div className="absolute bottom-1/3 left-20 opacity-10 animate-float-delayed pointer-events-none">
+        <Code className="w-24 h-24 text-orange-500" />
+      </div>
+      <div className="absolute top-1/2 right-32 opacity-10 animate-float pointer-events-none">
+        <Lightbulb className="w-22 h-22 text-yellow-500" />
+      </div>
+      <div className="absolute bottom-36 left-16 opacity-10 animate-float-delayed pointer-events-none">
+        <FileText className="w-20 h-20 text-pink-500" />
+      </div>
+      <div className="absolute top-1/3 right-40 opacity-8 animate-float pointer-events-none">
+        <Cpu className="w-26 h-26 text-cyan-500" />
+      </div>
+      <div className="absolute bottom-1/4 left-28 opacity-8 animate-float-delayed pointer-events-none">
+        <Zap className="w-24 h-24 text-emerald-500" />
+      </div>
+      <div className="absolute top-2/3 left-10 opacity-8 animate-float pointer-events-none">
+        <Cog className="w-22 h-22 text-indigo-500" />
+      </div>
+      <div className="absolute bottom-2/3 right-20 opacity-8 animate-float-delayed pointer-events-none">
+        <Building className="w-20 h-20 text-violet-500" />
+      </div>
+      <div className="absolute top-1/2 left-1/4 opacity-8 animate-float pointer-events-none">
+        <Atom className="w-24 h-24 text-teal-500" />
+      </div>
+      <div className="absolute bottom-1/2 right-1/4 opacity-8 animate-float-delayed pointer-events-none">
+        <Calculator className="w-20 h-20 text-amber-500" />
+      </div>
+      <div className="absolute top-3/4 right-28 opacity-7 animate-float pointer-events-none">
+        <Heart className="w-18 h-18 text-rose-500" />
+      </div>
+      <div className="absolute bottom-3/4 left-32 opacity-7 animate-float-delayed pointer-events-none">
+        <BookOpen className="w-18 h-18 text-lime-500" />
+      </div>
+      <div className="absolute top-1/4 left-1/3 opacity-7 animate-float pointer-events-none">
+        <GraduationCap className="w-20 h-20 text-fuchsia-500" />
+      </div>
+      <div className="absolute bottom-1/4 right-1/3 opacity-7 animate-float-delayed pointer-events-none">
+        <Layers className="w-16 h-16 text-sky-500" />
+      </div>
+      
+      <main className="container mx-auto px-4 py-8 sm:py-12 relative z-10">
+        {/* Hero Section */}
+        <div className="text-center mb-12 sm:mb-16 space-y-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-purple-500/20 mb-4 animate-bounce">
+            <GraduationCap className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
           </div>
-          <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Comprehensive study materials organized by engineering branches
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
+            Engineering Resources
+          </h1>
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Access semester-wise study materials, notes, and question papers for all engineering branches
           </p>
+          <div className="flex items-center justify-center gap-3 sm:gap-4 pt-4">
+            <Badge variant="secondary" className="text-sm px-4 py-2 bg-primary/10 hover:bg-primary/20 transition-colors">
+              <BookOpen className="w-4 h-4 mr-2" />
+              {MAIN_BRANCHES.length} Branches
+            </Badge>
+            <Badge variant="secondary" className="text-sm px-4 py-2 bg-primary/10 hover:bg-primary/20 transition-colors">
+              <FileText className="w-4 h-4 mr-2" />
+              {documents.length} Resources
+            </Badge>
+          </div>
         </div>
 
-        {/* Resources Content - 7 Branch Grid Layout */}
-        <div className="space-y-6 sm:space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl font-semibold text-foreground">
-              Engineering Branches
+        {/* Engineering Branches Grid - Improved Modern Design */}
+        <div className="space-y-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+              Select Your Branch
             </h2>
-            <Badge variant="secondary" className="bg-primary/20 text-primary w-fit">
-              {MAIN_BRANCHES.length} Branches
+            <Badge variant="outline" className="text-sm border-primary/30 text-primary">
+              {MAIN_BRANCHES.length} Available
             </Badge>
           </div>
 
-          {/* 7 Branch Grid - Side by Side */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {MAIN_BRANCHES.map((branchName) => {
+            {MAIN_BRANCHES.map((branchName, index) => {
               const semesterData = allBranches[branchName] || {};
               const availableSemesters = Object.keys(semesterData).map(Number).sort();
               
               // Calculate actual document counts for this branch
               const branchDocuments = documents.filter(doc => {
-                // Check both branch and course fields for compatibility
                 const docBranch = doc.branch || (doc as Document & { course?: string }).course || '';
                 return docBranch === branchName;
               });
               const totalResources = branchDocuments.length;
               
-              // Get semester-wise document counts
               const ordinal = (n: number) => {
                 if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`;
                 switch (n % 10) {
@@ -159,81 +220,112 @@ export default function AcademicResourcesPage() {
                 }
               };
 
-              
-              // Also check for all semesters 1-8, not just available ones
+              // Get semester-wise counts
               const allSemesterCounts = [1, 2, 3, 4, 5, 6, 7, 8].reduce((acc, sem) => {
-                const semesterKey = `${ordinal(sem)} Semester`;
                 const count = branchDocuments.filter(doc => {
-                  const docSemester = doc.semester || '';
-                  return docSemester === semesterKey;
+                  if (typeof doc.semester === 'number') {
+                    return doc.semester === sem;
+                  } else if (typeof doc.semester === 'string') {
+                    const semesterKey = `${ordinal(sem)} Semester`;
+                    return doc.semester === semesterKey;
+                  }
+                  return false;
                 }).length;
                 acc[sem] = count;
                 return acc;
               }, {} as Record<number, number>);
               
               return (
-                <Card key={branchName} className="bg-card/50 backdrop-blur-sm border-border h-fit">
-                  <CardHeader className="pb-3 sm:pb-4 p-4 sm:p-6">
-                    <CardTitle className="flex flex-col items-center gap-2 sm:gap-3 text-foreground text-center">
-                      <div className="p-2 sm:p-3 rounded-full bg-primary/20">
-                        {branchIcons[branchName] || <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
-                      </div>
-                      <h3 className="text-xs sm:text-sm font-semibold leading-tight break-words">
+                <Card 
+                  key={branchName} 
+                  className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 bg-card/80 backdrop-blur-sm hover:-translate-y-1"
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                  }}
+                >
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  <CardHeader className="relative pb-4 p-5">
+                    {/* Icon with Animation */}
+                    <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-purple-500/20 group-hover:from-primary/30 group-hover:to-purple-500/30 transition-all duration-300 mb-4 mx-auto group-hover:scale-110 group-hover:rotate-3">
+                      {branchIcons[branchName] || <BookOpen className="w-7 h-7 text-primary" />}
+                    </div>
+                    
+                    {/* Branch Name */}
+                    <CardTitle className="text-center">
+                      <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors leading-tight min-h-[2.5rem] flex items-center justify-center">
                         {branchName}
                       </h3>
-                      <Badge variant="outline" className="text-xs">
-                        {availableSemesters.length} Sem Available
-                      </Badge>
                     </CardTitle>
+                    
+                    {/* Resource Count Badge */}
+                    <div className="flex items-center justify-center gap-2 mt-3">
+                      <Badge 
+                        variant="outline" 
+                        className="border-primary/30 text-primary bg-primary/5 group-hover:bg-primary/10 transition-colors text-xs"
+                      >
+                        {availableSemesters.length} Sem • {totalResources} Files
+                      </Badge>
+                    </div>
                   </CardHeader>
-                  <CardContent className="pt-0 p-4 sm:p-6">
-                    {/* All Semesters Grid for this Branch */}
-                    <div className="space-y-3 sm:space-y-4">
-                      <h4 className="text-xs sm:text-sm font-medium text-foreground text-center mb-2 sm:mb-3">
-                        Select Semester
-                      </h4>
-                      
-                      {/* 8 Semester Grid - 2x4 layout */}
-                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((semester) => {
-                          const hasData = availableSemesters.includes(semester);
-                          const semesterResources = allSemesterCounts[semester] || 0;
-                          const hasDocuments = semesterResources > 0;
-                          
-                          return (
-                            <Button
-                              key={semester}
-                              variant="outline"
-                              size="sm"
-                              className={`${
-                                hasDocuments
-                                  ? 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'
-                                  : hasData
-                                    ? 'border-muted-foreground text-muted-foreground hover:bg-muted hover:text-muted-foreground'
-                                    : 'border-gray-400 text-gray-400 opacity-50 cursor-not-allowed'
-                              } h-7 sm:h-8 text-xs flex flex-col items-center justify-center p-1`}
-                              onClick={() => handleSemesterSelect(branchName, semester)}
-                              disabled={!hasData}
-                            >
-                              <span className="text-xs">Sem {semester}</span>
-                              <span className="text-[9px] sm:text-[10px] opacity-70">
-                                {semesterResources}
-                              </span>
-                            </Button>
-                          );
-                        })}
-                      </div>
 
-                      {/* Semester Selection Info */}
-                      <div className="border-t border-border pt-3 sm:pt-4 mt-3 sm:mt-4">
-                        <div className="text-center py-3 sm:py-4 text-muted-foreground">
-                          <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 opacity-50" />
-                          <p className="text-xs mb-1 sm:mb-2">Click on a semester to view resources</p>
-                          <p className="text-xs text-primary">
-                            {totalResources} resources available
-                          </p>
-                        </div>
-                      </div>
+                  <CardContent className="relative space-y-3 pt-4 border-t border-border/50 p-5">
+                    {/* Semester Selection Title */}
+                    <div className="flex items-center justify-center gap-2 text-sm font-semibold text-muted-foreground mb-3">
+                      <FileText className="w-4 h-4" />
+                      <span>Select Semester</span>
+                    </div>
+                    
+                    {/* Semester Grid - 2 columns, 4 rows */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => {
+                        const hasData = availableSemesters.includes(sem);
+                        const semesterResources = allSemesterCounts[sem] || 0;
+                        const hasDocuments = semesterResources > 0;
+                        
+                        return (
+                          <button
+                            key={sem}
+                            onClick={() => hasData && handleSemesterSelect(branchName, sem)}
+                            disabled={!hasData}
+                            className={`
+                              relative group/btn overflow-hidden rounded-lg border-2 transition-all duration-200 p-3
+                              ${hasDocuments
+                                ? 'border-primary/40 bg-gradient-to-br from-primary/10 to-purple-500/10 hover:border-primary hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 hover:scale-105 cursor-pointer' 
+                                : hasData
+                                  ? 'border-border/50 bg-muted/30 hover:bg-muted/50 cursor-pointer'
+                                  : 'border-border/30 bg-muted/20 cursor-not-allowed opacity-40'
+                              }
+                            `}
+                          >
+                            <div className="relative text-center">
+                              {/* Sem Number */}
+                              <div className={`text-sm font-bold mb-1 ${hasDocuments ? 'text-primary' : hasData ? 'text-foreground' : 'text-muted-foreground'}`}>
+                                Sem {sem}
+                              </div>
+                              
+                              {/* Resource Count */}
+                              <div className={`text-[10px] font-medium ${hasDocuments ? 'text-primary' : 'text-muted-foreground'}`}>
+                                {hasDocuments ? `${semesterResources} files` : hasData ? 'Available' : 'Soon'}
+                              </div>
+                              
+                              {/* Hover Glow Effect */}
+                              {hasDocuments && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-200 rounded-lg -z-10" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Bottom Total */}
+                    <div className="flex items-center justify-center pt-3 mt-2 border-t border-border/30">
+                      <span className="text-xs font-medium text-muted-foreground">
+                        <Heart className="w-3 h-3 inline mr-1 text-red-500" />
+                        {totalResources} total resources
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -242,37 +334,69 @@ export default function AcademicResourcesPage() {
           </div>
         </div>
 
-        {/* Statistics Section */}
-        <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-4 sm:py-6">
-              <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
-              <div className="text-xl sm:text-2xl font-bold text-foreground">
+        {/* Statistics Section - Redesigned */}
+        <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/20 transition-all">
+            <CardContent className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/20 mb-3">
+                <BookOpen className="h-6 w-6 text-blue-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground mb-1">
                 {MAIN_BRANCHES.length}
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Total Branches</div>
+              <div className="text-sm text-muted-foreground">Engineering Branches</div>
             </CardContent>
           </Card>
           
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-4 sm:py-6">
-              <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
-              <div className="text-xl sm:text-2xl font-bold text-foreground">
+          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/20 transition-all">
+            <CardContent className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-purple-500/20 mb-3">
+                <FileText className="h-6 w-6 text-purple-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground mb-1">
                 {documents.length}
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Total Resources</div>
+              <div className="text-sm text-muted-foreground">Study Materials</div>
             </CardContent>
           </Card>
           
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-4 sm:py-6">
-              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary mx-auto mb-2" />
-              <div className="text-xl sm:text-2xl font-bold text-foreground">8</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Semesters</div>
+          <Card className="bg-gradient-to-br from-pink-500/10 to-pink-600/5 border-pink-500/30 hover:shadow-lg hover:shadow-pink-500/20 transition-all">
+            <CardContent className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-pink-500/20 mb-3">
+                <GraduationCap className="h-6 w-6 text-pink-500" />
+              </div>
+              <div className="text-3xl font-bold text-foreground mb-1">8</div>
+              <div className="text-sm text-muted-foreground">Semesters Covered</div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Call to Action - Enhanced */}
+        <Card className="mt-12 sm:mt-16 bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 border-primary/30 overflow-hidden relative">
+          <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+          <CardContent className="relative p-8 sm:p-12 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-purple-500/30 mb-6 animate-pulse">
+              <BookOpen className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+              Can&apos;t find what you&apos;re looking for?
+            </h2>
+            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
+              Help fellow engineers by contributing your notes, question papers, and study materials.
+              Your contribution makes a difference!
+            </p>
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all hover:scale-105"
+              onClick={() => router.push('/contribute')}
+            >
+              <BookOpen className="w-5 h-5 mr-2" />
+              Contribute Resources
+            </Button>
+          </CardContent>
+        </Card>
       </main>
+      <Footer />
     </div>
   );
 }

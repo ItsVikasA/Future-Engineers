@@ -4,64 +4,52 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Header } from '@/components/Header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Footer } from '@/components/Footer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-// ...existing code...
-import { useDocumentsByCategory } from '@/hooks/useDocuments';
+import { BrowsePDFViewer } from '@/components/BrowsePDFViewer';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { 
   BookOpen, 
   FileText, 
-  Video, 
   Download, 
   ArrowLeft,
-  GraduationCap,
   Cpu,
   Zap,
   Cog,
   Building,
-  
   Eye,
-  Calendar,
-  User,
-  
-  CheckCircle,
-  XCircle
+  Heart,
+  AlertCircle,
+  GraduationCap
 } from 'lucide-react';
-// ...existing code...
-import academicResourcesData from '@/data/academicResources.json';
 
-interface Resource {
+interface Document {
+  id: string;
   title: string;
-  type: 'pdf' | 'video_playlist' | 'document' | 'link';
-  url: string;
-  uploadedBy?: string;
-  uploadDate?: string;
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
+  documentType: string;
+  branch: string;
+  semester: string | number;
+  subject: string;
+  nestedSubject?: string;
+  university: string;
+  uploadedBy: string;
+  uploaderName?: string;
+  uploaderEmail?: string;
   description?: string;
+  uploadedAt: { toDate(): Date } | Date;
+  status: 'pending' | 'approved' | 'rejected';
+  downloads?: number;
+  likes?: number;
+  views?: number;
 }
 
-interface Category {
-  name: string;
-  slug: string;
-  resources: Resource[];
-}
-
-interface Branch {
-  name: string;
-  categories: Category[];
-}
-
-interface Semester {
-  semester: number;
-  branches: Branch[];
-}
-
-interface AcademicResourcesData {
-  pageTitle: string;
-  semesters: Semester[];
-}
-
-const branchIcons: { [key: string]: React.ReactNode } = {
+const branchIcons: { [key: string]: React.ReactNode} = {
   'Computer Science & Engineering': <Cpu className="w-6 h-6" />,
   'Electronics & Communication Engineering': <Zap className="w-6 h-6" />,
   'Mechanical Engineering': <Cog className="w-6 h-6" />,
@@ -74,30 +62,33 @@ const branchIcons: { [key: string]: React.ReactNode } = {
 
 const getResourceIcon = (type: string) => {
   switch (type) {
-    case 'pdf':
+    case 'Notes':
       return <FileText className="w-5 h-5" />;
-    case 'video_playlist':
-      return <Video className="w-5 h-5" />;
-    case 'document':
+    case 'Lab Manual':
       return <BookOpen className="w-5 h-5" />;
+    case 'Question Paper':
+      return <FileText className="w-5 h-5" />;
+    case 'Assignment':
+      return <FileText className="w-5 h-5" />;
+    case 'Syllabus':
+      return <FileText className="w-5 h-5" />;
     default:
       return <BookOpen className="w-5 h-5" />;
   }
 };
 
-// ...existing code...
-
 export default function SemesterDetailPage() {
-  // ...existing code... (auth not required in this view)
   const params = useParams();
-  const [branchData, setBranchData] = useState<Branch | null>(null);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documentsByType, setDocumentsByType] = useState<Record<string, Document[]>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const branchName = decodeURIComponent(params.branch as string);
   const semester = parseInt(params.semester as string);
 
-  // Get the correct semester format
-  const getSemesterFormat = (sem: number) => {
+  // Helper function to format semester for display
+  const formatSemester = (sem: number) => {
     if (sem % 100 >= 11 && sem % 100 <= 13) return `${sem}th Semester`;
     switch (sem % 10) {
       case 1: return `${sem}st Semester`;
@@ -107,52 +98,129 @@ export default function SemesterDetailPage() {
     }
   };
 
-  // Fetch uploaded documents for this branch and semester
-  const { documentsByCategory, documents, loading: documentsLoading, error } = useDocumentsByCategory({
-    branch: branchName,
-    semester: getSemesterFormat(semester),
-    status: 'approved'
-  });
-
-  // Debug logging
-  useEffect(() => {
-    console.log('🔍 Debug Info:');
-    console.log('Branch Name:', branchName);
-    console.log('Semester Number:', semester);
-    console.log('Semester Format:', getSemesterFormat(semester));
-    console.log('Documents Found:', documents.length);
-    console.log('Documents:', documents);
-    console.log('Documents by Category:', documentsByCategory);
-    console.log('Loading:', documentsLoading);
-    console.log('Error:', error);
-  }, [branchName, semester, documents, documentsByCategory, documentsLoading, error]);
-  
-
-  useEffect(() => {
-    const data = academicResourcesData as AcademicResourcesData;
-    const semesterData = data.semesters.find(s => s.semester === semester);
-    
-    if (semesterData) {
-      const branch = semesterData.branches.find(b => b.name === branchName);
-      setBranchData(branch || null);
+  // Helper function to format date
+  const formatDate = (timestamp: { toDate(): Date } | Date): string => {
+    try {
+      const date = typeof timestamp === 'object' && 'toDate' in timestamp 
+        ? timestamp.toDate() 
+        : timestamp instanceof Date 
+        ? timestamp 
+        : new Date();
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return 'Unknown date';
     }
-    
-    setLoading(false);
+  };
+
+  // Fetch documents from Firestore
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log('🔍 Fetching documents for:');
+        console.log('Branch:', branchName);
+        console.log('Semester:', semester, '(type:', typeof semester, ')');
+
+        // First, get ALL approved documents to see what's available
+        const allDocsQuery = query(
+          collection(db, 'documents'),
+          where('status', '==', 'approved')
+        );
+
+        const allSnapshot = await getDocs(allDocsQuery);
+        console.log('📊 Total approved documents in database:', allSnapshot.size);
+        
+        // Filter documents client-side to handle both string and number semesters
+        const docs: Document[] = [];
+        
+        allSnapshot.forEach((doc) => {
+          const docData = doc.data();
+          
+          // Check semester match (handle both number and string formats)
+          let semesterMatches = false;
+          if (typeof docData.semester === 'number') {
+            semesterMatches = docData.semester === semester;
+          } else if (typeof docData.semester === 'string') {
+            // Extract number from string like "1st Semester" or "3rd Semester"
+            const match = docData.semester.match(/^(\d+)/);
+            const extractedSemester = match ? parseInt(match[1], 10) : 0;
+            semesterMatches = extractedSemester === semester;
+          }
+          
+          // Check branch match (exact or contains)
+          const branchMatches = docData.branch === branchName || 
+                                docData.branch?.includes('Computer Science');
+          
+          console.log('📄 Checking document:', {
+            id: doc.id,
+            branch: docData.branch,
+            branchMatches,
+            semester: docData.semester,
+            semesterType: typeof docData.semester,
+            semesterMatches,
+            status: docData.status,
+            title: docData.title || docData.fileName
+          });
+          
+          if (semesterMatches && branchMatches) {
+            docs.push({
+              id: doc.id,
+              ...docData,
+            } as Document);
+          }
+        });
+
+        console.log('📚 Documents found after filtering:', docs.length);
+        console.log('Documents:', docs);
+
+        // Sort documents by upload date (newest first)
+        docs.sort((a, b) => {
+          const dateA = typeof a.uploadedAt === 'object' && 'toDate' in a.uploadedAt 
+            ? a.uploadedAt.toDate().getTime() 
+            : new Date(a.uploadedAt).getTime();
+          const dateB = typeof b.uploadedAt === 'object' && 'toDate' in b.uploadedAt 
+            ? b.uploadedAt.toDate().getTime() 
+            : new Date(b.uploadedAt).getTime();
+          return dateB - dateA;
+        });
+
+        // Group documents by type
+        const grouped: Record<string, Document[]> = {};
+        docs.forEach((doc) => {
+          const type = doc.documentType;
+          if (!grouped[type]) {
+            grouped[type] = [];
+          }
+          grouped[type].push(doc);
+        });
+
+        setDocuments(docs);
+        setDocumentsByType(grouped);
+      } catch (err) {
+        console.error('❌ Error fetching documents:', err);
+        setError('Failed to load documents. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDocuments();
   }, [branchName, semester]);
-
-  // ...existing code...
-
-  const totalResources = documents.length;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading resources...</p>
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center space-y-4">
+              <div className="relative h-16 w-16 mx-auto">
+                <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+              </div>
+              <p className="text-muted-foreground font-medium">Loading resources...</p>
             </div>
           </div>
         </main>
@@ -160,101 +228,93 @@ export default function SemesterDetailPage() {
     );
   }
 
-  if (!branchData) {
+  if (error) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
         <Header />
         <main className="container mx-auto px-4 py-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Resource Not Found</h1>
-            <p className="text-muted-foreground mb-6">
-              The requested branch or semester could not be found.
-            </p>
-            <Link href="/resources">
-              <Button>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Resources
-              </Button>
-            </Link>
-          </div>
+          <Card className="max-w-md mx-auto mt-20 border-destructive/20 bg-card/50 backdrop-blur-sm">
+            <CardContent className="py-12 text-center">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 ring-8 ring-destructive/5 mb-4">
+                <AlertCircle className="h-8 w-8 text-destructive" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground mb-3">Error Loading Resources</h1>
+              <p className="text-muted-foreground mb-6">{error}</p>
+              <Link href="/resources">
+                <Button className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Resources
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       <Header />
       
-      <main className="container mx-auto px-4 py-4 sm:py-8">
-        {/* Header Section */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+      <main className="container mx-auto px-4 py-8 sm:py-12">
+        {/* Modern Hero Section */}
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center gap-3 mb-6">
             <Link href="/resources">
-              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
-                <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <Button variant="outline" size="sm" className="hover:bg-primary/10 hover:border-primary/30 transition-all duration-200">
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Resources
               </Button>
             </Link>
           </div>
           
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-            <div className="p-3 sm:p-4 rounded-full bg-primary/20">
-              {branchIcons[branchName] || <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8" />}
+          <div className="text-center space-y-5">
+            {/* Branch Icon Badge */}
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-primary/10 backdrop-blur-sm ring-4 ring-primary/5 animate-in zoom-in duration-700">
+              {branchIcons[branchName] || <GraduationCap className="w-8 h-8 text-primary" />}
             </div>
-            <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground break-words">
-                {branchName}
-              </h1>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2">
-                <Badge variant="secondary" className="bg-primary/20 text-primary w-fit">
-                  Semester {semester}
-                </Badge>
-                <Badge variant="outline" className="w-fit">
-                  {totalResources} Resources
-                </Badge>
-              </div>
+            
+            {/* Branch Name - Gradient Text */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+              {branchName}
+            </h1>
+            
+            {/* Semester Badge */}
+            <div className="inline-flex items-center px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+              <BookOpen className="h-4 w-4 mr-2 text-primary" />
+              <span className="text-sm font-medium text-primary">{formatSemester(semester)}</span>
+            </div>
+            
+            {/* Description */}
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+              Study materials and resources for {branchName}
+            </p>
+            
+            {/* Stats Badge */}
+            <div className="inline-flex items-center px-4 py-2 rounded-full border border-primary/20 bg-card/50 backdrop-blur-sm">
+              <FileText className="h-4 w-4 mr-2 text-primary" />
+              <span className="text-sm font-medium">
+                {documents.length} {documents.length === 1 ? 'Resource' : 'Resources'} Available
+              </span>
             </div>
           </div>
-          
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
-            Study materials and resources for {branchName} - Semester {semester}
-          </p>
         </div>
 
-        {/* Resources by Category */}
-        {documentsLoading ? (
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading resources...</p>
-            </CardContent>
-          </Card>
-        ) : error ? (
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-12">
-              <XCircle className="h-16 w-16 mx-auto mb-4 text-destructive opacity-50" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                Error Loading Resources
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                {error}
-              </p>
-            </CardContent>
-          </Card>
-        ) : totalResources === 0 ? (
-          <Card className="bg-card/50 backdrop-blur-sm border-border">
-            <CardContent className="text-center py-12">
-              <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                No Resources Available
-              </h3>
-              <p className="text-muted-foreground mb-6">
-                No study materials have been uploaded for this semester yet.
+        {/* Content Section */}
+        {documents.length === 0 ? (
+          <Card className="border-dashed border-primary/20 bg-card/50 backdrop-blur-sm">
+            <CardContent className="py-16 text-center">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5 mb-6">
+                <FileText className="h-10 w-10 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold text-foreground mb-3">No Resources Available</h2>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                No study materials have been uploaded for this semester yet. Be the first to contribute!
               </p>
               <Link href="/contribute">
-                <Button>
-                  <BookOpen className="w-4 h-4 mr-2" />
+                <Button size="lg" className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg shadow-primary/20">
+                  <BookOpen className="w-5 h-5 mr-2" />
                   Contribute Resources
                 </Button>
               </Link>
@@ -262,94 +322,86 @@ export default function SemesterDetailPage() {
           </Card>
         ) : (
           <div className="space-y-8">
-            {Object.entries(documentsByCategory).map(([categoryName, categoryDocuments]) => (
-              <Card key={categoryName} className="bg-card/50 backdrop-blur-sm border-border">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    {getResourceIcon('document')}
-                    <span>{categoryName}</span>
-                    <Badge variant="outline" className="ml-auto">
-                      {categoryDocuments.length} {categoryDocuments.length === 1 ? 'Resource' : 'Resources'}
+            {Object.entries(documentsByType).map(([docType, docs]) => (
+              <Card key={docType} className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+                <CardHeader className="border-b border-border/50 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      {getResourceIcon(docType)}
+                    </div>
+                    <CardTitle className="text-xl">{docType}</CardTitle>
+                    <Badge variant="secondary" className="ml-auto bg-primary/10 text-primary border-primary/20">
+                      {docs.length} {docs.length === 1 ? 'Resource' : 'Resources'}
                     </Badge>
-                  </CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-6">
                   <div className="grid gap-4">
-                    {categoryDocuments.map((doc) => (
-                      <div
-                        key={doc.id}
-                        className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg bg-card/30 border border-border/50 hover:bg-card/50 transition-colors gap-3 sm:gap-4"
-                      >
-                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                          <div className="p-2 rounded bg-primary/10 flex-shrink-0">
-                            <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h4 className="font-semibold text-foreground mb-1 text-sm sm:text-base break-words">
-                              {doc.title}
-                            </h4>
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                              <Badge 
-                                variant="outline" 
-                                className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs w-fit"
-                              >
-                                {doc.documentType.toUpperCase()}
-                              </Badge>
-                              <div className="flex items-center gap-1">
-                                <User className="w-3 h-3" />
-                                <span className="truncate">{doc.uploadedBy}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
-                                <span className="truncate">{doc.uploadedAt?.toDate?.()?.toLocaleDateString() || 'Unknown date'}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <CheckCircle className="w-3 h-3 text-green-500" />
-                                <span>Approved</span>
-                              </div>
-                            </div>
-                            <div className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
-                              <span className="font-medium">{doc.subject}</span>
-                              {doc.nestedSubject && (
-                                <span> • {doc.nestedSubject}</span>
+                    {docs.map((doc) => (
+                      <Card key={doc.id} className="bg-background/50 backdrop-blur-sm border-primary/10 hover:border-primary/30 hover:shadow-lg transition-all duration-300 group">
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1 min-w-0 space-y-3">
+                              <CardTitle className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
+                                {doc.title || doc.fileName}
+                              </CardTitle>
+                              {doc.description && (
+                                <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+                                  {doc.description}
+                                </CardDescription>
                               )}
-                              <span> • {(doc.fileSize / 1024 / 1024).toFixed(1)} MB</span>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge className="bg-gradient-to-r from-primary to-purple-600 text-white border-0">
+                                  {doc.documentType}
+                                </Badge>
+                                <Badge variant="outline" className="border-green-500/30 text-green-500 bg-green-500/5">
+                                  {doc.subject}
+                                </Badge>
+                                {doc.nestedSubject && (
+                                  <Badge variant="outline" className="border-blue-500/30 text-blue-500 bg-blue-500/5 text-xs">
+                                    {doc.nestedSubject}
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                <span className="truncate max-w-[200px]">{doc.university}</span>
+                                <span>•</span>
+                                <span className="truncate max-w-[200px]">by {doc.uploaderEmail || doc.uploaderName}</span>
+                                <span>•</span>
+                                <span>{formatDate(doc.uploadedAt)}</span>
+                              </div>
+                            </div>
+                            <div className="shrink-0">
+                              <BrowsePDFViewer documentId={doc.id} fileUrl={doc.fileUrl} title={doc.title || doc.fileName} />
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => window.open(doc.fileUrl, '_blank')}
-                            className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white flex-1 sm:flex-none text-xs"
-                          >
-                            <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                            View
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground flex-1 sm:flex-none text-xs"
-                            onClick={() => {
-          // Clean filename and append VICKY
-          const cleanFileName = doc.fileName.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '_').substring(0, 50);
-          const fileNameWithVicky = `${cleanFileName}_VICKY.pdf`;
-          
-          const link = document.createElement('a');
-          link.href = doc.fileUrl;
-          link.download = fileNameWithVicky;
-          link.target = '_blank';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-                            }}
-                          >
-                            <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                            Download
-                          </Button>
-                        </div>
-                      </div>
+                        </CardHeader>
+                        <CardContent className="pt-0 border-t border-border/30">
+                          <div className="flex items-center gap-6 text-sm pt-4">
+                            <div className="flex items-center gap-2">
+                              <div className="h-8 w-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                                <Download className="h-4 w-4 text-green-500" />
+                              </div>
+                              <span className="text-muted-foreground">{doc.downloads || 0}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <Eye className="h-4 w-4 text-blue-500" />
+                              </div>
+                              <span className="text-muted-foreground">{doc.views || 0}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="h-8 w-8 rounded-full bg-pink-500/10 flex items-center justify-center">
+                                <Heart className="h-4 w-4 text-pink-500" />
+                              </div>
+                              <span className="text-muted-foreground">{doc.likes || 0}</span>
+                            </div>
+                            <div className="ml-auto text-xs text-muted-foreground font-medium px-3 py-1.5 rounded-full bg-primary/5 border border-primary/10">
+                              {(doc.fileSize / 1024 / 1024).toFixed(1)} MB
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 </CardContent>
@@ -358,25 +410,30 @@ export default function SemesterDetailPage() {
           </div>
         )}
 
-        {/* Contribute Section */}
-        <Card className="mt-6 sm:mt-8 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-          <CardContent className="text-center py-6 sm:py-8">
-            <BookOpen className="h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 text-primary" />
-            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">
-              Have Study Materials?
-            </h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
-              Help fellow students by contributing your notes, lab manuals, and question papers.
-            </p>
-            <Link href="/contribute">
-              <Button size="lg" className="w-full sm:w-auto">
-                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Contribute Resources
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        {/* Enhanced Contribution CTA */}
+        {documents.length > 0 && (
+          <Card className="mt-10 bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 border-primary/20 shadow-xl">
+            <CardContent className="py-10 text-center">
+              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5 mb-4">
+                <BookOpen className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold text-foreground mb-3">
+                Have more resources to share?
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Help your fellow students by contributing your notes and study materials!
+              </p>
+              <Link href="/contribute">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
+                  <BookOpen className="w-5 h-5 mr-2" />
+                  Contribute Resources
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        )}
       </main>
+      <Footer />
     </div>
   );
 }

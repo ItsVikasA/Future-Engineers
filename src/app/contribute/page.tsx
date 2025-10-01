@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { useAuthStore } from "@/stores/authStore";
 import {
   Upload,
@@ -19,6 +20,11 @@ import {
   CheckCircle,
   Clock,
   ChevronDown,
+  Rocket,
+  Code,
+  Lightbulb,
+  Zap,
+  Sparkles,
 } from "lucide-react";
 import { collection, addDoc } from "firebase/firestore";
 import { uploadViaAPI } from "@/lib/apiUpload";
@@ -1842,10 +1848,20 @@ export default function Contribute() {
 
       // Save document metadata to Firestore
       const finalSubject = formData.nestedSubject || formData.subject;
+      // Convert semester string (e.g., "1st Semester") to number (e.g., 1)
+      let semesterNumber: number = 0;
+      if (typeof formData.semester === 'string') {
+        const match = formData.semester.match(/^(\d+)/);
+        semesterNumber = match ? parseInt(match[1], 10) : 0;
+      } else if (typeof formData.semester === 'number') {
+        semesterNumber = formData.semester;
+      }
       const docData = {
         ...formData,
+        semester: semesterNumber, // Store as number for consistency
         subject: finalSubject, // Use the nested subject if available, otherwise use the main subject
         title: `${finalSubject} - ${formData.documentType}`, // Generate title from final subject and type
+        description: `${formData.documentType} for ${finalSubject} - ${formData.branch}`, // Add description for search
         uploadedBy: user.email, // Use email instead of UID for consistency
         uploaderName: user.displayName || user.email.split("@")[0],
         uploaderEmail: user.email,
@@ -1917,74 +1933,6 @@ export default function Contribute() {
     }
   };
 
-  // Test upload API connectivity
-  const testUploadAPI = async () => {
-    try {
-      console.log("🔍 Testing upload API connectivity...");
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ test: true })
-      });
-      console.log("📡 API test response status:", response.status);
-      const responseText = await response.text();
-      console.log("📡 API test response:", responseText);
-      
-      if (response.ok) {
-        toast.success("✅ Upload API is working!", { duration: 3000 });
-      } else {
-        toast.error(`❌ Upload API error: ${response.status}`, { duration: 5000 });
-      }
-    } catch (error) {
-      console.error("❌ API test failed:", error);
-      toast.error("❌ Upload API test failed - check console for details", { duration: 5000 });
-    }
-  };
-
-  // Check environment variables
-  const checkEnvironment = () => {
-    console.log("🔧 Environment Variables Check:");
-    console.log("NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME);
-    console.log("CLOUDINARY_API_KEY:", process.env.CLOUDINARY_API_KEY ? "✅ Set" : "❌ Missing");
-    console.log("CLOUDINARY_API_SECRET:", process.env.CLOUDINARY_API_SECRET ? "✅ Set" : "❌ Missing");
-    
-    const hasCloudName = !!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-    const hasApiKey = !!process.env.CLOUDINARY_API_KEY;
-    const hasApiSecret = !!process.env.CLOUDINARY_API_SECRET;
-    
-    if (hasCloudName && hasApiKey && hasApiSecret) {
-      toast.success("✅ All Cloudinary credentials are set!", { duration: 3000 });
-    } else {
-      toast.error("❌ Missing Cloudinary credentials - check environment variables", { duration: 5000 });
-    }
-  };
-
-  // Create a test PDF file for testing
-  const createTestPDF = () => {
-    try {
-      // Create a simple text content
-      const content = "This is a test PDF file for upload testing.";
-      
-      // Create a blob with PDF-like content (this is just for testing)
-      const blob = new Blob([content], { type: 'application/pdf' });
-      const file = new File([blob], 'test-upload.pdf', { type: 'application/pdf' });
-      
-      console.log("📄 Created test PDF file:", {
-        name: file.name,
-        type: file.type,
-        size: file.size
-      });
-      
-      setSelectedFile(file);
-      toast.success("📄 Test PDF file created and selected!", { duration: 3000 });
-    } catch (error) {
-      console.error("❌ Failed to create test PDF:", error);
-      toast.error("❌ Failed to create test PDF file", { duration: 3000 });
-    }
-  };
-
   // Show toast for unauthenticated users
   useEffect(() => {
     if (!isAuthenticated && user === null) {
@@ -2009,42 +1957,104 @@ export default function Contribute() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <Header />
 
-      <div className="container mx-auto px-4 py-4 sm:py-8">
-        {/* Page Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-4">
+      {/* Floating Decorative Elements - Enhanced with Many More Icons */}
+      <div className="absolute top-32 right-16 opacity-10 animate-float pointer-events-none">
+        <Upload className="w-28 h-28 text-blue-500" />
+      </div>
+      <div className="absolute top-1/4 left-10 opacity-10 animate-float-delayed pointer-events-none">
+        <Rocket className="w-32 h-32 text-purple-500" />
+      </div>
+      <div className="absolute bottom-32 right-20 opacity-10 animate-float pointer-events-none">
+        <Code className="w-24 h-24 text-green-500" />
+      </div>
+      <div className="absolute bottom-1/4 left-24 opacity-10 animate-float-delayed pointer-events-none">
+        <Lightbulb className="w-28 h-28 text-yellow-500" />
+      </div>
+      <div className="absolute top-1/2 right-32 opacity-10 animate-float pointer-events-none">
+        <Zap className="w-20 h-20 text-orange-500" />
+      </div>
+      <div className="absolute bottom-40 left-12 opacity-10 animate-float-delayed pointer-events-none">
+        <Sparkles className="w-16 h-16 text-pink-500" />
+      </div>
+      <div className="absolute top-1/3 right-1/4 opacity-8 animate-float pointer-events-none">
+        <FileText className="w-26 h-26 text-cyan-500" />
+      </div>
+      <div className="absolute bottom-1/3 left-1/4 opacity-8 animate-float-delayed pointer-events-none">
+        <CheckCircle className="w-24 h-24 text-emerald-500" />
+      </div>
+      <div className="absolute top-2/3 left-16 opacity-8 animate-float pointer-events-none">
+        <Clock className="w-22 h-22 text-indigo-500" />
+      </div>
+      <div className="absolute bottom-2/3 right-24 opacity-8 animate-float-delayed pointer-events-none">
+        <Upload className="w-20 h-20 text-teal-500" />
+      </div>
+      <div className="absolute top-1/2 left-1/3 opacity-8 animate-float pointer-events-none">
+        <Rocket className="w-24 h-24 text-violet-500" />
+      </div>
+      <div className="absolute bottom-1/2 right-1/3 opacity-8 animate-float-delayed pointer-events-none">
+        <Lightbulb className="w-20 h-20 text-amber-500" />
+      </div>
+      <div className="absolute top-1/4 right-12 opacity-7 animate-float pointer-events-none">
+        <Code className="w-18 h-18 text-lime-500" />
+      </div>
+      <div className="absolute bottom-1/4 left-36 opacity-7 animate-float-delayed pointer-events-none">
+        <Zap className="w-16 h-16 text-rose-500" />
+      </div>
+
+      <div className="container mx-auto px-4 py-8 sm:py-12 relative z-10">
+        {/* Modern Hero Section */}
+        <div className="text-center mb-10 sm:mb-12 space-y-4">
+          <div className="inline-flex items-center px-4 py-2 bg-primary/10 backdrop-blur-sm rounded-full mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Upload className="h-4 w-4 mr-2 text-primary" />
+            <span className="text-sm font-medium text-primary">Contribute Resources</span>
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
             Share Engineering Knowledge
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
-            Share your notes and help fellow engineers succeed. Your
-            contributions build the future!
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+            Share your notes and help fellow engineers succeed. Your contributions build the future!
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Upload Form */}
           <div className="lg:col-span-2">
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-              <CardHeader className="p-4 sm:p-6">
-                <CardTitle className="text-white text-lg sm:text-xl">Upload Document</CardTitle>
-                <CardDescription className="text-gray-400 text-sm sm:text-base">
-                  Fill in the details below to share your academic resources
-                </CardDescription>
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-xl">
+              <CardHeader className="p-6 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Upload Document</CardTitle>
+                    <CardDescription className="text-sm">
+                      Fill in the details below to share your academic resources
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Basic Information */}
-                  <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                      Basic Information
-                    </h3>
+              <CardContent className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Basic Information Section */}
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-3 pb-3 border-b border-primary/20">
+                      <div className="h-8 w-1 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Basic Information
+                      </h3>
+                      <div className="ml-auto">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                          Step 1
+                        </span>
+                      </div>
+                    </div>
                     {/* Semester Selection */}
-                    <div className="relative">
-                      <Label htmlFor="semester" className="text-foreground">
-                        Semester *
+                    <div className="relative group">
+                      <Label htmlFor="semester" className="text-foreground font-medium mb-2 inline-block">
+                        Semester <span className="text-destructive">*</span>
                       </Label>
                       <div className="relative">
                         <Input
@@ -2060,30 +2070,32 @@ export default function Contribute() {
                             )
                           }
                           placeholder="Select semester..."
-                          className="mt-1 bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background/80 focus:border-primary pr-10"
+                          className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10"
                           readOnly
                         />
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none mt-0.5" />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         {showSemesterDropdown && (
-                          <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg backdrop-blur-sm">
-                            {SEMESTERS.map((semester, index) => (
-                              <div
-                                key={index}
-                                onClick={() => handleSelectSemester(semester)}
-                                className="px-3 py-2 hover:bg-accent cursor-pointer text-popover-foreground text-sm border-b border-border last:border-b-0"
-                              >
-                                {semester}
-                              </div>
-                            ))}
+                          <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
+                            <div className="max-h-64 overflow-y-auto py-1">
+                              {SEMESTERS.map((semester, index) => (
+                                <div
+                                  key={index}
+                                  onClick={() => handleSelectSemester(semester)}
+                                  className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
+                                >
+                                  {semester}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {/* Branch Selection */}
-                    <div className="relative">
-                      <Label htmlFor="branch" className="text-foreground">
-                        Branch *
+                    <div className="relative group">
+                      <Label htmlFor="branch" className="text-foreground font-medium mb-2 inline-block">
+                        Branch <span className="text-destructive">*</span>
                       </Label>
                       <div className="relative">
                         <Input
@@ -2102,31 +2114,33 @@ export default function Contribute() {
                               ? "Select branch..."
                               : "Please select semester first"
                           }
-                          className="mt-1 bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background/80 focus:border-primary pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={!formData.semester}
                           readOnly
                         />
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none mt-0.5" />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         {showBranchDropdown && availableBranches.length > 0 && (
-                          <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto backdrop-blur-sm">
-                            {availableBranches.map((branch, index) => (
-                              <div
-                                key={index}
-                                onClick={() => handleSelectBranch(branch)}
-                                className="px-3 py-2 hover:bg-accent cursor-pointer text-popover-foreground text-sm border-b border-border last:border-b-0"
-                              >
-                                {branch}
-                              </div>
-                            ))}
+                          <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
+                            <div className="max-h-64 overflow-y-auto py-1">
+                              {availableBranches.map((branch, index) => (
+                                <div
+                                  key={index}
+                                  onClick={() => handleSelectBranch(branch)}
+                                  className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
+                                >
+                                  {branch}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {/* Subject Selection */}
-                    <div className="relative">
-                      <Label htmlFor="subject" className="text-foreground">
-                        Subject *
+                    <div className="relative group">
+                      <Label htmlFor="subject" className="text-foreground font-medium mb-2 inline-block">
+                        Subject <span className="text-destructive">*</span>
                       </Label>
                       <div className="relative">
                         <Input
@@ -2147,23 +2161,25 @@ export default function Contribute() {
                               ? "Select subject..."
                               : "Please select branch first"
                           }
-                          className="mt-1 bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background/80 focus:border-primary pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
                           disabled={!formData.branch || !formData.semester}
                           readOnly
                         />
-                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none mt-0.5" />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         {showSubjectDropdown &&
                           availableSubjects.length > 0 && (
-                            <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto backdrop-blur-sm">
-                              {availableSubjects.map((subject, index) => (
-                                <div
-                                  key={index}
-                                  onClick={() => handleSelectSubject(subject)}
-                                  className="px-3 py-2 hover:bg-accent cursor-pointer text-popover-foreground text-sm border-b border-border last:border-b-0"
-                                >
-                                  {subject}
-                                </div>
-                              ))}
+                            <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
+                              <div className="max-h-64 overflow-y-auto py-1">
+                                {availableSubjects.map((subject, index) => (
+                                  <div
+                                    key={index}
+                                    onClick={() => handleSelectSubject(subject)}
+                                    className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
+                                  >
+                                    {subject}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                       </div>
@@ -2171,15 +2187,15 @@ export default function Contribute() {
 
                     {/* Nested Subject Selection - Only show if subject has nested options */}
                     {hasNestedSubjects && (
-                      <div className="relative">
+                      <div className="relative group">
                         <Label
                           htmlFor="nestedSubject"
-                          className="text-foreground"
+                          className="text-foreground font-medium mb-2 inline-block"
                         >
                           {formData.subject.includes("ESC")
                             ? "Select ESC Subject"
                             : "Select PSC Subject"}{" "}
-                          *
+                          <span className="text-destructive">*</span>
                         </Label>
                         <div className="relative">
                           <Input
@@ -2195,26 +2211,28 @@ export default function Contribute() {
                               )
                             }
                             placeholder="Select specific subject..."
-                            className="mt-1 bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background/80 focus:border-primary pr-10"
+                            className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10"
                             readOnly
                           />
-                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none mt-0.5" />
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                           {showNestedSubjectDropdown &&
                             availableNestedSubjects.length > 0 && (
-                              <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto backdrop-blur-sm">
-                                {availableNestedSubjects.map(
-                                  (nestedSubject, index) => (
-                                    <div
-                                      key={index}
-                                      onClick={() =>
-                                        handleSelectNestedSubject(nestedSubject)
-                                      }
-                                      className="px-3 py-2 hover:bg-accent cursor-pointer text-popover-foreground text-sm border-b border-border last:border-b-0"
-                                    >
-                                      {nestedSubject}
-                                    </div>
-                                  )
-                                )}
+                              <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
+                                <div className="max-h-64 overflow-y-auto py-1">
+                                  {availableNestedSubjects.map(
+                                    (nestedSubject, index) => (
+                                      <div
+                                        key={index}
+                                        onClick={() =>
+                                          handleSelectNestedSubject(nestedSubject)
+                                        }
+                                        className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
+                                      >
+                                        {nestedSubject}
+                                      </div>
+                                    )
+                                  )}
+                                </div>
                               </div>
                             )}
                         </div>
@@ -2222,8 +2240,8 @@ export default function Contribute() {
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="relative">
-                        <Label htmlFor="university" className="text-foreground">
+                      <div className="relative group">
+                        <Label htmlFor="university" className="text-foreground font-medium mb-2 inline-block">
                           University
                         </Label>
                         <div className="relative">
@@ -2240,107 +2258,134 @@ export default function Contribute() {
                               )
                             }
                             placeholder="Start typing to search universities..."
-                            className="mt-1 bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background/80 focus:border-primary pr-10"
+                            className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10"
                           />
-                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none mt-0.5" />
+                          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         </div>
                         {showUniversityDropdown &&
                           filteredUniversities.length > 0 && (
-                            <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto backdrop-blur-sm">
-                              {filteredUniversities.map((university, index) => (
-                                <div
-                                  key={index}
-                                  onClick={() =>
-                                    handleSelectUniversity(university)
-                                  }
-                                  className="px-3 py-2 hover:bg-accent cursor-pointer text-popover-foreground text-sm border-b border-border last:border-b-0"
-                                >
-                                  {university}
-                                </div>
-                              ))}
+                            <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
+                              <div className="max-h-64 overflow-y-auto py-1">
+                                {filteredUniversities.map((university, index) => (
+                                  <div
+                                    key={index}
+                                    onClick={() =>
+                                      handleSelectUniversity(university)
+                                    }
+                                    className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
+                                  >
+                                    {university}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           )}
                       </div>
 
-                    </div>
-
-                    <div>
-                      <Label htmlFor="documentType" className="text-foreground">
-                        Document Type
-                      </Label>
-                      <select
-                        id="documentType"
-                        name="documentType"
-                        value={formData.documentType}
-                        onChange={handleInputChange}
-                        title="Select document type"
-                        className="mt-1 w-full px-3 py-2 bg-background/50 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
-                      >
-                        <option value="Notes">
-                          Notes
-                        </option>
-                        <option value="Lab Manual">
-                          Lab Manual
-                        </option>
-                        <option value="Question Paper">
-                          Question Paper
-                        </option>
-                        <option value="Assignment">
-                          Assignment
-                        </option>
-                        <option value="Syllabus">
-                          Syllabus
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* File Upload */}
-                  <div className="space-y-3 sm:space-y-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      File Upload
-                    </h3>
-
-                    <div className="border-2 border-dashed border-white/20 rounded-lg p-4 sm:p-6 md:p-8 text-center bg-white/5">
-                      <Upload className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-purple-400 mx-auto mb-3 sm:mb-4" />
-                      <h4 className="text-base sm:text-lg font-medium text-white mb-2">
-                        Upload your PDF
-                      </h4>
-                      <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base break-words">
-                        {selectedFile
-                          ? selectedFile.name
-                          : "Select a PDF file to upload (Max 50MB)"}
-                      </p>
-                      <input
-                        type="file"
-                        accept=".pdf,application/pdf"
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        id="file-upload"
-                        disabled={isUploading}
-                      />
-                      <label htmlFor="file-upload">
-                        <Button
-                          type="button"
-                          className="bg-purple-600 hover:bg-purple-700 text-white w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
-                          onClick={() =>
-                            document.getElementById("file-upload")?.click()
-                          }
-                          disabled={isUploading}
+                      <div className="group">
+                        <Label htmlFor="documentType" className="text-foreground font-medium mb-2 inline-block">
+                          Document Type
+                        </Label>
+                        <select
+                          id="documentType"
+                          name="documentType"
+                          value={formData.documentType}
+                          onChange={handleInputChange}
+                          title="Select document type"
+                          aria-label="Select document type"
+                          className="w-full h-11 px-4 bg-background/50 border border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 rounded-md focus:outline-none transition-all duration-200 text-foreground"
                         >
-                          {isUploading ? "Uploading..." : "Choose File"}
-                        </Button>
-                      </label>
+                          <option value="Notes">Notes</option>
+                          <option value="Lab Manual">Lab Manual</option>
+                          <option value="Question Paper">Question Paper</option>
+                          <option value="Assignment">Assignment</option>
+                          <option value="Syllabus">Syllabus</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Submit */}
-                  <div className="pt-6">
+                  {/* File Upload Section */}
+                  <div className="space-y-5">
+                    <div className="flex items-center gap-3 pb-3 border-b border-purple-500/20">
+                      <div className="h-8 w-1 bg-gradient-to-b from-purple-500 to-purple-600 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        File Upload
+                      </h3>
+                      <div className="ml-auto">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                          Step 2
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="relative group">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
+                      <div className="relative border-2 border-dashed border-purple-500/30 rounded-lg p-8 md:p-10 text-center bg-card/30 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300">
+                        <div className="space-y-4">
+                          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 ring-8 ring-purple-500/5">
+                            <Upload className="h-8 w-8 text-purple-500" />
+                          </div>
+                          <div>
+                            <h4 className="text-lg font-semibold text-foreground mb-2">
+                              Upload your PDF
+                            </h4>
+                            <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                              {selectedFile
+                                ? selectedFile.name
+                                : "Select a PDF file to upload (Max 50MB)"}
+                            </p>
+                          </div>
+                          <input
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                            id="file-upload"
+                            disabled={isUploading}
+                          />
+                          <label htmlFor="file-upload">
+                            <Button
+                              type="button"
+                              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                              onClick={() =>
+                                document.getElementById("file-upload")?.click()
+                              }
+                              disabled={isUploading}
+                            >
+                              {isUploading ? "Uploading..." : selectedFile ? "Change File" : "Choose File"}
+                            </Button>
+                          </label>
+                          {selectedFile && (
+                            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium border border-green-500/20">
+                              <CheckCircle className="h-3 w-3 mr-1.5" />
+                              File selected
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Submit Section */}
+                  <div className="space-y-5 pt-4">
+                    <div className="flex items-center gap-3 pb-3 border-b border-green-500/20">
+                      <div className="h-8 w-1 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Submit for Review
+                      </h3>
+                      <div className="ml-auto">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20">
+                          Step 3
+                        </span>
+                      </div>
+                    </div>
+
                     {isUploading && (
-                      <div className="mb-4 space-y-2">
-                        <div className="flex justify-between text-sm text-white/70">
-                          <span>Uploading... {uploadProgress.toFixed(1)}%</span>
-                          <span>
+                      <div className="space-y-3 p-4 rounded-lg bg-primary/5 border border-primary/10">
+                        <div className="flex justify-between text-sm text-foreground">
+                          <span className="font-medium">Uploading... {uploadProgress.toFixed(1)}%</span>
+                          <span className="text-muted-foreground">
                             {uploadSpeed > 0 && (
                               <>
                                 {(uploadSpeed / 1024 / 1024).toFixed(1)} MB/s
@@ -2350,9 +2395,9 @@ export default function Contribute() {
                             )}
                           </span>
                         </div>
-                        <div className="w-full bg-white/10 rounded-full h-2">
+                        <div className="w-full bg-background/50 rounded-full h-3 overflow-hidden border border-primary/10">
                           <div
-                            className={`bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300`}
+                            className="bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 h-3 rounded-full transition-all duration-300 shadow-lg shadow-primary/20"
                             style={{
                               width: `${Math.min(uploadProgress, 100)}%`,
                             }}
@@ -2360,46 +2405,16 @@ export default function Contribute() {
                         </div>
                       </div>
                     )}
+                    
                     <Button
                       type="submit"
                       disabled={isUploading || !selectedFile}
-                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                      className="w-full h-12 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-green-500/20 hover:shadow-xl hover:shadow-green-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base"
                     >
                       {isUploading
                         ? `Uploading... ${uploadProgress.toFixed(0)}%`
                         : "Submit for Review"}
                     </Button>
-                    
-                    {/* Diagnostic Buttons - Remove in production */}
-                    <div className="mt-4 space-y-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={checkEnvironment}
-                        className="w-full text-xs"
-                      >
-                        🔧 Check Environment Variables
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={testUploadAPI}
-                        className="w-full text-xs"
-                      >
-                        📡 Test Upload API
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={createTestPDF}
-                        className="w-full text-xs"
-                      >
-                        📄 Create Test PDF
-                      </Button>
-                    </div>
                   </div>
                 </form>
               </CardContent>
@@ -2408,56 +2423,77 @@ export default function Contribute() {
 
           {/* Guidelines Sidebar */}
           <div className="space-y-6">
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <FileText className="h-5 w-5" />
-                  Guidelines
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-blue-500" />
+                  </div>
+                  <span className="text-lg">Guidelines</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-300">
-                  <li>• Upload only PDF files</li>
-                  <li>• Maximum file size: 10MB</li>
-                  <li>• Ensure content is your own or you have permission</li>
-                  <li>• Provide clear, descriptive titles</li>
-                  <li>• Include relevant tags for better discoverability</li>
+                <ul className="space-y-3 text-sm">
+                  <li className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary font-bold mt-0.5">•</span>
+                    <span>Upload only <span className="text-foreground font-medium">PDF files</span></span>
+                  </li>
+                  <li className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary font-bold mt-0.5">•</span>
+                    <span>Maximum file size: <span className="text-foreground font-medium">10MB</span></span>
+                  </li>
+                  <li className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary font-bold mt-0.5">•</span>
+                    <span>Ensure content is your own or you have permission</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary font-bold mt-0.5">•</span>
+                    <span>Provide clear, descriptive titles</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary font-bold mt-0.5">•</span>
+                    <span>Include relevant tags for better discoverability</span>
+                  </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <Clock className="h-5 w-5" />
-                  Review Process
+            <Card className="bg-card/50 backdrop-blur-sm border-primary/10 shadow-lg hover:shadow-xl hover:border-primary/20 transition-all duration-300">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-purple-500" />
+                  </div>
+                  <span className="text-lg">Review Process</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
-                    <div>
-                      <p className="text-gray-300">You upload your document</p>
+                  <div className="flex items-start gap-3 group">
+                    <div className="h-9 w-9 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0 ring-2 ring-green-500/20 group-hover:ring-green-500/40 transition-all duration-300">
+                      <CheckCircle className="h-5 w-5 text-green-500" />
+                    </div>
+                    <div className="pt-1">
+                      <p className="text-foreground font-medium mb-1">You upload your document</p>
+                      <p className="text-muted-foreground text-xs">Fill the form and submit</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-yellow-400 mt-0.5" />
-                    <div>
-                      <p className="text-gray-300">
-                        Our moderators review the content
-                      </p>
-                      <p className="text-gray-400 text-xs">
-                        Review typically takes 24-48 hours
-                      </p>
+                  <div className="flex items-start gap-3 group">
+                    <div className="h-9 w-9 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0 ring-2 ring-yellow-500/20 group-hover:ring-yellow-500/40 transition-all duration-300">
+                      <Clock className="h-5 w-5 text-yellow-500" />
+                    </div>
+                    <div className="pt-1">
+                      <p className="text-foreground font-medium mb-1">Our moderators review the content</p>
+                      <p className="text-muted-foreground text-xs">Review typically takes 24-48 hours</p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-purple-400 mt-0.5" />
-                    <div>
-                      <p className="text-gray-300">
-                        Document goes live for students
-                      </p>
+                  <div className="flex items-start gap-3 group">
+                    <div className="h-9 w-9 rounded-full bg-purple-500/10 flex items-center justify-center flex-shrink-0 ring-2 ring-purple-500/20 group-hover:ring-purple-500/40 transition-all duration-300">
+                      <CheckCircle className="h-5 w-5 text-purple-500" />
+                    </div>
+                    <div className="pt-1">
+                      <p className="text-foreground font-medium mb-1">Document goes live for students</p>
+                      <p className="text-muted-foreground text-xs">Available for everyone to access</p>
                     </div>
                   </div>
                 </div>
@@ -2466,6 +2502,7 @@ export default function Contribute() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

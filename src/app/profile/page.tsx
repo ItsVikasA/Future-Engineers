@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,17 +23,21 @@ import {
   Award, 
   Clock, 
   Trash2,
-  Edit3,
+  Edit,
   MapPin,
   GraduationCap,
   TrendingUp,
   Users,
   Settings,
-  Shield,
   Crown,
   Linkedin,
   Github,
-  Globe
+  Globe,
+  User,
+  BookOpen,
+  Target,
+  Zap,
+  Heart
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -67,6 +73,7 @@ export default function ProfilePage() {
     displayName: '',
     email: '',
     photoURL: '',
+    bannerURL: '', // Add banner URL
     bio: '',
     university: '',
     course: '',
@@ -85,11 +92,24 @@ export default function ProfilePage() {
   });
 
   // Helper function to handle Firestore timestamp conversion
-  const getDateFromTimestamp = (timestamp: { toDate(): Date } | Date): Date => {
+  const getDateFromTimestamp = (timestamp: { toDate(): Date } | Date | number): Date => {
     if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp && typeof timestamp.toDate === 'function') {
       return timestamp.toDate();
     }
+    if (typeof timestamp === 'number') {
+      return new Date(timestamp);
+    }
     return timestamp as Date;
+  };
+
+  // Helper function to get initials from name or email
+  const getInitials = (nameOrEmail: string): string => {
+    if (!nameOrEmail) return '?';
+    const parts = nameOrEmail.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return nameOrEmail.substring(0, 2).toUpperCase();
   };
 
   // Redirect if not authenticated
@@ -115,6 +135,7 @@ export default function ProfilePage() {
             displayName: user.displayName || userData.displayName || 'Anonymous User',
             email: user.email || '',
             photoURL: user.photoURL || userData.photoURL || '',
+            bannerURL: userData.bannerURL || '', // Load banner URL
             bio: userData.bio || 'Engineering student passionate about learning and sharing knowledge.',
             university: userData.university || '',
             course: userData.course || '',
@@ -244,414 +265,591 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Profile Header with Role Distinction */}
-          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-600 mb-8">
-            <CardContent className="p-8">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-8">
-                {/* Profile Picture and Basic Info */}
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 w-full">
-                  <div className="relative">
-                    <Avatar className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 border-4 border-purple-500/30">
-                      <AvatarImage src={profileData.photoURL} alt={profileData.displayName} />
-                      <AvatarFallback className="text-2xl sm:text-3xl bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                        {profileData.displayName.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    {isAdmin && (
-                      <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 sm:p-2">
-                        <Crown className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
+      {/* Floating Decorative Elements - Enhanced with Many More Icons */}
+      <div className="absolute top-24 right-20 opacity-10 animate-float pointer-events-none">
+        <User className="w-32 h-32 text-blue-500" />
+      </div>
+      <div className="absolute top-1/3 left-16 opacity-10 animate-float-delayed pointer-events-none">
+        <Award className="w-28 h-28 text-purple-500" />
+      </div>
+      <div className="absolute bottom-32 right-28 opacity-10 animate-float pointer-events-none">
+        <Target className="w-26 h-26 text-green-500" />
+      </div>
+      <div className="absolute bottom-1/4 left-24 opacity-10 animate-float-delayed pointer-events-none">
+        <Zap className="w-24 h-24 text-yellow-500" />
+      </div>
+      <div className="absolute top-1/2 right-36 opacity-10 animate-float pointer-events-none">
+        <Heart className="w-20 h-20 text-pink-500" />
+      </div>
+      <div className="absolute bottom-40 left-12 opacity-10 animate-float-delayed pointer-events-none">
+        <Crown className="w-22 h-22 text-orange-500" />
+      </div>
+      <div className="absolute top-1/4 right-32 opacity-8 animate-float pointer-events-none">
+        <Settings className="w-24 h-24 text-cyan-500" />
+      </div>
+      <div className="absolute bottom-1/3 left-32 opacity-8 animate-float-delayed pointer-events-none">
+        <TrendingUp className="w-22 h-22 text-emerald-500" />
+      </div>
+      <div className="absolute top-2/3 left-20 opacity-8 animate-float pointer-events-none">
+        <Users className="w-24 h-24 text-indigo-500" />
+      </div>
+      <div className="absolute bottom-2/3 right-24 opacity-8 animate-float-delayed pointer-events-none">
+        <GraduationCap className="w-20 h-20 text-violet-500" />
+      </div>
+      <div className="absolute top-1/2 left-1/4 opacity-8 animate-float pointer-events-none">
+        <BookOpen className="w-22 h-22 text-teal-500" />
+      </div>
+      <div className="absolute bottom-1/2 right-1/4 opacity-8 animate-float-delayed pointer-events-none">
+        <Mail className="w-20 h-20 text-amber-500" />
+      </div>
+      <div className="absolute top-3/4 right-40 opacity-7 animate-float pointer-events-none">
+        <Calendar className="w-18 h-18 text-rose-500" />
+      </div>
+      <div className="absolute bottom-3/4 left-36 opacity-7 animate-float-delayed pointer-events-none">
+        <MapPin className="w-18 h-18 text-lime-500" />
+      </div>
+      <div className="absolute top-1/3 left-1/3 opacity-7 animate-float pointer-events-none">
+        <Github className="w-20 h-20 text-slate-500" />
+      </div>
+      <div className="absolute bottom-1/3 right-1/3 opacity-7 animate-float-delayed pointer-events-none">
+        <Globe className="w-18 h-18 text-sky-500" />
+      </div>
+      <div className="absolute top-1/4 left-1/2 opacity-7 animate-float pointer-events-none">
+        <Linkedin className="w-16 h-16 text-blue-400" />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <div className="space-y-8">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <>
+              {/* Profile Hero Card - LinkedIn Style */}
+              <Card className="bg-card/50 backdrop-blur-sm border-primary/10 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                {/* Banner Section - LinkedIn style (4:1 aspect ratio) */}
+                <div className="relative w-full h-48 md:h-64 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20">
+                  {profileData.bannerURL ? (
+                    <Image 
+                      src={profileData.bannerURL} 
+                      alt="Profile Banner" 
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20" />
+                  )}
+                </div>
+                
+                {/* Profile Content */}
+                <CardContent className="p-0">
+                  {/* Profile Picture overlapping banner */}
+                  <div className="px-6 md:px-8">
+                    <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 md:-mt-20 mb-4">
+                      {/* Avatar Section */}
+                      <div className="flex-shrink-0 mb-4 md:mb-0">
+                        <div className="relative">
+                          <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-card shadow-2xl bg-card ring-2 ring-primary/20">
+                            <AvatarImage src={profileData.photoURL || ''} alt={profileData.displayName || 'User'} />
+                            <AvatarFallback className="text-3xl md:text-4xl bg-gradient-to-br from-primary to-purple-600 text-white">
+                              {getInitials(profileData.displayName || profileData.email)}
+                            </AvatarFallback>
+                          </Avatar>
+                          {isAdmin && (
+                            <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-3 shadow-lg animate-pulse">
+                              <Crown className="h-5 w-5 text-white" />
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-2 w-full text-center sm:text-left">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 min-w-0">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white truncate">{profileData.displayName}</h1>
-                      <div className="flex justify-center sm:justify-start">
-                        {isAdmin ? (
-                          <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 flex items-center gap-1 text-xs sm:text-sm">
-                            <Shield className="h-3 w-3" />
-                            Administrator
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="border-primary text-primary text-xs sm:text-sm">
-                            <GraduationCap className="h-3 w-3 mr-1" />
-                            Student
-                          </Badge>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-2 md:mb-6">
+                        <Link href="/profile/edit">
+                          <Button className="w-full sm:w-auto bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white transition-all duration-300 hover:scale-105 shadow-lg">
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Profile
+                          </Button>
+                        </Link>
+                        {isAdmin && (
+                          <Link href="/admin">
+                            <Button variant="outline" className="w-full sm:w-auto border-yellow-500/50 text-yellow-600 hover:bg-yellow-500 hover:text-white hover:scale-105 transition-all duration-300 shadow-lg">
+                              <Crown className="h-4 w-4 mr-2" />
+                              Admin Panel
+                            </Button>
+                          </Link>
                         )}
                       </div>
                     </div>
-                    
-                    <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2 justify-center sm:justify-start">
-                      <Mail className="h-4 w-4" />
-                      {profileData.email}
-                    </div>
-                    
-                    {profileData.location && (
-                      <div className="flex items-center text-gray-700 dark:text-gray-200 gap-2 justify-center sm:justify-start">
-                        <MapPin className="h-4 w-4" />
-                        {profileData.location}
+
+                    {/* Profile Details */}
+                    <div className="pb-6 space-y-4">
+                      {/* Name and Badges */}
+                      <div>
+                        <h1 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-2 flex-wrap">
+                          {profileData.displayName || 'User'}
+                          {isAdmin && (
+                            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 shadow-lg">
+                              <Crown className="h-3 w-3 mr-1" />
+                              Admin
+                            </Badge>
+                          )}
+                          {!isAdmin && (
+                            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0">
+                              Student
+                            </Badge>
+                          )}
+                        </h1>
+                        
+                        {/* Bio/Role */}
+                        {profileData.bio && (
+                          <p className="text-muted-foreground text-sm md:text-base mb-3">
+                            {profileData.bio}
+                          </p>
+                        )}
+                        
+                        {/* University & Course */}
+                        {(profileData.university || profileData.course) && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                            <GraduationCap className="h-4 w-4 flex-shrink-0" />
+                            <span>
+                              {profileData.course && <span className="font-medium">{profileData.course}</span>}
+                              {profileData.course && profileData.university && <span> • </span>}
+                              {profileData.university && <span>{profileData.university}</span>}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Contact Info */}
+                        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 flex-shrink-0" />
+                            <span className="break-all">{profileData.email}</span>
+                          </div>
+                          {profileData.location && (
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4 flex-shrink-0" />
+                              <span>{profileData.location}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 flex-shrink-0" />
+                            <span>Joined {profileData.joinedAt.toLocaleDateString()}</span>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                    
-                    <div className="flex items-center text-gray-600 dark:text-gray-300 gap-2 justify-center sm:justify-start">
-                      <Calendar className="h-4 w-4" />
-                      Member since {profileData.joinedAt.toLocaleDateString()}
+
+                      {/* Social Links - LinkedIn Style */}
+                      {(profileData.socialMedia.linkedin || profileData.socialMedia.github || profileData.socialMedia.portfolio) && (
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border/50">
+                          {profileData.socialMedia.linkedin && (
+                            <a
+                              href={profileData.socialMedia.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 transition-colors text-sm"
+                            >
+                              <Linkedin className="h-4 w-4" />
+                              <span>LinkedIn</span>
+                            </a>
+                          )}
+                          {profileData.socialMedia.github && (
+                            <a
+                              href={profileData.socialMedia.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-500/10 hover:bg-gray-500/20 text-gray-700 dark:text-gray-300 transition-colors text-sm"
+                            >
+                              <Github className="h-4 w-4" />
+                              <span>GitHub</span>
+                            </a>
+                          )}
+                          {profileData.socialMedia.portfolio && (
+                            <a
+                              href={profileData.socialMedia.portfolio}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 transition-colors text-sm"
+                            >
+                              <Globe className="h-4 w-4" />
+                              <span>Portfolio</span>
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                {/* Quick Actions */}
-                <div className="flex-1 lg:flex lg:justify-end w-full">
-                  <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <Link href="/profile/edit" className="w-full sm:w-auto">
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2 w-full justify-center">
-                        <Edit3 className="h-4 w-4" />
-                        Edit Profile
-                      </Button>
-                    </Link>
-                    {isAdmin && (
-                      <Link href="/admin" className="w-full sm:w-auto">
-                        <Button variant="outline" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black flex items-center gap-2 w-full justify-center">
-                          <Settings className="h-4 w-4" />
-                          Admin Panel
+              {/* Stats Cards Row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {/* Reputation Card */}
+                <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 text-center">
+                    <Award className="h-8 w-8 mx-auto mb-2 text-primary" />
+                    <p className="text-2xl font-bold text-primary">{profileData.reputation}</p>
+                    <p className="text-xs text-muted-foreground">Reputation</p>
+                  </CardContent>
+                </Card>
+
+                {/* Uploads Card */}
+                <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 text-center">
+                    <FileText className="h-8 w-8 mx-auto mb-2 text-green-600" />
+                    <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
+                    <p className="text-xs text-muted-foreground">Uploads</p>
+                  </CardContent>
+                </Card>
+
+                {/* Views Card */}
+                <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 text-center">
+                    <Eye className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+                    <p className="text-2xl font-bold text-blue-600">{stats.totalViews}</p>
+                    <p className="text-xs text-muted-foreground">Views</p>
+                  </CardContent>
+                </Card>
+
+                {/* Downloads Card */}
+                <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-4 text-center">
+                    <Download className="h-8 w-8 mx-auto mb-2 text-purple-600" />
+                    <p className="text-2xl font-bold text-purple-600">{stats.totalDownloads}</p>
+                    <p className="text-xs text-muted-foreground">Downloads</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Rest of the content */}
+              {/* Bio Section - Moved below stats */}
+              {profileData.bio && profileData.bio !== 'Engineering student passionate about learning and sharing knowledge.' && (
+                <Card className="bg-card/50 backdrop-blur-sm border-primary/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      About
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground leading-relaxed">{profileData.bio}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Academic Information */}
+              {(profileData.university || profileData.course || profileData.semester) && (
+                <Card className="bg-card/50 backdrop-blur-sm border-primary/10">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <GraduationCap className="h-5 w-5" />
+                      Academic Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {profileData.university && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all">
+                          <div className="p-2 rounded-lg bg-blue-500/20">
+                            <GraduationCap className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">University</p>
+                            <p className="font-medium text-sm">{profileData.university}</p>
+                          </div>
+                        </div>
+                      )}
+                      {profileData.course && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all">
+                          <div className="p-2 rounded-lg bg-purple-500/20">
+                            <BookOpen className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Course</p>
+                            <p className="font-medium text-sm">{profileData.course}</p>
+                          </div>
+                        </div>
+                      )}
+                      {profileData.semester && (
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all">
+                          <div className="p-2 rounded-lg bg-green-500/20">
+                            <Clock className="h-4 w-4 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Semester</p>
+                            <p className="font-medium text-sm">{profileData.semester}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Documents Section continues... */}
+              
+              {/* Stats Cards - 6 Column Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <Award className="h-8 w-8 mx-auto mb-3 text-yellow-600" />
+                    <div className="text-3xl font-bold mb-1">{profileData.reputation}</div>
+                    <div className="text-sm text-muted-foreground">Reputation</div>
+                    {isAdmin && <Badge className="mt-2 bg-yellow-500/20 text-yellow-700">MAX</Badge>}
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <FileText className="h-8 w-8 mx-auto mb-3 text-blue-600" />
+                    <div className="text-3xl font-bold mb-1">{stats.total}</div>
+                    <div className="text-sm text-muted-foreground">Total Uploads</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <Download className="h-8 w-8 mx-auto mb-3 text-green-600" />
+                    <div className="text-3xl font-bold mb-1">{stats.totalDownloads}</div>
+                    <div className="text-sm text-muted-foreground">Downloads</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <Eye className="h-8 w-8 mx-auto mb-3 text-purple-600" />
+                    <div className="text-3xl font-bold mb-1">{stats.totalViews}</div>
+                    <div className="text-sm text-muted-foreground">Views</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <Clock className="h-8 w-8 mx-auto mb-3 text-orange-600" />
+                    <div className="text-3xl font-bold mb-1">{stats.pending}</div>
+                    <div className="text-sm text-muted-foreground">Pending</div>
+                  </CardContent>
+                </Card>
+                
+                <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border-emerald-500/20 hover:scale-105 transition-transform duration-300 shadow-lg">
+                  <CardContent className="p-6 text-center">
+                    <TrendingUp className="h-8 w-8 mx-auto mb-3 text-emerald-600" />
+                    <div className="text-3xl font-bold mb-1">{stats.approved}</div>
+                    <div className="text-sm text-muted-foreground">Approved</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Admin Quick Actions */}
+              {isAdmin && (
+                <Card className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 hover:shadow-xl transition-shadow duration-300">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Crown className="h-5 w-5 text-yellow-600" />
+                      <span className="bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">Administrator Tools</span>
+                    </CardTitle>
+                    <CardDescription>Quick access to admin functions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <Link href="/admin/users">
+                        <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/20 hover:border-yellow-500 h-16 flex-col gap-1 hover:scale-105 transition-all">
+                          <Users className="h-5 w-5 text-yellow-600" />
+                          <span className="text-sm">Manage Users</span>
                         </Button>
                       </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Bio Section */}
-              {profileData.bio && (
-                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-gray-800 dark:text-gray-100 text-sm sm:text-base md:text-lg leading-relaxed font-medium break-words">{profileData.bio}</p>
-                </div>
+                      <Link href="/admin">
+                        <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/20 hover:border-yellow-500 h-16 flex-col gap-1 hover:scale-105 transition-all">
+                          <FileText className="h-5 w-5 text-yellow-600" />
+                          <span className="text-sm">Content Review</span>
+                        </Button>
+                      </Link>
+                      <Link href="/admin/analytics">
+                        <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/20 hover:border-yellow-500 h-16 flex-col gap-1 hover:scale-105 transition-all">
+                          <TrendingUp className="h-5 w-5 text-yellow-600" />
+                          <span className="text-sm">Analytics</span>
+                        </Button>
+                      </Link>
+                      <Link href="/admin/settings">
+                        <Button variant="outline" className="w-full border-yellow-500/50 hover:bg-yellow-500/20 hover:border-yellow-500 h-16 flex-col gap-1 hover:scale-105 transition-all">
+                          <Settings className="h-5 w-5 text-yellow-600" />
+                          <span className="text-sm">Settings</span>
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               )}
 
-              {/* Academic Info */}
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {profileData.university && (
-                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <GraduationCap className="h-4 w-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
-                      <span className="text-sm font-medium">{profileData.university}</span>
-                    </div>
-                  )}
-                  {profileData.course && (
-                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      <span className="text-sm font-medium">{profileData.course}</span>
-                    </div>
-                  )}
-                  {profileData.semester && (
-                    <div className="flex items-center gap-2 text-gray-800 dark:text-gray-100 p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                      <Clock className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-                      <span className="text-sm font-medium">Semester {profileData.semester}</span>
-                    </div>
-                  )}
+              {/* Search and Filter */}
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Search your documents..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-12 bg-card/50 backdrop-blur-sm border-primary/20 focus:border-primary/50 transition-colors"
+                  />
                 </div>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-4 py-3 h-12 bg-card/50 backdrop-blur-sm border border-primary/20 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 min-w-[150px] transition-all"
+                  aria-label="Filter documents by status"
+                >
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
               </div>
 
-              {/* Social Media Links */}
-              {(profileData.socialMedia.linkedin || profileData.socialMedia.github || profileData.socialMedia.portfolio) && (
-                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Connect with me</h3>
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                    {profileData.socialMedia.linkedin && (
-                      <a
-                        href={profileData.socialMedia.linkedin.startsWith('http') ? profileData.socialMedia.linkedin : `https://${profileData.socialMedia.linkedin}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors text-sm font-medium"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                        <span>LinkedIn</span>
-                      </a>
-                    )}
-                    {profileData.socialMedia.github && (
-                      <a
-                        href={profileData.socialMedia.github.startsWith('http') ? profileData.socialMedia.github : `https://${profileData.socialMedia.github}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-800 hover:bg-gray-900 rounded-lg text-white transition-colors text-sm font-medium"
-                      >
-                        <Github className="h-4 w-4" />
-                        <span>GitHub</span>
-                      </a>
-                    )}
-                    {profileData.socialMedia.portfolio && (
-                      <a
-                        href={profileData.socialMedia.portfolio.startsWith('http') ? profileData.socialMedia.portfolio : `https://${profileData.socialMedia.portfolio}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors text-sm font-medium"
-                      >
-                        <Globe className="h-4 w-4" />
-                        <span>Portfolio</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Enhanced Stats Section */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-8">
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <Award className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-yellow-600 dark:text-yellow-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{profileData.reputation}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Reputation</div>
-                {isAdmin && <Badge className="mt-1 sm:mt-2 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 text-xs">MAX</Badge>}
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-blue-600 dark:text-blue-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Total Uploads</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <Download className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-green-600 dark:text-green-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalDownloads}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Downloads</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <Eye className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-purple-600 dark:text-purple-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.totalViews}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Views</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <Clock className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-yellow-600 dark:text-yellow-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.pending}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Pending</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 transition-colors">
-              <CardContent className="p-3 sm:p-4 md:p-6 text-center">
-                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 sm:mb-3 text-emerald-600 dark:text-emerald-400" />
-                <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{stats.approved}</div>
-                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">Approved</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Admin-specific Quick Actions */}
-          {isAdmin && (
-            <Card className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 backdrop-blur-sm border-yellow-500/30 mb-8">
-              <CardHeader>
-                <CardTitle className="text-yellow-400 flex items-center gap-2">
-                  <Crown className="h-5 w-5" />
-                  Administrator Tools
-                </CardTitle>
-                <CardDescription className="text-yellow-300/80">
-                  Quick access to admin functions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-4 gap-4">
-                  <Link href="/admin/users">
-                    <Button variant="outline" className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500 hover:text-black h-16 flex-col gap-1">
-                      <Users className="h-5 w-5" />
-                      <span className="text-sm">Manage Users</span>
-                    </Button>
-                  </Link>
-                  <Link href="/admin">
-                    <Button variant="outline" className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500 hover:text-black h-16 flex-col gap-1">
-                      <FileText className="h-5 w-5" />
-                      <span className="text-sm">Content Review</span>
-                    </Button>
-                  </Link>
-                  <Link href="/admin/analytics">
-                    <Button variant="outline" className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500 hover:text-black h-16 flex-col gap-1">
-                      <TrendingUp className="h-5 w-5" />
-                      <span className="text-sm">Analytics</span>
-                    </Button>
-                  </Link>
-                  <Link href="/admin/settings">
-                    <Button variant="outline" className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500 hover:text-black h-16 flex-col gap-1">
-                      <Settings className="h-5 w-5" />
-                      <span className="text-sm">Settings</span>
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Search and Filter */}
-          <div className="mb-6 flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Search your documents..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 h-12"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[150px]"
-              aria-label="Filter documents by status"
-            >
-              <option value="all" className="bg-white dark:bg-gray-700">All Status</option>
-              <option value="pending" className="bg-white dark:bg-gray-700">Pending</option>
-              <option value="approved" className="bg-white dark:bg-gray-700">Approved</option>
-              <option value="rejected" className="bg-white dark:bg-gray-700">Rejected</option>
-            </select>
-          </div>
-
-          {/* Enhanced Documents List */}
-          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-600">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-gray-900 dark:text-white flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Your Documents ({filteredDocuments.length})
-                  </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-300">
-                    Manage and track your uploaded documents
-                  </CardDescription>
-                </div>
-                <Link href="/contribute">
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                    Upload New Document
-                  </Button>
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                  <p className="text-gray-600 dark:text-gray-300">Loading your documents...</p>
-                </div>
-              ) : filteredDocuments.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="h-16 w-16 mx-auto text-gray-500 dark:text-gray-400 mb-4" />
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Documents Found</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    {searchTerm || statusFilter !== 'all' 
-                      ? 'No documents match your current filters'
-                      : 'You haven\'t uploaded any documents yet'
-                    }
-                  </p>
-                  {!searchTerm && statusFilter === 'all' && (
+              {/* Documents List */}
+              <Card className="bg-card/50 backdrop-blur-sm border-primary/10 hover:shadow-xl transition-shadow duration-300">
+                <CardHeader>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <CardTitle className="flex items-center gap-2 text-2xl">
+                        <FileText className="h-6 w-6" />
+                        Your Documents ({filteredDocuments.length})
+                      </CardTitle>
+                      <CardDescription>Manage and track your uploaded documents</CardDescription>
+                    </div>
                     <Link href="/contribute">
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                        Upload Your First Document
+                      <Button className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white hover:scale-105 transition-all shadow-lg">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Upload New Document
                       </Button>
                     </Link>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredDocuments.map((document) => (
-                    <div key={document.id} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <div className="flex flex-col gap-4">
-                          <div className="flex-1">
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-3 mb-3">
-                              <h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white leading-snug break-words">{document.title}</h3>
-                              <div className="flex justify-start sm:justify-end">
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {filteredDocuments.length === 0 ? (
+                    <div className="text-center py-16">
+                      <FileText className="h-20 w-20 mx-auto text-muted-foreground/50 mb-4" />
+                      <h3 className="text-xl font-semibold mb-2">No Documents Found</h3>
+                      <p className="text-muted-foreground mb-6">
+                        {searchTerm || statusFilter !== 'all' 
+                          ? 'No documents match your current filters'
+                          : 'You haven\'t uploaded any documents yet'
+                        }
+                      </p>
+                      {!searchTerm && statusFilter === 'all' && (
+                        <Link href="/contribute">
+                          <Button className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white hover:scale-105 transition-all shadow-lg">
+                            <FileText className="h-4 w-4 mr-2" />
+                            Upload Your First Document
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredDocuments.map((document) => (
+                        <Card key={document.id} className="bg-background/50 border-primary/10 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                          <CardContent className="p-6">
+                            <div className="flex flex-col gap-4">
+                              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                <h3 className="text-lg font-semibold break-words flex-1">{document.title}</h3>
                                 <Badge 
-                                  variant={
-                                    document.status === 'approved' ? 'default' :
-                                    document.status === 'pending' ? 'secondary' : 'destructive'
-                                  }
                                   className={
-                                    document.status === 'approved' ? 'bg-green-600 hover:bg-green-700 text-white text-xs' :
-                                    document.status === 'pending' ? 'bg-yellow-600 hover:bg-yellow-700 text-white text-xs' :
-                                    'bg-red-600 hover:bg-red-700 text-white text-xs'
+                                    document.status === 'approved' 
+                                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md' :
+                                    document.status === 'pending' 
+                                      ? 'bg-gradient-to-r from-orange-500 to-yellow-500 text-white border-0 shadow-md' :
+                                      'bg-gradient-to-r from-red-500 to-pink-500 text-white border-0 shadow-md'
                                   }
                                 >
                                   {document.status.charAt(0).toUpperCase() + document.status.slice(1)}
                                 </Badge>
                               </div>
-                            </div>
-                          
-                          <p className="text-gray-700 dark:text-gray-200 mb-4 leading-relaxed text-sm sm:text-base break-words">{document.description}</p>
-                          
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                                <FileText className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span className="font-medium">Subject:</span>
-                                <span className="truncate">{document.subject}</span>
+                            
+                              <p className="text-muted-foreground leading-relaxed break-words">{document.description}</p>
+                            
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <div className="p-1.5 rounded bg-blue-500/10">
+                                      <FileText className="h-3.5 w-3.5 text-blue-600" />
+                                    </div>
+                                    <span className="font-medium">Subject:</span>
+                                    <span className="text-muted-foreground truncate">{document.subject}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <div className="p-1.5 rounded bg-purple-500/10">
+                                      <GraduationCap className="h-3.5 w-3.5 text-purple-600" />
+                                    </div>
+                                    <span className="font-medium">Course:</span>
+                                    <span className="text-muted-foreground truncate">{document.course}</span>
+                                  </div>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <div className="p-1.5 rounded bg-green-500/10">
+                                      <Clock className="h-3.5 w-3.5 text-green-600" />
+                                    </div>
+                                    <span className="font-medium">Semester:</span>
+                                    <span className="text-muted-foreground truncate">{document.semester}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-sm">
+                                    <div className="p-1.5 rounded bg-pink-500/10">
+                                      <Calendar className="h-3.5 w-3.5 text-pink-600" />
+                                    </div>
+                                    <span className="font-medium">Uploaded:</span>
+                                    <span className="text-muted-foreground truncate">{getDateFromTimestamp(document.uploadedAt).toLocaleDateString()}</span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                                <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span className="font-medium">Course:</span>
-                                <span className="truncate">{document.course}</span>
+                            
+                              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2 border-t border-border/50">
+                                <div className="flex items-center gap-1.5">
+                                  <Eye className="h-4 w-4 text-purple-600" />
+                                  <span className="font-medium">{document.views || 0}</span>
+                                  <span>views</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <Download className="h-4 w-4 text-green-600" />
+                                  <span className="font-medium">{document.downloads || 0}</span>
+                                  <span>downloads</span>
+                                </div>
+                                <Badge variant="outline" className="ml-auto">
+                                  {document.documentType}
+                                </Badge>
+                              </div>
+
+                              <div className="flex justify-end pt-2">
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => handleDeleteDocument(document.id, document.title)}
+                                  className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white border-0 hover:scale-105 transition-all shadow-lg"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </Button>
                               </div>
                             </div>
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                                <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span className="font-medium">Semester:</span>
-                                <span className="truncate">{document.semester}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-300">
-                                <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                                <span className="font-medium">Uploaded:</span>
-                                <span className="truncate">{getDateFromTimestamp(document.uploadedAt).toLocaleDateString()}</span>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
-                            <div className="flex items-center gap-1">
-                              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
-                              <span>{document.views || 0} views</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Download className="h-3 w-3 sm:h-4 sm:w-4" />
-                              <span>{document.downloads || 0} downloads</span>
-                            </div>
-                            <Badge variant="outline" className="text-xs w-fit">
-                              {document.documentType}
-                            </Badge>
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-end">
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDeleteDocument(document.id, document.title)}
-                            className="bg-red-600/80 hover:bg-red-600 border-0 w-full sm:w-auto"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                  )}
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
+
+
+

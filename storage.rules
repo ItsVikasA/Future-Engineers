@@ -18,5 +18,24 @@ service firebase.storage {
         && request.resource.size < 5 * 1024 * 1024 // 5MB limit
         && request.resource.contentType.matches('image/.*'); // Only images
     }
+    
+    // Profile images (new path)
+    match /profile-images/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.size < 5 * 1024 * 1024 // 5MB limit
+        && request.resource.contentType.matches('image/.*'); // Only images
+    }
+    
+    // Profile banners (new path)
+    match /profile-banners/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && request.auth.uid == userId
+        && request.resource.size < 10 * 1024 * 1024 // 10MB limit for banners
+        && request.resource.contentType.matches('image/.*'); // Only images
+    }
   }
 }
+

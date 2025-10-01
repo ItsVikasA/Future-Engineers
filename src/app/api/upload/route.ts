@@ -14,12 +14,14 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const userId = formData.get('userId') as string;
+    const uploadType = formData.get('uploadType') as string; // 'profile', 'banner', or default
 
     console.log('📄 File details:', {
       name: file?.name,
       size: file?.size,
       type: file?.type,
-      userId: userId
+      userId: userId,
+      uploadType: uploadType
     });
 
     if (!file) {
@@ -39,10 +41,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { success: false, error: 'Only PDF, JPEG, and PNG files are allowed.' },
+        { success: false, error: 'Only PDF, JPEG, PNG, and WebP files are allowed.' },
         { status: 400 }
       );
     }
@@ -68,9 +70,23 @@ export async function POST(request: NextRequest) {
     // Upload to Cloudinary
     console.log('☁️ Starting Cloudinary upload...');
     const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      // Determine folder based on upload type
+      let folder = `future_engineers/${userId}`;
+      let resourceType: 'raw' | 'image' | 'video' | 'auto' = 'raw';
+      
+      if (uploadType === 'profile') {
+        folder = `future_engineers/profiles/${userId}`;
+        resourceType = 'image';
+      } else if (uploadType === 'banner') {
+        folder = `future_engineers/banners/${userId}`;
+        resourceType = 'image';
+      } else if (file.type.startsWith('image/')) {
+        resourceType = 'image';
+      }
+
       const uploadOptions: UploadApiOptions = {
-        resource_type: 'raw',
-        folder: `future_engineers/${userId}`,
+        resource_type: resourceType,
+        folder: folder,
         access_mode: 'public',
         use_filename: true,
         unique_filename: true,
