@@ -331,8 +331,8 @@ export default function ProfilePage() {
             <>
               {/* Profile Hero Card - LinkedIn Style */}
               <Card className="bg-card/50 backdrop-blur-sm border-primary/10 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                {/* Banner Section - LinkedIn style (4:1 aspect ratio) */}
-                <div className="relative w-full h-48 md:h-64 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20">
+                {/* Banner Section - LinkedIn style with better mobile height */}
+                <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20">
                   {profileData.bannerURL ? (
                     <Image 
                       src={profileData.bannerURL} 
@@ -350,38 +350,40 @@ export default function ProfilePage() {
                 {/* Profile Content */}
                 <CardContent className="p-0">
                   {/* Profile Picture overlapping banner */}
-                  <div className="px-6 md:px-8">
-                    <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 md:-mt-20 mb-4">
+                  <div className="px-4 sm:px-6 md:px-8">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12 sm:-mt-16 md:-mt-20 mb-4">
                       {/* Avatar Section */}
-                      <div className="flex-shrink-0 mb-4 md:mb-0">
+                      <div className="flex-shrink-0 mb-4 sm:mb-0">
                         <div className="relative">
-                          <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-card shadow-2xl bg-card ring-2 ring-primary/20">
+                          <Avatar className="h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40 border-4 border-card shadow-2xl bg-card ring-2 ring-primary/20">
                             <AvatarImage src={profileData.photoURL || ''} alt={profileData.displayName || 'User'} />
-                            <AvatarFallback className="text-3xl md:text-4xl bg-gradient-to-br from-primary to-purple-600 text-white">
+                            <AvatarFallback className="text-2xl sm:text-3xl md:text-4xl bg-gradient-to-br from-primary to-purple-600 text-white">
                               {getInitials(profileData.displayName || profileData.email)}
                             </AvatarFallback>
                           </Avatar>
                           {isAdmin && (
-                            <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-3 shadow-lg animate-pulse">
-                              <Crown className="h-5 w-5 text-white" />
+                            <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full p-2 sm:p-3 shadow-lg animate-pulse">
+                              <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                             </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-2 md:mb-6">
-                        <Link href="/profile/edit">
+                      {/* Action Buttons - Better mobile layout */}
+                      <div className="flex gap-2 sm:mb-6 w-full sm:w-auto">
+                        <Link href="/profile/edit" className="flex-1 sm:flex-initial">
                           <Button className="w-full sm:w-auto bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white transition-all duration-300 hover:scale-105 shadow-lg">
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Profile
+                            <Edit className="h-4 w-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Edit Profile</span>
+                            <span className="sm:hidden">Edit</span>
                           </Button>
                         </Link>
                         {isAdmin && (
-                          <Link href="/admin">
+                          <Link href="/admin" className="flex-1 sm:flex-initial">
                             <Button variant="outline" className="w-full sm:w-auto border-yellow-500/50 text-yellow-600 hover:bg-yellow-500 hover:text-white hover:scale-105 transition-all duration-300 shadow-lg">
-                              <Crown className="h-4 w-4 mr-2" />
-                              Admin Panel
+                              <Crown className="h-4 w-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Admin Panel</span>
+                              <span className="sm:hidden">Admin</span>
                             </Button>
                           </Link>
                         )}
@@ -389,19 +391,19 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Profile Details */}
-                    <div className="pb-6 space-y-4">
+                    <div className="pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                       {/* Name and Badges */}
                       <div>
-                        <h1 className="text-2xl md:text-3xl font-bold mb-2 flex items-center gap-2 flex-wrap">
+                        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 flex items-center gap-2 flex-wrap">
                           {profileData.displayName || 'User'}
                           {isAdmin && (
-                            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 shadow-lg">
+                            <Badge className="text-xs sm:text-sm bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 shadow-lg">
                               <Crown className="h-3 w-3 mr-1" />
                               Admin
                             </Badge>
                           )}
                           {!isAdmin && (
-                            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0">
+                            <Badge className="text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0">
                               Student
                             </Badge>
                           )}
@@ -409,16 +411,16 @@ export default function ProfilePage() {
                         
                         {/* Bio/Role */}
                         {profileData.bio && (
-                          <p className="text-muted-foreground text-sm md:text-base mb-3">
+                          <p className="text-muted-foreground text-sm sm:text-base mb-3 leading-relaxed">
                             {profileData.bio}
                           </p>
                         )}
                         
                         {/* University & Course */}
                         {(profileData.university || profileData.course) && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <GraduationCap className="h-4 w-4 flex-shrink-0" />
-                            <span>
+                          <div className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
+                            <GraduationCap className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                            <span className="leading-snug">
                               {profileData.course && <span className="font-medium">{profileData.course}</span>}
                               {profileData.course && profileData.university && <span> • </span>}
                               {profileData.university && <span>{profileData.university}</span>}
@@ -426,36 +428,36 @@ export default function ProfilePage() {
                           </div>
                         )}
 
-                        {/* Contact Info */}
-                        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                        {/* Contact Info - Stacked on mobile */}
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-x-4 text-xs sm:text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
-                            <Mail className="h-4 w-4 flex-shrink-0" />
+                            <Mail className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                             <span className="break-all">{profileData.email}</span>
                           </div>
                           {profileData.location && (
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 flex-shrink-0" />
+                              <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                               <span>{profileData.location}</span>
                             </div>
                           )}
                           <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 flex-shrink-0" />
+                            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                             <span>Joined {profileData.joinedAt.toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
 
-                      {/* Social Links - LinkedIn Style */}
+                      {/* Social Links - LinkedIn Style - Better mobile spacing */}
                       {(profileData.socialMedia.linkedin || profileData.socialMedia.github || profileData.socialMedia.portfolio) && (
-                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border/50">
+                        <div className="flex flex-wrap gap-2 pt-3 border-t border-border/50">
                           {profileData.socialMedia.linkedin && (
                             <a
                               href={profileData.socialMedia.linkedin}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 transition-colors text-sm"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 transition-colors text-xs sm:text-sm"
                             >
-                              <Linkedin className="h-4 w-4" />
+                              <Linkedin className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                               <span>LinkedIn</span>
                             </a>
                           )}
@@ -464,9 +466,9 @@ export default function ProfilePage() {
                               href={profileData.socialMedia.github}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-gray-500/10 hover:bg-gray-500/20 text-gray-700 dark:text-gray-300 transition-colors text-sm"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-gray-500/10 hover:bg-gray-500/20 text-gray-700 dark:text-gray-300 transition-colors text-xs sm:text-sm"
                             >
-                              <Github className="h-4 w-4" />
+                              <Github className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                               <span>GitHub</span>
                             </a>
                           )}
@@ -475,9 +477,9 @@ export default function ProfilePage() {
                               href={profileData.socialMedia.portfolio}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 transition-colors text-sm"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 transition-colors text-xs sm:text-sm"
                             >
-                              <Globe className="h-4 w-4" />
+                              <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                               <span>Portfolio</span>
                             </a>
                           )}
@@ -488,41 +490,41 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              {/* Stats Cards Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Stats Cards Row - Better mobile grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {/* Reputation Card */}
                 <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <Award className="h-8 w-8 mx-auto mb-2 text-primary" />
-                    <p className="text-2xl font-bold text-primary">{profileData.reputation}</p>
-                    <p className="text-xs text-muted-foreground">Reputation</p>
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <Award className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 text-primary" />
+                    <p className="text-xl sm:text-2xl font-bold text-primary">{profileData.reputation}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Reputation</p>
                   </CardContent>
                 </Card>
 
                 {/* Uploads Card */}
                 <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <FileText className="h-8 w-8 mx-auto mb-2 text-green-600" />
-                    <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
-                    <p className="text-xs text-muted-foreground">Uploads</p>
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <FileText className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 text-green-600" />
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">{stats.approved}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Uploads</p>
                   </CardContent>
                 </Card>
 
                 {/* Views Card */}
                 <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <Eye className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                    <p className="text-2xl font-bold text-blue-600">{stats.totalViews}</p>
-                    <p className="text-xs text-muted-foreground">Views</p>
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <Eye className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 text-blue-600" />
+                    <p className="text-xl sm:text-2xl font-bold text-blue-600">{stats.totalViews}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
                   </CardContent>
                 </Card>
 
                 {/* Downloads Card */}
                 <Card className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-purple-500/20 hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <Download className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-                    <p className="text-2xl font-bold text-purple-600">{stats.totalDownloads}</p>
-                    <p className="text-xs text-muted-foreground">Downloads</p>
+                  <CardContent className="p-3 sm:p-4 text-center">
+                    <Download className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-1 sm:mb-2 text-purple-600" />
+                    <p className="text-xl sm:text-2xl font-bold text-purple-600">{stats.totalDownloads}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Downloads</p>
                   </CardContent>
                 </Card>
               </div>
