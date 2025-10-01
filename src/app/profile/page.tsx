@@ -331,8 +331,8 @@ export default function ProfilePage() {
             <>
               {/* Profile Hero Card - LinkedIn Style */}
               <Card className="bg-card/50 backdrop-blur-sm border-primary/10 overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                {/* Banner Section - LinkedIn style with better mobile height */}
-                <div className="relative w-full h-32 sm:h-40 md:h-48 lg:h-56 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20">
+                {/* Banner Section - LinkedIn style with prominent mobile display */}
+                <div className="relative w-full h-40 sm:h-48 md:h-56 lg:h-64 bg-gradient-to-r from-primary/20 via-purple-500/20 to-pink-500/20">
                   {profileData.bannerURL ? (
                     <Image 
                       src={profileData.bannerURL} 
@@ -351,7 +351,7 @@ export default function ProfilePage() {
                 <CardContent className="p-0">
                   {/* Profile Picture overlapping banner */}
                   <div className="px-4 sm:px-6 md:px-8">
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-12 sm:-mt-16 md:-mt-20 mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between -mt-16 sm:-mt-20 md:-mt-24 mb-4">
                       {/* Avatar Section */}
                       <div className="flex-shrink-0 mb-4 sm:mb-0">
                         <div className="relative">
