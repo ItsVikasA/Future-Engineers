@@ -209,7 +209,7 @@ export default function Leaderboard() {
                     </Avatar>
                     <div className="bg-gradient-to-br from-gray-400/20 to-gray-500/20 border-2 border-gray-400/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-32 sm:h-40 flex flex-col justify-center">
                       <Medal className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="font-bold text-foreground text-sm sm:text-base line-clamp-2 px-2 leading-tight">{getUserDisplayName(topContributors[1])}</p>
+                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[1])}</p>
                       <p className="text-2xl sm:text-3xl font-bold text-gray-400 mt-1">{topContributors[1].reputation || 0}</p>
                       <p className="text-xs text-muted-foreground">reputation</p>
                     </div>
@@ -226,7 +226,7 @@ export default function Leaderboard() {
                     </Avatar>
                     <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-40 sm:h-48 flex flex-col justify-center shadow-lg shadow-yellow-500/20">
                       <Trophy className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
-                      <p className="font-bold text-foreground line-clamp-2 px-2 leading-tight">{getUserDisplayName(topContributors[0])}</p>
+                      <p className="font-bold text-foreground text-base sm:text-lg leading-tight break-words w-full">{getUserDisplayName(topContributors[0])}</p>
                       <p className="text-3xl sm:text-4xl font-bold text-yellow-500 mt-1">{topContributors[0].reputation || 0}</p>
                       <p className="text-xs text-muted-foreground">reputation</p>
                     </div>
@@ -242,7 +242,7 @@ export default function Leaderboard() {
                     </Avatar>
                     <div className="bg-gradient-to-br from-amber-600/20 to-amber-700/20 border-2 border-amber-600/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-28 sm:h-36 flex flex-col justify-center">
                       <Award className="w-8 h-8 text-amber-600 mx-auto mb-2" />
-                      <p className="font-bold text-foreground text-sm sm:text-base line-clamp-2 px-2 leading-tight">{getUserDisplayName(topContributors[2])}</p>
+                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[2])}</p>
                       <p className="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">{topContributors[2].reputation || 0}</p>
                       <p className="text-xs text-muted-foreground">reputation</p>
                     </div>
