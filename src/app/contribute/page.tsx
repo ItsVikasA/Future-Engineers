@@ -1832,12 +1832,15 @@ export default function Contribute() {
     const startTime = Date.now(); // Track upload start time
 
     try {
-      // Use direct Cloudinary upload for files > 5MB to bypass server limits
-      // Use API route for smaller files (better error handling and logging)
-      const FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB in bytes
-      const useDirectUpload = selectedFile.size > FILE_SIZE_LIMIT;
+      // Use direct Cloudinary upload for files > 3MB to bypass Vercel's 4.5MB limit
+      // On Vercel, always use direct upload for safety
+      // Locally, use API route for files < 3MB (better logging)
+      const FILE_SIZE_LIMIT = 3 * 1024 * 1024; // 3MB in bytes (safe for Vercel)
+      const isVercel = process.env.NEXT_PUBLIC_VERCEL === '1' || window.location.hostname.includes('vercel.app');
+      const useDirectUpload = selectedFile.size > FILE_SIZE_LIMIT || isVercel;
       
       console.log(`📦 File size: ${(selectedFile.size / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`🌐 Environment: ${isVercel ? 'Vercel (Production)' : 'Local/Other'}`);
       console.log(`🚀 Upload method: ${useDirectUpload ? 'Direct to Cloudinary' : 'Via API route'}`);
       
       const uploadResult = useDirectUpload
