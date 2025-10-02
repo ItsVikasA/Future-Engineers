@@ -258,17 +258,17 @@ export default function Leaderboard() {
                         {getUserInitials(topContributors[2])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="w-full bg-gradient-to-b from-amber-600 to-amber-700 rounded-t-xl shadow-xl relative overflow-hidden h-30">
+                    <div className="w-full bg-gradient-to-b from-amber-600 to-amber-700 rounded-t-xl shadow-xl relative overflow-hidden h-36 sm:h-40">
                       {/* Rank number on stand */}
-                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
-                        <span className="text-xl sm:text-2xl font-black text-white">3</span>
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-lg sm:text-xl font-black text-white">3</span>
                       </div>
                       {/* User info */}
-                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
-                        <Award className="w-6 h-6 text-white/90 mx-auto mb-1" />
-                        <p className="font-bold text-white text-xs sm:text-sm leading-tight break-words">{getUserDisplayName(topContributors[2])}</p>
-                        <p className="text-xl sm:text-2xl font-black text-white mt-1">{topContributors[2].contributions || 0}</p>
-                        <p className="text-[10px] text-white/80">contributions</p>
+                      <div className="absolute bottom-2 left-0 right-0 px-1.5 text-center">
+                        <Award className="w-5 h-5 text-white/90 mx-auto mb-0.5" />
+                        <p className="font-bold text-white text-xs leading-tight break-words line-clamp-1">{getUserDisplayName(topContributors[2])}</p>
+                        <p className="text-xl sm:text-2xl font-black text-white mt-0.5">{topContributors[2].contributions || 0}</p>
+                        <p className="text-[9px] text-white/80">contributions</p>
                       </div>
                     </div>
                   </div>
