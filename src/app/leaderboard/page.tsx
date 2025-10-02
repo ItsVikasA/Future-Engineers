@@ -199,56 +199,77 @@ export default function Leaderboard() {
         <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main Leaderboard */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Top 3 Podium */}
+            {/* Top 3 Podium - Olympic Style */}
             {!loading && topContributors.length >= 3 && (
               <div className="mb-8">
-                <div className="flex items-end justify-center gap-4 sm:gap-6 mb-8">
-                  {/* 2nd Place */}
-                  <div className="flex flex-col items-center flex-1 max-w-[240px]">
-                    <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-gray-400 mb-3 ring-4 ring-gray-400/20">
+                <div className="flex items-end justify-center gap-2 sm:gap-4 px-2 sm:px-4">
+                  {/* 2nd Place - Left, Shorter */}
+                  <div className="flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[180px]">
+                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-gray-400 mb-2 ring-4 ring-gray-400/20 relative z-10">
                       <AvatarImage src={topContributors[1].photoURL} alt={getUserDisplayName(topContributors[1])} />
-                      <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white text-xl">
+                      <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white text-lg">
                         {getUserInitials(topContributors[1])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-gradient-to-br from-gray-400/20 to-gray-500/20 border-2 border-gray-400/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-32 sm:h-40 flex flex-col justify-center">
-                      <Medal className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[1])}</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-gray-400 mt-1">{topContributors[1].contributions || 0}</p>
-                      <p className="text-xs text-muted-foreground">contributions</p>
+                    <div className="w-full bg-gradient-to-b from-gray-400 to-gray-500 rounded-t-xl shadow-xl relative overflow-hidden h-40">
+                      {/* Rank number on stand */}
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-xl sm:text-2xl font-black text-white">2</span>
+                      </div>
+                      {/* User info */}
+                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
+                        <Medal className="w-6 h-6 text-white/90 mx-auto mb-1" />
+                        <p className="font-bold text-white text-xs sm:text-sm leading-tight break-words">{getUserDisplayName(topContributors[1])}</p>
+                        <p className="text-xl sm:text-2xl font-black text-white mt-1">{topContributors[1].contributions || 0}</p>
+                        <p className="text-[10px] text-white/80">contributions</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* 1st Place */}
-                  <div className="flex flex-col items-center flex-1 max-w-[240px]">
+                  {/* 1st Place - Center, Tallest */}
+                  <div className="flex flex-col items-center flex-1 max-w-[160px] sm:max-w-[200px]">
                     <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-500 mb-2 animate-bounce" />
-                    <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-4 border-yellow-500 mb-3 ring-4 ring-yellow-500/30">
+                    <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-yellow-500 mb-2 ring-4 ring-yellow-500/30 relative z-10">
                       <AvatarImage src={topContributors[0].photoURL} alt={getUserDisplayName(topContributors[0])} />
-                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white text-2xl">
+                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white text-xl sm:text-2xl">
                         {getUserInitials(topContributors[0])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-40 sm:h-48 flex flex-col justify-center shadow-lg shadow-yellow-500/20">
-                      <Trophy className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
-                      <p className="font-bold text-foreground text-base sm:text-lg leading-tight break-words w-full">{getUserDisplayName(topContributors[0])}</p>
-                      <p className="text-3xl sm:text-4xl font-bold text-yellow-500 mt-1">{topContributors[0].contributions || 0}</p>
-                      <p className="text-xs text-muted-foreground">contributions</p>
+                    <div className="w-full bg-gradient-to-b from-yellow-500 to-orange-500 rounded-t-xl shadow-2xl shadow-yellow-500/50 relative overflow-hidden h-50">
+                      {/* Rank number on stand */}
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-2xl sm:text-3xl font-black text-white">1</span>
+                      </div>
+                      {/* User info */}
+                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
+                        <Trophy className="w-8 h-8 text-white mx-auto mb-1" />
+                        <p className="font-bold text-white text-sm sm:text-base leading-tight break-words">{getUserDisplayName(topContributors[0])}</p>
+                        <p className="text-2xl sm:text-3xl font-black text-white mt-1">{topContributors[0].contributions || 0}</p>
+                        <p className="text-[10px] text-white/90">contributions</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* 3rd Place */}
-                  <div className="flex flex-col items-center flex-1 max-w-[240px]">
-                    <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-amber-600 mb-3 ring-4 ring-amber-600/20">
+                  {/* 3rd Place - Right, Shortest */}
+                  <div className="flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[180px]">
+                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-amber-600 mb-2 ring-4 ring-amber-600/20 relative z-10">
                       <AvatarImage src={topContributors[2].photoURL} alt={getUserDisplayName(topContributors[2])} />
-                      <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-700 text-white text-xl">
+                      <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-700 text-white text-lg">
                         {getUserInitials(topContributors[2])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="bg-gradient-to-br from-amber-600/20 to-amber-700/20 border-2 border-amber-600/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-28 sm:h-36 flex flex-col justify-center">
-                      <Award className="w-8 h-8 text-amber-600 mx-auto mb-2" />
-                      <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[2])}</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">{topContributors[2].contributions || 0}</p>
-                      <p className="text-xs text-muted-foreground">contributions</p>
+                    <div className="w-full bg-gradient-to-b from-amber-600 to-amber-700 rounded-t-xl shadow-xl relative overflow-hidden h-30">
+                      {/* Rank number on stand */}
+                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-xl sm:text-2xl font-black text-white">3</span>
+                      </div>
+                      {/* User info */}
+                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
+                        <Award className="w-6 h-6 text-white/90 mx-auto mb-1" />
+                        <p className="font-bold text-white text-xs sm:text-sm leading-tight break-words">{getUserDisplayName(topContributors[2])}</p>
+                        <p className="text-xl sm:text-2xl font-black text-white mt-1">{topContributors[2].contributions || 0}</p>
+                        <p className="text-[10px] text-white/80">contributions</p>
+                      </div>
                     </div>
                   </div>
                 </div>

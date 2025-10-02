@@ -82,9 +82,41 @@ export function PDFViewer({ fileUrl, fileName, title }: PDFViewerProps) {
       }
       
       toast.dismiss(loadingToast);
-      toast.success('✅ Download started successfully!', {
-        duration: 3000,
-      });
+      
+      // Show success toast with download info
+      toast.success(
+        () => (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              <span className="font-semibold">Download Started!</span>
+            </div>
+            <span className="text-xs text-muted-foreground">
+              Check your downloads folder
+            </span>
+          </div>
+        ),
+        {
+          duration: 4000,
+          style: {
+            background: '#10b981',
+            color: '#fff',
+            padding: '12px 16px',
+          },
+        }
+      );
+
+      // Show completion toast after estimated download time (3 seconds)
+      setTimeout(() => {
+        toast.success('📁 Download completed! Check your downloads folder.', {
+          duration: 3000,
+          style: {
+            background: '#059669',
+            color: '#fff',
+          },
+        });
+      }, 3000);
+      
     } catch (error) {
       console.error('Download error:', error);
       toast.dismiss();
