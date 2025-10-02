@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuthStore } from '@/stores/authStore';
 import { useAdminStatus } from '@/hooks/useAdminStatus';
-import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy } from 'firebase/firestore';
+import { collection, query, onSnapshot, doc, updateDoc, deleteDoc, orderBy, increment, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { 
   ArrowLeft,
@@ -91,22 +91,71 @@ export default function ContentReview() {
 
   const handleApprove = async (docId: string, title: string) => {
     try {
-      await updateDoc(doc(db, 'documents', docId), {
+      // Get the document to find the uploader
+      const docRef = doc(db, 'documents', docId);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        toast.error('Document not found');
+        return;
+      }
+
+      const docData = docSnap.data();
+      const uploaderId = docData.uploadedBy;
+
+      // Approve the document
+      await updateDoc(docRef, {
         status: 'approved'
       });
+
+      // Update user's reputation and contribution count
+      if (uploaderId) {
+        const userRef = doc(db, 'users', uploaderId);
+        await updateDoc(userRef, {
+          reputation: increment(10), // Award 10 reputation points
+          contributions: increment(1) // Increment contribution count
+        });
+        console.log(`✅ Updated reputation for user: ${uploaderId}`);
+      }
+
       toast.success(`✅ Approved: ${title}`);
-    } catch {
+    } catch (error) {
+      console.error('Error approving document:', error);
       toast.error('❌ Failed to approve document');
     }
   };
 
   const handleReject = async (docId: string, title: string) => {
     try {
-      await updateDoc(doc(db, 'documents', docId), {
+      // Get the document to find the uploader
+      const docRef = doc(db, 'documents', docId);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        toast.error('Document not found');
+        return;
+      }
+
+      const docData = docSnap.data();
+      const uploaderId = docData.uploadedBy;
+
+      // Reject the document
+      await updateDoc(docRef, {
         status: 'rejected'
       });
+
+      // Optionally: Deduct reputation on rejection (can be removed if not desired)
+      if (uploaderId) {
+        const userRef = doc(db, 'users', uploaderId);
+        await updateDoc(userRef, {
+          reputation: increment(-2) // Small penalty for rejected content
+        });
+        console.log(`⚠️ Updated reputation for rejected upload: ${uploaderId}`);
+      }
+
       toast.success(`❌ Rejected: ${title}`);
-    } catch {
+    } catch (error) {
+      console.error('Error rejecting document:', error);
       toast.error('❌ Failed to reject document');
     }
   };

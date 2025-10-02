@@ -28,9 +28,10 @@ export default function Leaderboard() {
 
   useEffect(() => {
     // Set up real-time listener for leaderboard data
+    // Sort by contributions (number of approved documents)
     const usersQuery = query(
       collection(db, 'users'),
-      orderBy('reputation', 'desc'),
+      orderBy('contributions', 'desc'),
       limit(10)
     );
 
@@ -213,8 +214,8 @@ export default function Leaderboard() {
                     <div className="bg-gradient-to-br from-gray-400/20 to-gray-500/20 border-2 border-gray-400/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-32 sm:h-40 flex flex-col justify-center">
                       <Medal className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                       <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[1])}</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-gray-400 mt-1">{topContributors[1].reputation || 0}</p>
-                      <p className="text-xs text-muted-foreground">reputation</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-gray-400 mt-1">{topContributors[1].contributions || 0}</p>
+                      <p className="text-xs text-muted-foreground">contributions</p>
                     </div>
                   </div>
 
@@ -230,8 +231,8 @@ export default function Leaderboard() {
                     <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-2 border-yellow-500/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-40 sm:h-48 flex flex-col justify-center shadow-lg shadow-yellow-500/20">
                       <Trophy className="w-10 h-10 text-yellow-500 mx-auto mb-2" />
                       <p className="font-bold text-foreground text-base sm:text-lg leading-tight break-words w-full">{getUserDisplayName(topContributors[0])}</p>
-                      <p className="text-3xl sm:text-4xl font-bold text-yellow-500 mt-1">{topContributors[0].reputation || 0}</p>
-                      <p className="text-xs text-muted-foreground">reputation</p>
+                      <p className="text-3xl sm:text-4xl font-bold text-yellow-500 mt-1">{topContributors[0].contributions || 0}</p>
+                      <p className="text-xs text-muted-foreground">contributions</p>
                     </div>
                   </div>
 
@@ -246,8 +247,8 @@ export default function Leaderboard() {
                     <div className="bg-gradient-to-br from-amber-600/20 to-amber-700/20 border-2 border-amber-600/50 rounded-t-2xl p-4 sm:p-6 text-center w-full h-28 sm:h-36 flex flex-col justify-center">
                       <Award className="w-8 h-8 text-amber-600 mx-auto mb-2" />
                       <p className="font-bold text-foreground text-sm sm:text-base leading-tight break-words w-full">{getUserDisplayName(topContributors[2])}</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">{topContributors[2].reputation || 0}</p>
-                      <p className="text-xs text-muted-foreground">reputation</p>
+                      <p className="text-2xl sm:text-3xl font-bold text-amber-600 mt-1">{topContributors[2].contributions || 0}</p>
+                      <p className="text-xs text-muted-foreground">contributions</p>
                     </div>
                   </div>
                 </div>
@@ -262,7 +263,7 @@ export default function Leaderboard() {
                   All Contributors
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
-                  Rankings based on reputation points earned through quality contributions
+                  Rankings based on number of approved documents contributed
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -324,12 +325,12 @@ export default function Leaderboard() {
 
                             <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
                               <div>
-                                <span className="font-bold text-blue-500 block">{(contributor.reputation || 0).toLocaleString()}</span>
-                                <span className="text-muted-foreground text-xs">Reputation</span>
+                                <span className="font-bold text-green-500 block text-base sm:text-lg">{contributor.contributions || 0}</span>
+                                <span className="text-muted-foreground text-xs">Contributions</span>
                               </div>
                               <div>
-                                <span className="font-bold text-green-500 block">{contributor.contributions || 0}</span>
-                                <span className="text-muted-foreground text-xs">Uploads</span>
+                                <span className="font-bold text-blue-500 block">{(contributor.reputation || 0).toLocaleString()}</span>
+                                <span className="text-muted-foreground text-xs">Reputation</span>
                               </div>
                               <div>
                                 <span className="font-bold text-purple-500 block">{(contributor.downloads || 0).toLocaleString()}</span>
