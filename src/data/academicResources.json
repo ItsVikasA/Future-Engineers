@@ -201,6 +201,66 @@
               "resources": []
             }
           ]
+        },
+        {
+          "name": "Mechanical Engineering",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
+        },
+        {
+          "name": "Civil Engineering",
+          "categories": [
+            {
+              "name": "Notes",
+              "slug": "notes",
+              "resources": []
+            },
+            {
+              "name": "Lab Manuals",
+              "slug": "lab-manuals",
+              "resources": []
+            },
+            {
+              "name": "Question Papers",
+              "slug": "question-papers",
+              "resources": []
+            },
+            {
+              "name": "Assignments",
+              "slug": "assignments",
+              "resources": []
+            },
+            {
+              "name": "Syllabus",
+              "slug": "syllabus",
+              "resources": []
+            }
+          ]
         }
       ]
     },
