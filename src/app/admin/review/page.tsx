@@ -188,19 +188,28 @@ export default function ContentReview() {
         downloadUrl = downloadUrl.replace('/student-notes/', '/future_engineers/');
       }
       
-      // Create download link
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = fileName;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      console.log('🔽 Admin download:', downloadUrl);
+      console.log('🔽 Filename:', fileName);
       
-      toast.success(`✅ Download started: ${title}`);
-      setPreviewDialog({ isOpen: false, document: null });
+      // Use the SAME working method as BrowsePDFViewer
+      const response = await fetch(downloadUrl);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        toast.success(`✅ Download started: ${title}`);
+        setPreviewDialog({ isOpen: false, document: null });
+      } else {
+        throw new Error('Download failed');
+      }
     } catch (error) {
       console.error('Download error:', error);
       toast.error('❌ Download failed');
