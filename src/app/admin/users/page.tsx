@@ -125,46 +125,46 @@ export default function UserManagement() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => router.push('/admin')}
-              className="border-border"
+              className="border-border w-fit"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Admin
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-                <Users className="h-8 w-8 text-blue-500" />
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
+                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
                 User Management
               </h1>
-              <p className="text-muted-foreground">Manage user accounts, roles, and permissions</p>
+              <p className="text-sm sm:text-base text-muted-foreground">Manage user accounts, roles, and permissions</p>
             </div>
           </div>
 
           {/* Search and Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="lg:col-span-3">
               <Card className="bg-card border-border">
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="Search users by email or name..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 bg-background border-border"
+                      className="pl-10 bg-background border-border text-sm sm:text-base"
                     />
                   </div>
                 </CardContent>
               </Card>
             </div>
             <Card className="bg-card border-border">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-foreground">{users.length}</div>
-                <div className="text-sm text-muted-foreground">Total Users</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{users.length}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Total Users</div>
               </CardContent>
             </Card>
           </div>
@@ -191,36 +191,36 @@ export default function UserManagement() {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {filteredUsers.map((userData) => (
-                    <div key={userData.id} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-12 w-12">
+                    <div key={userData.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors">
+                      <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                        <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
                           <AvatarImage src={userData.photoURL} />
-                          <AvatarFallback className="bg-primary/10 text-primary">
+                          <AvatarFallback className="bg-primary/10 text-primary text-sm sm:text-base">
                             {userData.displayName?.charAt(0) || userData.email.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-foreground">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-foreground text-sm sm:text-base truncate">
                               {userData.displayName || 'No Name'}
                             </h3>
                             {userData.isAdmin && (
-                              <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">
+                              <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 text-xs">
                                 <Shield className="h-3 w-3 mr-1" />
                                 Admin
                               </Badge>
                             )}
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Mail className="h-3 w-3" />
-                              {userData.email}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                            <span className="flex items-center gap-1 truncate">
+                              <Mail className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{userData.email}</span>
                             </span>
                             {userData.createdAt && (
-                              <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
+                              <span className="flex items-center gap-1 whitespace-nowrap">
+                                <Calendar className="h-3 w-3 flex-shrink-0" />
                                 Joined {new Date(userData.createdAt.toDate()).toLocaleDateString()}
                               </span>
                             )}
@@ -228,26 +228,28 @@ export default function UserManagement() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                         {!userData.isAdmin ? (
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleMakeAdmin(userData.id, userData.email)}
-                            className="border-green-500 text-green-600 hover:bg-green-500 hover:text-white"
+                            className="border-green-500 text-green-600 hover:bg-green-500 hover:text-white text-xs sm:text-sm flex-1 sm:flex-initial"
                           >
-                            <UserCheck className="h-4 w-4 mr-1" />
-                            Make Admin
+                            <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                            <span className="hidden sm:inline">Make Admin</span>
+                            <span className="sm:hidden">Admin</span>
                           </Button>
                         ) : userData.id !== user?.email && (
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handleRemoveAdmin(userData.id, userData.email)}
-                            className="border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white"
+                            className="border-orange-500 text-orange-600 hover:bg-orange-500 hover:text-white text-xs sm:text-sm flex-1 sm:flex-initial"
                           >
-                            <UserX className="h-4 w-4 mr-1" />
-                            Remove Admin
+                            <UserX className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                            <span className="hidden sm:inline">Remove Admin</span>
+                            <span className="sm:hidden">Remove</span>
                           </Button>
                         )}
                         
@@ -257,8 +259,9 @@ export default function UserManagement() {
                             variant="outline"
                             onClick={() => handleDeleteUser(userData.id, userData.email)}
                             className="border-red-500 text-red-600 hover:bg-red-500 hover:text-white"
+                            title="Delete User"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                           </Button>
                         )}
                       </div>

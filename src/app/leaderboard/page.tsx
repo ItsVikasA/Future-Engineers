@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Trophy, Medal, Award, TrendingUp, Crown, Star, Target, Gem, Flame } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface UserStats {
@@ -27,36 +27,39 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchLeaderboardData();
+    // Set up real-time listener for leaderboard data
+    const usersQuery = query(
+      collection(db, 'users'),
+      orderBy('reputation', 'desc'),
+      limit(10)
+    );
+
+    // Subscribe to real-time updates
+    const unsubscribe = onSnapshot(
+      usersQuery,
+      (snapshot) => {
+        const users = snapshot.docs.map(doc => ({
+          uid: doc.id,
+          ...doc.data(),
+          contributions: doc.data().contributions || 0,
+          downloads: doc.data().downloads || 0,
+          reputation: doc.data().reputation || 0,
+          badges: doc.data().badges || []
+        })) as UserStats[];
+
+        setTopContributors(users);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error fetching leaderboard data:', error);
+        setTopContributors([]);
+        setLoading(false);
+      }
+    );
+
+    // Cleanup listener on unmount
+    return () => unsubscribe();
   }, []);
-
-  const fetchLeaderboardData = async () => {
-    try {
-      // Get users ordered by reputation/contributions
-      const usersQuery = query(
-        collection(db, 'users'),
-        orderBy('reputation', 'desc'),
-        limit(10)
-      );
-      
-      const usersSnapshot = await getDocs(usersQuery);
-      const users = usersSnapshot.docs.map(doc => ({
-        uid: doc.id,
-        ...doc.data(),
-        contributions: doc.data().contributions || 0,
-        downloads: doc.data().downloads || 0,
-        reputation: doc.data().reputation || 0,
-        badges: doc.data().badges || []
-      })) as UserStats[];
-
-      setTopContributors(users);
-    } catch (error) {
-      console.error('Error fetching leaderboard data:', error);
-      setTopContributors([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
