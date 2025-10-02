@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
+        .progress {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Cloudinary Upload Test</h1>
+        
+        <div class="section">
+            <h3>Configuration</h3>
+            <label>Cloud Name:</label>
+            <input type="text" id="cloudName" value="daf87l22y">
+            
+            <label>Upload Preset:</label>
+            <input type="text" id="uploadPreset" value="future_engineers">
+            
+            <label>Folder (optional):</label>
+            <input type="text" id="folder" value="test_uploads" placeholder="Leave empty or enter folder name">
+        </div>
+
+        <div class="section">
+            <h3>Test Upload Preset</h3>
+            <button onclick="testPreset()">🔍 Check Preset Configuration</button>
+            <div id="presetResult"></div>
+        </div>
+
+        <div class="section">
+            <h3>Upload File</h3>
+            <label>Select File (PDF recommended):</label>
+            <input type="file" id="fileInput" accept=".pdf">
+            
+            <button onclick="uploadFile()">📤 Upload File</button>
+            <button onclick="uploadFileRaw()">📤 Upload as Raw (for PDFs)</button>
+            
+            <div id="progressContainer" style="display: none;">
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar">0%</div>
+                </div>
+            </div>
+            
+            <div id="uploadResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        async function testPreset() {
+            const cloudName = document.getElementById('cloudName').value;
+            const uploadPreset = document.getElementById('uploadPreset').value;
+            const resultDiv = document.getElementById('presetResult');
+
+            if (!cloudName || !uploadPreset) {
+                showResult('presetResult', '❌ Please fill in Cloud Name and Upload Preset', 'error');
+                return;
+            }
+
+            resultDiv.textContent = '🔍 Checking preset...';
+            resultDiv.className = 'result info';
+            resultDiv.style.display = 'block';
+
+            try {
+                // Note: This endpoint might not be publicly accessible
+                // If it fails, that's okay - we'll just try the upload
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload_presets/${uploadPreset}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const isUnsigned = data.unsigned === true;
+                    
+                    let message = '✅ Preset Configuration:\n\n';
+                    message += `Name: ${data.name}\n`;
+                    message += `Unsigned: ${isUnsigned ? '✅ YES (Good!)' : '❌ NO (Problem!)'}\n`;
+                    message += `Folder: ${data.folder || '(none)'}\n`;
+                    
+                    if (!isUnsigned) {
+                        message += '\n⚠️ WARNING: Preset must be "Unsigned" for direct browser uploads!';
+                        message += '\n\nFix: Go to Cloudinary Dashboard → Settings → Upload → Edit this preset → Change "Signing Mode" to "Unsigned"';
+                    }
+                    
+                    showResult('presetResult', message, isUnsigned ? 'success' : 'warning');
+                } else {
+                    showResult('presetResult', 
+                        '⚠️ Could not fetch preset info (this is normal).\n\nPreset might exist but details are private.\nTry uploading a file to test if preset works.', 
+                        'warning');
+                }
+            } catch (error) {
+                showResult('presetResult', 
+                    '⚠️ Could not fetch preset info (this is normal).\n\nPreset might exist but details are private.\nTry uploading a file to test if preset works.', 
+                    'warning');
+            }
+        }
+
+        function uploadFileInternal(resourceType = 'auto') {
+            const cloudName = document.getElementById('cloudName').value;
+            const uploadPreset = document.getElementById('uploadPreset').value;
+            const folder = document.getElementById('folder').value;
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showResult('uploadResult', '❌ Please select a file first', 'error');
+                return;
+            }
+
+            if (!cloudName || !uploadPreset) {
+                showResult('uploadResult', '❌ Please fill in Cloud Name and Upload Preset', 'error');
+                return;
+            }
+
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const resultDiv = document.getElementById('uploadResult');
+
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            resultDiv.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', uploadPreset);
+            
+            if (resourceType !== 'auto') {
+                formData.append('resource_type', resourceType);
+            }
+            
+            if (folder) {
+                formData.append('folder', folder);
+            }
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percent + '%';
+                    progressBar.textContent = percent + '%';
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                progressContainer.style.display = 'none';
+                
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const result = JSON.parse(xhr.responseText);
+                        let message = '✅ UPLOAD SUCCESSFUL!\n\n';
+                        message += `File URL: ${result.secure_url}\n`;
+                        message += `Public ID: ${result.public_id}\n`;
+                        message += `Format: ${result.format}\n`;
+                        message += `Size: ${(result.bytes / 1024).toFixed(2)} KB\n`;
+                        message += `Resource Type: ${result.resource_type}\n`;
+                        message += `\nFull Response:\n${JSON.stringify(result, null, 2)}`;
+                        
+                        showResult('uploadResult', message, 'success');
+                    } catch (e) {
+                        showResult('uploadResult', '✅ Upload successful but failed to parse response:\n' + xhr.responseText, 'warning');
+                    }
+                } else {
+                    let errorMessage = `❌ UPLOAD FAILED (Status ${xhr.status})\n\n`;
+                    
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        errorMessage += `Error: ${errorData.error.message}\n\n`;
+                        
+                        if (xhr.status === 400) {
+                            errorMessage += 'Common 400 Error Causes:\n';
+                            errorMessage += '1. Upload preset is in "Signed" mode (needs to be "Unsigned")\n';
+                            errorMessage += '2. Upload preset does not exist\n';
+                            errorMessage += '3. Cloud name is incorrect\n';
+                            errorMessage += '4. Preset name is incorrect (case-sensitive!)\n';
+                            errorMessage += '5. File type not allowed in preset\n\n';
+                            errorMessage += 'Fix: Go to Cloudinary Dashboard → Settings → Upload\n';
+                            errorMessage += '     Find your preset and set "Signing Mode" to "Unsigned"\n\n';
+                        }
+                        
+                        errorMessage += `Full Response:\n${JSON.stringify(errorData, null, 2)}`;
+                    } catch {
+                        errorMessage += `Response: ${xhr.responseText}`;
+                    }
+                    
+                    showResult('uploadResult', errorMessage, 'error');
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                progressContainer.style.display = 'none';
+                showResult('uploadResult', '❌ Network error during upload', 'error');
+            });
+
+            const endpoint = resourceType === 'raw' 
+                ? `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`
+                : `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+            
+            console.log('Uploading to:', endpoint);
+            console.log('Preset:', uploadPreset);
+            console.log('Resource type:', resourceType);
+            
+            xhr.open('POST', endpoint);
+            xhr.send(formData);
+        }
+
+        function uploadFile() {
+            uploadFileInternal('auto');
+        }
+
+        function uploadFileRaw() {
+            uploadFileInternal('raw');
+        }
+    </script>
+</body>
+</html>

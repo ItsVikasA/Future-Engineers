@@ -41,6 +41,7 @@ export const uploadDirectlyToCloudinary = async (
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
+      formData.append('resource_type', 'raw'); // For PDFs and non-image files
       formData.append('folder', `future_engineers/${userId}`);
       
       const xhr = new XMLHttpRequest();
@@ -56,12 +57,26 @@ export const uploadDirectlyToCloudinary = async (
 
       xhr.addEventListener('load', () => {
         console.log('📤 Upload completed, status:', xhr.status);
+        console.log('📝 Response text:', xhr.responseText);
         
         if (xhr.status < 200 || xhr.status >= 300) {
           console.error('❌ Upload failed with status:', xhr.status);
+          console.error('❌ Error details:', xhr.responseText);
+          
+          // Try to parse error message from Cloudinary
+          let errorMessage = `Upload failed with status ${xhr.status}`;
+          try {
+            const errorData = JSON.parse(xhr.responseText);
+            if (errorData.error && errorData.error.message) {
+              errorMessage = errorData.error.message;
+            }
+          } catch {
+            // Keep default error message if parsing fails
+          }
+          
           resolve({
             success: false,
-            error: `Upload failed with status ${xhr.status}`
+            error: errorMessage
           });
           return;
         }
@@ -94,8 +109,11 @@ export const uploadDirectlyToCloudinary = async (
       });
 
       // Direct upload to Cloudinary (no Next.js server involved)
-      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/upload`;
+      // Use /raw/upload for PDFs and other non-image files
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
       console.log('📡 Uploading to:', uploadUrl);
+      console.log('📦 Upload preset:', uploadPreset);
+      console.log('📁 Cloud name:', cloudName);
       
       xhr.open('POST', uploadUrl);
       xhr.send(formData);
