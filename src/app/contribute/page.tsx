@@ -2126,7 +2126,10 @@ export default function Contribute() {
                               {SEMESTERS.map((semester, index) => (
                                 <div
                                   key={index}
-                                  onClick={() => handleSelectSemester(semester)}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectSemester(semester);
+                                  }}
                                   className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                 >
                                   {semester}
@@ -2171,7 +2174,10 @@ export default function Contribute() {
                               {availableBranches.map((branch, index) => (
                                 <div
                                   key={index}
-                                  onClick={() => handleSelectBranch(branch)}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectBranch(branch);
+                                  }}
                                   className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                 >
                                   {branch}
@@ -2219,7 +2225,10 @@ export default function Contribute() {
                                 {availableSubjects.map((subject, index) => (
                                   <div
                                     key={index}
-                                    onClick={() => handleSelectSubject(subject)}
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectSubject(subject);
+                                    }}
                                     className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                   >
                                     {subject}
@@ -2269,9 +2278,10 @@ export default function Contribute() {
                                     (nestedSubject, index) => (
                                       <div
                                         key={index}
-                                        onClick={() =>
-                                          handleSelectNestedSubject(nestedSubject)
-                                        }
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          handleSelectNestedSubject(nestedSubject);
+                                        }}
                                         className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                       >
                                         {nestedSubject}
@@ -2315,9 +2325,10 @@ export default function Contribute() {
                                 {filteredUniversities.map((university, index) => (
                                   <div
                                     key={index}
-                                    onClick={() =>
-                                      handleSelectUniversity(university)
-                                    }
+                                    onMouseDown={(e) => {
+                                      e.preventDefault();
+                                      handleSelectUniversity(university);
+                                    }}
                                     className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                   >
                                     {university}
@@ -2349,7 +2360,10 @@ export default function Contribute() {
                                 <button
                                   key={docType}
                                   type="button"
-                                  onClick={() => handleSelectDocumentType(docType)}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectDocumentType(docType);
+                                  }}
                                   className={formData.documentType === docType ? "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 bg-primary/10 text-primary font-medium" : "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 text-foreground"}
                                 >
                                   {docType}
@@ -2383,7 +2397,10 @@ export default function Contribute() {
                                 <button
                                   key={module}
                                   type="button"
-                                  onClick={() => handleSelectModule(module)}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSelectModule(module);
+                                  }}
                                   className={formData.module === module ? "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 bg-primary/10 text-primary font-medium" : "w-full px-4 py-3 text-left hover:bg-primary/10 transition-colors duration-150 text-foreground"}
                                 >
                                   {module}
