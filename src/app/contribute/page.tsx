@@ -1914,6 +1914,7 @@ export default function Contribute() {
       
       // Build docData conditionally to avoid undefined fields
       // Destructure to exclude module from spread
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { module: _, ...formDataWithoutModule } = formData;
       
       const docData: Record<string, unknown> = {

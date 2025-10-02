@@ -125,7 +125,7 @@ export default function FixReputationPage() {
               Reputation Calculator
             </CardTitle>
             <CardDescription>
-              This will scan all approved documents and update each user's reputation and contribution count.
+              This will scan all approved documents and update each user&apos;s reputation and contribution count.
               Each approved document awards 10 reputation points.
             </CardDescription>
           </CardHeader>
