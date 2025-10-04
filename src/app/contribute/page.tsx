@@ -32,7 +32,7 @@ import { uploadDirectlyToCloudinary } from "@/lib/directCloudinaryUpload";
 import toast from "react-hot-toast";
 import { db } from "@/lib/firebase";
 
-const KARNATAKA_UNIVERSITIES = [
+const KARNATAKA_COLLEGES = [
   "A J Institute of Engineering, Dakshin Kannad",
   "Acharya Institute of Technology, Bengaluru",
   "Acharyar NRV School of Architecture, Bengaluru",
@@ -1584,7 +1584,7 @@ export default function Contribute() {
   const [uploadSpeed, setUploadSpeed] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [showUniversityDropdown, setShowUniversityDropdown] = useState(false);
+  const [showCollegeDropdown, setShowCollegeDropdown] = useState(false);
   const [showSemesterDropdown, setShowSemesterDropdown] = useState(false);
   const [showBranchDropdown, setShowBranchDropdown] = useState(false);
   const [showSubjectDropdown, setShowSubjectDropdown] = useState(false);
@@ -1593,7 +1593,7 @@ export default function Contribute() {
   const [showDocumentTypeDropdown, setShowDocumentTypeDropdown] = useState(false);
   const [showModuleDropdown, setShowModuleDropdown] = useState(false);
   const [formData, setFormData] = useState({
-    university: "",
+    college: "",
     semester: "",
     branch: "",
     subject: "",
@@ -1602,13 +1602,13 @@ export default function Contribute() {
     module: "",
   });
 
-  // Filter universities based on search input
-  const filteredUniversities = useMemo(() => {
-    if (!formData.university) return KARNATAKA_UNIVERSITIES.slice(0, 10);
-    return KARNATAKA_UNIVERSITIES.filter((uni) =>
-      uni.toLowerCase().includes(formData.university.toLowerCase())
+  // Filter colleges based on search input
+  const filteredColleges = useMemo(() => {
+    if (!formData.college) return KARNATAKA_COLLEGES.slice(0, 10);
+    return KARNATAKA_COLLEGES.filter((col) =>
+      col.toLowerCase().includes(formData.college.toLowerCase())
     ).slice(0, 10);
-  }, [formData.university]);
+  }, [formData.college]);
 
 
   // Get available branches for selected semester
@@ -1678,14 +1678,14 @@ export default function Contribute() {
     }
 
     // Show/hide dropdowns based on input
-    if (name === "university") {
-      setShowUniversityDropdown(value.length > 0);
+    if (name === "college") {
+      setShowCollegeDropdown(value.length > 0);
     }
   };
 
-  const handleSelectUniversity = (university: string) => {
-    setFormData((prev) => ({ ...prev, university }));
-    setShowUniversityDropdown(false);
+  const handleSelectCollege = (college: string) => {
+    setFormData((prev) => ({ ...prev, college }));
+    setShowCollegeDropdown(false);
   };
 
 
@@ -1930,7 +1930,7 @@ export default function Contribute() {
 
       // Reset form
       setFormData({
-        university: "",
+        college: "",
         semester: "",
         branch: "",
         subject: "",
@@ -2297,41 +2297,41 @@ export default function Contribute() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="relative group">
-                        <Label htmlFor="university" className="text-foreground font-medium mb-2 inline-block">
-                          University
+                        <Label htmlFor="college" className="text-foreground font-medium mb-2 inline-block">
+                          College
                         </Label>
                         <div className="relative">
                           <Input
-                            id="university"
-                            name="university"
-                            value={formData.university}
+                            id="college"
+                            name="college"
+                            value={formData.college}
                             onChange={handleInputChange}
-                            onFocus={() => setShowUniversityDropdown(true)}
+                            onFocus={() => setShowCollegeDropdown(true)}
                             onBlur={() =>
                               setTimeout(
-                                () => setShowUniversityDropdown(false),
+                                () => setShowCollegeDropdown(false),
                                 200
                               )
                             }
-                            placeholder="Start typing to search universities..."
+                            placeholder="Start typing to search colleges..."
                             className="h-11 bg-background/50 border-primary/20 hover:border-primary/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-200 pr-10"
                           />
                           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         </div>
-                        {showUniversityDropdown &&
-                          filteredUniversities.length > 0 && (
+                        {showCollegeDropdown &&
+                          filteredColleges.length > 0 && (
                             <div className="absolute z-50 w-full mt-2 bg-popover/95 backdrop-blur-md border border-primary/20 rounded-lg shadow-2xl overflow-hidden">
                               <div className="max-h-64 overflow-y-auto py-1">
-                                {filteredUniversities.map((university, index) => (
+                                {filteredColleges.map((college, index) => (
                                   <div
                                     key={index}
                                     onMouseDown={(e) => {
                                       e.preventDefault();
-                                      handleSelectUniversity(university);
+                                      handleSelectCollege(college);
                                     }}
                                     className="px-4 py-2.5 hover:bg-primary/10 cursor-pointer text-popover-foreground text-sm transition-colors duration-150 border-b border-border/30 last:border-b-0"
                                   >
-                                    {university}
+                                    {college}
                                   </div>
                                 ))}
                               </div>

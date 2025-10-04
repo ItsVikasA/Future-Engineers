@@ -46,7 +46,7 @@ interface Document {
   title: string;
   description: string;
   subject: string;
-  university: string;
+  college: string;
   course: string;
   semester: string;
   documentType: string;
@@ -75,7 +75,7 @@ export default function ProfilePage() {
     photoURL: '',
     bannerURL: '', // Add banner URL
     bio: '',
-    university: '',
+    college: '',
     course: '',
     semester: '',
     location: '',
@@ -137,7 +137,7 @@ export default function ProfilePage() {
             photoURL: user.photoURL || userData.photoURL || '',
             bannerURL: userData.bannerURL || '', // Load banner URL
             bio: userData.bio || 'Engineering student passionate about learning and sharing knowledge.',
-            university: userData.university || '',
+            college: userData.college || '',
             course: userData.course || '',
             semester: userData.semester || '',
             location: userData.location || 'India',
@@ -416,14 +416,14 @@ export default function ProfilePage() {
                           </p>
                         )}
                         
-                        {/* University & Course */}
-                        {(profileData.university || profileData.course) && (
+                        {/* College & Course */}
+                        {(profileData.college || profileData.course) && (
                           <div className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
                             <GraduationCap className="h-4 w-4 flex-shrink-0 mt-0.5" />
                             <span className="leading-snug">
                               {profileData.course && <span className="font-medium">{profileData.course}</span>}
-                              {profileData.course && profileData.university && <span> • </span>}
-                              {profileData.university && <span>{profileData.university}</span>}
+                              {profileData.course && profileData.college && <span> • </span>}
+                              {profileData.college && <span>{profileData.college}</span>}
                             </span>
                           </div>
                         )}
@@ -546,7 +546,7 @@ export default function ProfilePage() {
               )}
 
               {/* Academic Information */}
-              {(profileData.university || profileData.course || profileData.semester) && (
+              {(profileData.college || profileData.course || profileData.semester) && (
                 <Card className="bg-card/50 backdrop-blur-sm border-primary/10">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -556,14 +556,14 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {profileData.university && (
+                      {profileData.college && (
                         <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all">
                           <div className="p-2 rounded-lg bg-blue-500/20">
                             <GraduationCap className="h-4 w-4 text-blue-600" />
                           </div>
                           <div>
-                            <p className="text-xs text-muted-foreground">University</p>
-                            <p className="font-medium text-sm">{profileData.university}</p>
+                            <p className="text-xs text-muted-foreground">College</p>
+                            <p className="font-medium text-sm">{profileData.college}</p>
                           </div>
                         </div>
                       )}

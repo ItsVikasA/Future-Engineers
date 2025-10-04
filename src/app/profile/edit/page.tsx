@@ -16,7 +16,7 @@ import { doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { updateProfile } from 'firebase/auth';
 
-const KARNATAKA_UNIVERSITIES = [
+const KARNATAKA_COLLEGES = [
   "A J Institute of Engineering, Dakshin Kannad",
   "Acharya Institute of Technology, Bengaluru",
   "Acharyar NRV School of Architecture, Bengaluru",
@@ -152,7 +152,7 @@ interface UserProfile {
   photoURL: string;
   bannerURL: string; // Add banner URL
   bio: string;
-  university: string;
+  college: string;
   course: string;
   semester: string;
   location: string;
@@ -173,7 +173,7 @@ export default function ProfileEditPage() {
   const [loading, setLoading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [bannerUploading, setBannerUploading] = useState(false); // Add banner uploading state
-  const [showUniversityDropdown, setShowUniversityDropdown] = useState(false);
+  const [showCollegeDropdown, setShowCollegeDropdown] = useState(false);
   const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   
   const [profile, setProfile] = useState<UserProfile>({
@@ -182,7 +182,7 @@ export default function ProfileEditPage() {
     photoURL: user?.photoURL || '',
     bannerURL: '', // Add banner URL
     bio: '',
-    university: '',
+    college: '',
     course: '',
     semester: '',
     location: '',
@@ -210,7 +210,7 @@ export default function ProfileEditPage() {
             ...prev,
             displayName: userData.displayName || user.displayName || '',
             bio: userData.bio || '',
-            university: userData.university || '',
+            college: userData.college || '',
             course: userData.course || '',
             semester: userData.semester || '',
             location: userData.location || '',
@@ -229,9 +229,9 @@ export default function ProfileEditPage() {
     loadProfileData();
   }, [user]);
 
-  // Filter universities based on search input
-  const filteredUniversities = KARNATAKA_UNIVERSITIES.filter(university => 
-    university.toLowerCase().includes(profile.university.toLowerCase())
+  // Filter colleges based on search input
+  const filteredColleges = KARNATAKA_COLLEGES.filter(college => 
+    college.toLowerCase().includes(profile.college.toLowerCase())
   ).slice(0, 10);
 
   // Filter courses based on search input
@@ -239,9 +239,9 @@ export default function ProfileEditPage() {
     course.toLowerCase().includes(profile.course.toLowerCase())
   ).slice(0, 10);
 
-  const handleSelectUniversity = (university: string) => {
-    setProfile(prev => ({ ...prev, university }));
-    setShowUniversityDropdown(false);
+  const handleSelectCollege = (college: string) => {
+    setProfile(prev => ({ ...prev, college }));
+    setShowCollegeDropdown(false);
   };
 
   const handleSelectCourse = (course: string) => {
@@ -254,7 +254,7 @@ export default function ProfileEditPage() {
     const fields = [
       profile.displayName,
       profile.bio,
-      profile.university,
+      profile.college,
       profile.course,
       profile.semester,
       profile.location,
@@ -400,7 +400,7 @@ export default function ProfileEditPage() {
         photoURL: profile.photoURL,
         bannerURL: profile.bannerURL, // Add banner URL
         bio: profile.bio,
-        university: profile.university,
+        college: profile.college,
         course: profile.course,
         semester: profile.semester,
         location: profile.location,
@@ -711,31 +711,31 @@ export default function ProfileEditPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        University
+                        College
                       </label>
                       <div className="relative">
                         <Input
-                          value={profile.university}
+                          value={profile.college}
                           onChange={(e) => {
-                            setProfile(prev => ({ ...prev, university: e.target.value }));
-                            setShowUniversityDropdown(e.target.value.length > 0);
+                            setProfile(prev => ({ ...prev, college: e.target.value }));
+                            setShowCollegeDropdown(e.target.value.length > 0);
                           }}
-                          onFocus={() => setShowUniversityDropdown(profile.university.length > 0)}
-                          onBlur={() => setTimeout(() => setShowUniversityDropdown(false), 200)}
-                          placeholder="Start typing to search universities..."
+                          onFocus={() => setShowCollegeDropdown(profile.college.length > 0)}
+                          onBlur={() => setTimeout(() => setShowCollegeDropdown(false), 200)}
+                          placeholder="Start typing to search colleges..."
                           className="bg-black/20 border-white/10 text-white placeholder-gray-500 pr-10"
                         />
                         <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                       </div>
-                      {showUniversityDropdown && filteredUniversities.length > 0 && (
+                      {showCollegeDropdown && filteredColleges.length > 0 && (
                         <div className="absolute z-10 w-full mt-1 bg-slate-800 border border-white/20 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                          {filteredUniversities.map((university, index) => (
+                          {filteredColleges.map((college, index) => (
                             <div
                               key={index}
-                              onClick={() => handleSelectUniversity(university)}
+                              onClick={() => handleSelectCollege(college)}
                               className="px-3 py-2 hover:bg-white/10 cursor-pointer text-white text-sm border-b border-white/10 last:border-b-0"
                             >
-                              {university}
+                              {college}
                             </div>
                           ))}
                         </div>
