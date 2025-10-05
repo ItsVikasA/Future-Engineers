@@ -135,140 +135,140 @@ export default function Leaderboard() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <Header />
       
-      {/* Floating Decorative Elements - Enhanced with Many More Icons */}
-      <div className="absolute top-24 right-20 opacity-10 animate-float pointer-events-none">
+      {/* Floating Decorative Elements - Hidden on mobile for better performance */}
+      <div className="absolute top-24 right-20 opacity-10 animate-float pointer-events-none hidden lg:block">
         <Trophy className="w-32 h-32 text-yellow-500" />
       </div>
-      <div className="absolute top-1/3 left-16 opacity-10 animate-float-delayed pointer-events-none">
+      <div className="absolute top-1/3 left-16 opacity-10 animate-float-delayed pointer-events-none hidden lg:block">
         <Crown className="w-28 h-28 text-orange-500" />
       </div>
-      <div className="absolute bottom-32 right-24 opacity-10 animate-float pointer-events-none">
+      <div className="absolute bottom-32 right-24 opacity-10 animate-float pointer-events-none hidden lg:block">
         <Target className="w-24 h-24 text-blue-500" />
       </div>
-      <div className="absolute bottom-1/4 left-20 opacity-10 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-1/4 left-20 opacity-10 animate-float-delayed pointer-events-none hidden lg:block">
         <Gem className="w-26 h-26 text-purple-500" />
       </div>
-      <div className="absolute top-1/2 right-40 opacity-10 animate-float pointer-events-none">
+      <div className="absolute top-1/2 right-40 opacity-10 animate-float pointer-events-none hidden lg:block">
         <Flame className="w-20 h-20 text-red-500" />
       </div>
-      <div className="absolute bottom-40 left-10 opacity-10 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-40 left-10 opacity-10 animate-float-delayed pointer-events-none hidden lg:block">
         <Star className="w-22 h-22 text-pink-500" />
       </div>
-      <div className="absolute top-1/4 right-32 opacity-8 animate-float pointer-events-none">
+      <div className="absolute top-1/4 right-32 opacity-8 animate-float pointer-events-none hidden lg:block">
         <Medal className="w-26 h-26 text-amber-500" />
       </div>
-      <div className="absolute bottom-1/3 left-32 opacity-8 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-1/3 left-32 opacity-8 animate-float-delayed pointer-events-none hidden lg:block">
         <Award className="w-24 h-24 text-emerald-500" />
       </div>
-      <div className="absolute top-2/3 right-16 opacity-8 animate-float pointer-events-none">
+      <div className="absolute top-2/3 right-16 opacity-8 animate-float pointer-events-none hidden lg:block">
         <TrendingUp className="w-22 h-22 text-cyan-500" />
       </div>
-      <div className="absolute bottom-2/3 left-24 opacity-8 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-2/3 left-24 opacity-8 animate-float-delayed pointer-events-none hidden lg:block">
         <Trophy className="w-20 h-20 text-indigo-500" />
       </div>
-      <div className="absolute top-1/2 left-1/4 opacity-8 animate-float pointer-events-none">
+      <div className="absolute top-1/2 left-1/4 opacity-8 animate-float pointer-events-none hidden lg:block">
         <Crown className="w-24 h-24 text-violet-500" />
       </div>
-      <div className="absolute bottom-1/2 right-1/4 opacity-8 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-1/2 right-1/4 opacity-8 animate-float-delayed pointer-events-none hidden lg:block">
         <Star className="w-20 h-20 text-rose-500" />
       </div>
-      <div className="absolute top-3/4 right-28 opacity-7 animate-float pointer-events-none">
+      <div className="absolute top-3/4 right-28 opacity-7 animate-float pointer-events-none hidden lg:block">
         <Gem className="w-18 h-18 text-teal-500" />
       </div>
-      <div className="absolute bottom-3/4 left-36 opacity-7 animate-float-delayed pointer-events-none">
+      <div className="absolute bottom-3/4 left-36 opacity-7 animate-float-delayed pointer-events-none hidden lg:block">
         <Flame className="w-18 h-18 text-orange-400" />
       </div>
-      <div className="absolute top-1/3 left-1/3 opacity-7 animate-float pointer-events-none">
+      <div className="absolute top-1/3 left-1/3 opacity-7 animate-float pointer-events-none hidden lg:block">
         <Target className="w-16 h-16 text-lime-500" />
       </div>
       
       <div className="container mx-auto px-4 py-8 sm:py-12 relative z-10">
         {/* Hero Section */}
-        <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 mb-4">
-            <Trophy className="w-8 h-8 text-yellow-500" />
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 mb-3 sm:mb-4">
+            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent mb-3 sm:mb-4 px-4">
             Leaderboard
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Celebrate our top contributors and their amazing work in building our knowledge community
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Main Leaderboard */}
           <div className="lg:col-span-2 space-y-6">
             {/* Top 3 Podium - Olympic Style */}
             {!loading && topContributors.length >= 3 && (
-              <div className="mb-8">
-                <div className="flex items-end justify-center gap-2 sm:gap-4 px-2 sm:px-4">
+              <div className="mb-6 sm:mb-8">
+                <div className="flex items-end justify-center gap-1 sm:gap-2 md:gap-4 px-1 sm:px-2 md:px-4">
                   {/* 2nd Place - Left, Shorter */}
-                  <div className="flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[180px]">
-                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-gray-400 mb-2 ring-4 ring-gray-400/20 relative z-10">
+                  <div className="flex flex-col items-center flex-1 max-w-[110px] sm:max-w-[140px] md:max-w-[180px]">
+                    <Avatar className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 border-2 sm:border-4 border-gray-400 mb-2 ring-2 sm:ring-4 ring-gray-400/20 relative z-10">
                       <AvatarImage src={topContributors[1].photoURL} alt={getUserDisplayName(topContributors[1])} />
-                      <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white text-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-gray-400 to-gray-500 text-white text-sm sm:text-lg">
                         {getUserInitials(topContributors[1])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="w-full bg-gradient-to-b from-gray-400 to-gray-500 rounded-t-xl shadow-xl relative overflow-hidden h-40">
+                    <div className="w-full bg-gradient-to-b from-gray-400 to-gray-500 rounded-t-xl shadow-xl relative overflow-hidden h-32 sm:h-40">
                       {/* Rank number on stand */}
-                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
-                        <span className="text-xl sm:text-2xl font-black text-white">2</span>
+                      <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-lg sm:text-xl md:text-2xl font-black text-white">2</span>
                       </div>
                       {/* User info */}
-                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
-                        <Medal className="w-6 h-6 text-white/90 mx-auto mb-1" />
-                        <p className="font-bold text-white text-xs sm:text-sm leading-tight break-words">{getUserDisplayName(topContributors[1])}</p>
-                        <p className="text-xl sm:text-2xl font-black text-white mt-1">{topContributors[1].contributions || 0}</p>
-                        <p className="text-[10px] text-white/80">contributions</p>
+                      <div className="absolute bottom-2 sm:bottom-3 left-0 right-0 px-1 sm:px-2 text-center">
+                        <Medal className="w-4 h-4 sm:w-6 sm:h-6 text-white/90 mx-auto mb-0.5 sm:mb-1" />
+                        <p className="font-bold text-white text-[10px] sm:text-xs md:text-sm leading-tight break-words line-clamp-2">{getUserDisplayName(topContributors[1])}</p>
+                        <p className="text-lg sm:text-xl md:text-2xl font-black text-white mt-0.5 sm:mt-1">{topContributors[1].contributions || 0}</p>
+                        <p className="text-[8px] sm:text-[10px] text-white/80">contributions</p>
                       </div>
                     </div>
                   </div>
 
                   {/* 1st Place - Center, Tallest */}
-                  <div className="flex flex-col items-center flex-1 max-w-[160px] sm:max-w-[200px]">
-                    <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-500 mb-2 animate-bounce" />
-                    <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-4 border-yellow-500 mb-2 ring-4 ring-yellow-500/30 relative z-10">
+                  <div className="flex flex-col items-center flex-1 max-w-[130px] sm:max-w-[160px] md:max-w-[200px]">
+                    <Crown className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-yellow-500 mb-1 sm:mb-2 animate-bounce" />
+                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 border-2 sm:border-4 border-yellow-500 mb-2 ring-2 sm:ring-4 ring-yellow-500/30 relative z-10">
                       <AvatarImage src={topContributors[0].photoURL} alt={getUserDisplayName(topContributors[0])} />
-                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white text-xl sm:text-2xl">
+                      <AvatarFallback className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white text-lg sm:text-xl md:text-2xl">
                         {getUserInitials(topContributors[0])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="w-full bg-gradient-to-b from-yellow-500 to-orange-500 rounded-t-xl shadow-2xl shadow-yellow-500/50 relative overflow-hidden h-50">
+                    <div className="w-full bg-gradient-to-b from-yellow-500 to-orange-500 rounded-t-xl shadow-2xl shadow-yellow-500/50 relative overflow-hidden h-40 sm:h-48 md:h-52">
                       {/* Rank number on stand */}
-                      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
-                        <span className="text-2xl sm:text-3xl font-black text-white">1</span>
+                      <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-xl sm:text-2xl md:text-3xl font-black text-white">1</span>
                       </div>
                       {/* User info */}
-                      <div className="absolute bottom-3 left-0 right-0 px-2 text-center">
-                        <Trophy className="w-8 h-8 text-white mx-auto mb-1" />
-                        <p className="font-bold text-white text-sm sm:text-base leading-tight break-words">{getUserDisplayName(topContributors[0])}</p>
-                        <p className="text-2xl sm:text-3xl font-black text-white mt-1">{topContributors[0].contributions || 0}</p>
-                        <p className="text-[10px] text-white/90">contributions</p>
+                      <div className="absolute bottom-2 sm:bottom-3 left-0 right-0 px-1 sm:px-2 text-center">
+                        <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-1" />
+                        <p className="font-bold text-white text-xs sm:text-sm md:text-base leading-tight break-words line-clamp-2">{getUserDisplayName(topContributors[0])}</p>
+                        <p className="text-2xl sm:text-2xl md:text-3xl font-black text-white mt-1">{topContributors[0].contributions || 0}</p>
+                        <p className="text-[8px] sm:text-[10px] text-white/90">contributions</p>
                       </div>
                     </div>
                   </div>
 
                   {/* 3rd Place - Right, Shortest */}
-                  <div className="flex flex-col items-center flex-1 max-w-[140px] sm:max-w-[180px]">
-                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-4 border-amber-600 mb-2 ring-4 ring-amber-600/20 relative z-10">
+                  <div className="flex flex-col items-center flex-1 max-w-[110px] sm:max-w-[140px] md:max-w-[180px]">
+                    <Avatar className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 border-2 sm:border-4 border-amber-600 mb-2 ring-2 sm:ring-4 ring-amber-600/20 relative z-10">
                       <AvatarImage src={topContributors[2].photoURL} alt={getUserDisplayName(topContributors[2])} />
-                      <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-700 text-white text-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-amber-600 to-amber-700 text-white text-sm sm:text-lg">
                         {getUserInitials(topContributors[2])}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="w-full bg-gradient-to-b from-amber-600 to-amber-700 rounded-t-xl shadow-xl relative overflow-hidden h-36 sm:h-40">
+                    <div className="w-full bg-gradient-to-b from-amber-600 to-amber-700 rounded-t-xl shadow-xl relative overflow-hidden h-28 sm:h-36 md:h-40">
                       {/* Rank number on stand */}
-                      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
-                        <span className="text-lg sm:text-xl font-black text-white">3</span>
+                      <div className="absolute top-1.5 sm:top-2 left-1/2 -translate-x-1/2 w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50">
+                        <span className="text-base sm:text-lg md:text-xl font-black text-white">3</span>
                       </div>
                       {/* User info */}
-                      <div className="absolute bottom-2 left-0 right-0 px-1.5 text-center">
-                        <Award className="w-5 h-5 text-white/90 mx-auto mb-0.5" />
-                        <p className="font-bold text-white text-xs leading-tight break-words line-clamp-1">{getUserDisplayName(topContributors[2])}</p>
-                        <p className="text-xl sm:text-2xl font-black text-white mt-0.5">{topContributors[2].contributions || 0}</p>
-                        <p className="text-[9px] text-white/80">contributions</p>
+                      <div className="absolute bottom-1.5 sm:bottom-2 left-0 right-0 px-1 sm:px-1.5 text-center">
+                        <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white/90 mx-auto mb-0.5" />
+                        <p className="font-bold text-white text-[10px] sm:text-xs leading-tight break-words line-clamp-2">{getUserDisplayName(topContributors[2])}</p>
+                        <p className="text-lg sm:text-xl md:text-2xl font-black text-white mt-0.5">{topContributors[2].contributions || 0}</p>
+                        <p className="text-[8px] sm:text-[9px] text-white/80">contributions</p>
                       </div>
                     </div>
                   </div>
@@ -307,7 +307,7 @@ export default function Leaderboard() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {topContributors.map((contributor, index) => {
                       const rank = index + 1;
                       const displayName = getUserDisplayName(contributor);
@@ -316,46 +316,46 @@ export default function Leaderboard() {
                       return (
                         <div
                           key={contributor.uid}
-                          className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:scale-[1.02] ${
+                          className={`flex items-center gap-2 sm:gap-3 md:gap-4 p-2.5 sm:p-3 md:p-4 rounded-xl border transition-all duration-300 hover:scale-[1.02] ${
                             rank <= 3 
                               ? 'bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 shadow-md' 
                               : 'bg-card/50 border-border hover:border-primary/30 hover:shadow-md'
                           }`}
                         >
                           {/* Rank Number */}
-                          <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 font-bold text-foreground">
+                          <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 font-bold text-foreground text-xs sm:text-sm md:text-base">
                             #{rank}
                           </div>
 
                           {/* Avatar */}
-                          <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-border">
+                          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 border-2 border-border">
                             <AvatarImage src={contributor.photoURL} alt={displayName} />
-                            <AvatarFallback className="bg-gradient-to-br from-primary to-purple-500 text-white text-sm">
+                            <AvatarFallback className="bg-gradient-to-br from-primary to-purple-500 text-white text-[10px] sm:text-xs md:text-sm">
                               {initials}
                             </AvatarFallback>
                           </Avatar>
 
                           {/* Info */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-foreground break-words line-clamp-1">{displayName}</h3>
+                            <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1">
+                              <h3 className="font-semibold text-foreground break-words line-clamp-1 text-xs sm:text-sm md:text-base">{displayName}</h3>
                               {rank <= 3 && (
-                                <TrendingUp className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
                               )}
                             </div>
 
-                            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
+                            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 md:gap-4">
                               <div>
-                                <span className="font-bold text-green-500 block text-base sm:text-lg">{contributor.contributions || 0}</span>
-                                <span className="text-muted-foreground text-xs">Contributions</span>
+                                <span className="font-bold text-green-500 block text-sm sm:text-base md:text-lg">{contributor.contributions || 0}</span>
+                                <span className="text-muted-foreground text-[9px] sm:text-[10px] md:text-xs">Contributions</span>
                               </div>
                               <div>
-                                <span className="font-bold text-blue-500 block">{(contributor.reputation || 0).toLocaleString()}</span>
-                                <span className="text-muted-foreground text-xs">Reputation</span>
+                                <span className="font-bold text-blue-500 block text-xs sm:text-sm md:text-base">{(contributor.reputation || 0).toLocaleString()}</span>
+                                <span className="text-muted-foreground text-[9px] sm:text-[10px] md:text-xs">Reputation</span>
                               </div>
                               <div>
-                                <span className="font-bold text-purple-500 block">{(contributor.downloads || 0).toLocaleString()}</span>
-                                <span className="text-muted-foreground text-xs">Downloads</span>
+                                <span className="font-bold text-purple-500 block text-xs sm:text-sm md:text-base">{(contributor.downloads || 0).toLocaleString()}</span>
+                                <span className="text-muted-foreground text-[9px] sm:text-[10px] md:text-xs">Downloads</span>
                               </div>
                             </div>
                           </div>
@@ -374,35 +374,35 @@ export default function Leaderboard() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Achievement Badges */}
             <Card className="bg-card/50 backdrop-blur-sm border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Star className="h-5 w-5 text-yellow-500" />
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-foreground text-base sm:text-lg">
+                  <Star className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
                   Achievement Badges
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">
+                <CardDescription className="text-muted-foreground text-xs sm:text-sm">
                   Earn badges by contributing quality content
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-2 sm:space-y-4">
                   {badges.map((badge) => (
-                    <div key={badge.name} className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border hover:border-primary/30 transition-colors">
-                      <div className="text-3xl">{badge.icon}</div>
+                    <div key={badge.name} className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-card/50 border border-border hover:border-primary/30 transition-colors">
+                      <div className="text-xl sm:text-2xl md:text-3xl flex-shrink-0">{badge.icon}</div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h4 className="font-semibold text-sm text-foreground">{badge.name}</h4>
+                        <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap">
+                          <h4 className="font-semibold text-xs sm:text-sm text-foreground">{badge.name}</h4>
                           <Badge 
                             variant="outline" 
-                            className={`text-xs ${getBadgeColor(badge.rarity)}`}
+                            className={`text-[10px] sm:text-xs ${getBadgeColor(badge.rarity)}`}
                           >
                             {badge.rarity}
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">{badge.description}</p>
-                        <p className="text-xs text-primary font-medium">{badge.holders} holders</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mb-1 sm:mb-2 line-clamp-2">{badge.description}</p>
+                        <p className="text-[10px] sm:text-xs text-primary font-medium">{badge.holders} holders</p>
                       </div>
                     </div>
                   ))}
@@ -412,26 +412,26 @@ export default function Leaderboard() {
 
             {/* This Week's Stats */}
             <Card className="bg-gradient-to-br from-primary/10 to-purple-500/10 border-primary/30">
-              <CardHeader>
-                <CardTitle className="text-foreground">This Week&apos;s Stats</CardTitle>
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="text-foreground text-base sm:text-lg">This Week&apos;s Stats</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-green-500/10">
-                    <span className="text-sm text-foreground">New Contributors</span>
-                    <span className="font-bold text-green-500">+23</span>
+                <div className="space-y-2 sm:space-y-4">
+                  <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-green-500/10">
+                    <span className="text-xs sm:text-sm text-foreground">New Contributors</span>
+                    <span className="font-bold text-green-500 text-sm sm:text-base">+23</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10">
-                    <span className="text-sm text-foreground">Documents Added</span>
-                    <span className="font-bold text-blue-500">87</span>
+                  <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-blue-500/10">
+                    <span className="text-xs sm:text-sm text-foreground">Documents Added</span>
+                    <span className="font-bold text-blue-500 text-sm sm:text-base">87</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-purple-500/10">
-                    <span className="text-sm text-foreground">Total Downloads</span>
-                    <span className="font-bold text-purple-500">2,453</span>
+                  <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-purple-500/10">
+                    <span className="text-xs sm:text-sm text-foreground">Total Downloads</span>
+                    <span className="font-bold text-purple-500 text-sm sm:text-base">2,453</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-red-500/10">
-                    <span className="text-sm text-foreground">Community Likes</span>
-                    <span className="font-bold text-red-500">892</span>
+                  <div className="flex items-center justify-between p-2 sm:p-3 rounded-lg bg-red-500/10">
+                    <span className="text-xs sm:text-sm text-foreground">Community Likes</span>
+                    <span className="font-bold text-red-500 text-sm sm:text-base">892</span>
                   </div>
                 </div>
               </CardContent>
@@ -439,34 +439,34 @@ export default function Leaderboard() {
 
             {/* How to Earn Points */}
             <Card className="bg-card/50 backdrop-blur-sm border-border">
-              <CardHeader>
-                <CardTitle className="text-foreground">How to Earn Points</CardTitle>
+              <CardHeader className="pb-3 sm:pb-6">
+                <CardTitle className="text-foreground text-base sm:text-lg">How to Earn Points</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-2 rounded-lg hover:bg-green-500/5 transition-colors">
-                    <span className="text-sm text-foreground">Upload approved document</span>
-                    <span className="text-sm font-bold text-green-500">+10 pts</span>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-green-500/5 transition-colors">
+                    <span className="text-xs sm:text-sm text-foreground">Upload approved document</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-500 flex-shrink-0 ml-2">+10 pts</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg hover:bg-green-500/5 transition-colors">
-                    <span className="text-sm text-foreground">Receive a like</span>
-                    <span className="text-sm font-bold text-green-500">+1 pt</span>
+                  <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-green-500/5 transition-colors">
+                    <span className="text-xs sm:text-sm text-foreground">Receive a like</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-500 flex-shrink-0 ml-2">+1 pt</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg hover:bg-green-500/5 transition-colors">
-                    <span className="text-sm text-foreground">Featured content</span>
-                    <span className="text-sm font-bold text-green-500">+25 pts</span>
+                  <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-green-500/5 transition-colors">
+                    <span className="text-xs sm:text-sm text-foreground">Featured content</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-500 flex-shrink-0 ml-2">+25 pts</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg hover:bg-green-500/5 transition-colors">
-                    <span className="text-sm text-foreground">100+ downloads</span>
-                    <span className="text-sm font-bold text-green-500">+5 pts</span>
+                  <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-green-500/5 transition-colors">
+                    <span className="text-xs sm:text-sm text-foreground">100+ downloads</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-500 flex-shrink-0 ml-2">+5 pts</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 rounded-lg hover:bg-green-500/5 transition-colors">
-                    <span className="text-sm text-foreground">Helpful comment</span>
-                    <span className="text-sm font-bold text-green-500">+2 pts</span>
+                  <div className="flex items-center justify-between p-1.5 sm:p-2 rounded-lg hover:bg-green-500/5 transition-colors">
+                    <span className="text-xs sm:text-sm text-foreground">Helpful comment</span>
+                    <span className="text-xs sm:text-sm font-bold text-green-500 flex-shrink-0 ml-2">+2 pts</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border">
-                  <Button size="sm" className="w-full bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90">
+                <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-border">
+                  <Button size="sm" className="w-full bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-xs sm:text-sm">
                     Start Contributing
                   </Button>
                 </div>
