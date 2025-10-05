@@ -124,45 +124,44 @@ export default function SemesterDetailPage() {
         console.log('Branch:', branchName);
         console.log('Semester:', semester, '(type:', typeof semester, ')');
 
-        // First, get ALL approved documents to see what's available
-        const allDocsQuery = query(
+        // Query all approved documents
+        const docsQuery = query(
           collection(db, 'documents'),
           where('status', '==', 'approved')
         );
 
-        const allSnapshot = await getDocs(allDocsQuery);
-        console.log('📊 Total approved documents in database:', allSnapshot.size);
+        const snapshot = await getDocs(docsQuery);
+        console.log('📊 Total approved documents:', snapshot.size);
         
-        // Filter documents client-side to handle both string and number semesters
+        // Filter documents client-side
         const docs: Document[] = [];
         
-        allSnapshot.forEach((doc) => {
+        snapshot.forEach((doc) => {
           const docData = doc.data();
           
-          // Check semester match (handle both number and string formats)
-          let semesterMatches = false;
+          // Convert semester to number for comparison
+          let docSemester = 0;
           if (typeof docData.semester === 'number') {
-            semesterMatches = docData.semester === semester;
+            docSemester = docData.semester;
           } else if (typeof docData.semester === 'string') {
-            // Extract number from string like "1st Semester" or "3rd Semester"
             const match = docData.semester.match(/^(\d+)/);
-            const extractedSemester = match ? parseInt(match[1], 10) : 0;
-            semesterMatches = extractedSemester === semester;
+            docSemester = match ? parseInt(match[1], 10) : 0;
           }
           
-          // Check branch match (exact or contains)
-          const branchMatches = docData.branch === branchName || 
-                                docData.branch?.includes('Computer Science');
+          const semesterMatches = docSemester === semester;
+          const branchMatches = docData.branch === branchName;
           
-          console.log('📄 Checking document:', {
+          console.log('📄 Document:', {
             id: doc.id,
+            title: docData.title || docData.fileName,
             branch: docData.branch,
-            branchMatches,
+            expectedBranch: branchName,
+            branchMatches: branchMatches ? '✅' : '❌',
             semester: docData.semester,
-            semesterType: typeof docData.semester,
-            semesterMatches,
-            status: docData.status,
-            title: docData.title || docData.fileName
+            convertedSemester: docSemester,
+            expectedSemester: semester,
+            semesterMatches: semesterMatches ? '✅' : '❌',
+            status: docData.status
           });
           
           if (semesterMatches && branchMatches) {
