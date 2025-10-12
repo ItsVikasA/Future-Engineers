@@ -21,7 +21,9 @@ import {
   UserX,
   Mail,
   Calendar,
-  Trash2
+  Trash2,
+  GraduationCap,
+  Filter
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -31,6 +33,9 @@ interface User {
   displayName: string;
   photoURL?: string;
   isAdmin?: boolean;
+  college?: string;
+  course?: string;
+  semester?: string;
   createdAt?: { toDate: () => Date };
   lastLoginAt?: { toDate: () => Date };
   profileCompletion?: number;
@@ -43,6 +48,27 @@ export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [collegeFilter, setCollegeFilter] = useState<'all' | 'bgmit' | 'others'>('all');
+  const [branchFilter, setBranchFilter] = useState<string>('all');
+  const [semesterFilter, setSemesterFilter] = useState<string>('all');
+
+  // Helper function to check if user is from BGMIT
+  const isBGMITStudent = (college?: string): boolean => {
+    if (!college) return false;
+    
+    const bgmitVariants = [
+      'biluru gurubasva mahaswamiji institute of technology',
+      'biluru gurubasva mahaswamiji institute of technoly',
+      'bgmit',
+      'b.g.m.i.t',
+      'mudhol',
+      'bagalkot',
+      'bagalakot'
+    ];
+    
+    const collegeLower = college.toLowerCase();
+    return bgmitVariants.some(variant => collegeLower.includes(variant));
+  };
 
   useEffect(() => {
     if (!isAdmin) {
@@ -63,10 +89,58 @@ export default function UserManagement() {
     return () => unsubscribe();
   }, [isAdmin, router]);
 
-  const filteredUsers = users.filter(u => 
-    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.displayName?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = users.filter(u => {
+    // Search filter
+    const matchesSearch = u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.displayName?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // College filter
+    let matchesCollege = true;
+    if (collegeFilter === 'bgmit') {
+      matchesCollege = isBGMITStudent(u.college);
+    } else if (collegeFilter === 'others') {
+      matchesCollege = !isBGMITStudent(u.college);
+    }
+    
+    // Branch filter (only for BGMIT students)
+    let matchesBranch = true;
+    if (collegeFilter === 'bgmit' && branchFilter !== 'all' && u.course) {
+      matchesBranch = u.course.toLowerCase().includes(branchFilter.toLowerCase());
+    }
+    
+    // Semester filter (only for BGMIT students)
+    let matchesSemester = true;
+    if (collegeFilter === 'bgmit' && semesterFilter !== 'all' && u.semester) {
+      matchesSemester = u.semester === semesterFilter;
+    }
+    
+    return matchesSearch && matchesCollege && matchesBranch && matchesSemester;
+  });
+
+  // Separate BGMIT students
+  const bgmitStudents = users.filter(u => isBGMITStudent(u.college));
+  const otherStudents = users.filter(u => !isBGMITStudent(u.college));
+  
+  // Predefined branches for BGMIT
+  const allBranches = [
+    'Computer Science and Engineering',
+    'Electronics and Communication Engineering',
+    'Mechanical Engineering',
+    'Civil Engineering',
+    'Electrical and Electronics Engineering',
+    'Information Science and Engineering'
+  ];
+  
+  // Predefined semesters (1-8)
+  const allSemesters = ['1', '2', '3', '4', '5', '6', '7', '8'];
+  
+  // Get branches that have at least one student (for display purposes)
+  const activeBranches = Array.from(new Set(bgmitStudents.map(u => u.course).filter(Boolean))) as string[];
+  const activeSemesters = Array.from(new Set(bgmitStudents.map(u => u.semester).filter(Boolean))).sort() as string[];
+  
+  // Combine predefined + active branches (remove duplicates)
+  const uniqueBranches = [...new Set([...allBranches, ...activeBranches])];
+  const uniqueSemesters = allSemesters;
 
   const handleMakeAdmin = async (userId: string, userEmail: string) => {
     try {
@@ -145,7 +219,7 @@ export default function UserManagement() {
           </div>
 
           {/* Search and Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div className="lg:col-span-3">
               <Card className="bg-card border-border">
                 <CardContent className="p-3 sm:p-4">
@@ -167,12 +241,160 @@ export default function UserManagement() {
                 <div className="text-xs sm:text-sm text-muted-foreground">Total Users</div>
               </CardContent>
             </Card>
+            <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border-blue-500/30">
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">{bgmitStudents.length}</div>
+                <div className="text-xs sm:text-sm text-blue-600 font-medium flex items-center justify-center gap-1">
+                  <GraduationCap className="h-3 w-3" />
+                  BGMIT Students
+                </div>
+              </CardContent>
+            </Card>
           </div>
+
+          {/* Filter Tabs */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Button
+              variant={collegeFilter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setCollegeFilter('all');
+                setBranchFilter('all');
+                setSemesterFilter('all');
+              }}
+              className="flex items-center gap-2"
+            >
+              <Users className="h-4 w-4" />
+              All Users ({users.length})
+            </Button>
+            <Button
+              variant={collegeFilter === 'bgmit' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setCollegeFilter('bgmit');
+                setBranchFilter('all');
+                setSemesterFilter('all');
+              }}
+              className="flex items-center gap-2"
+            >
+              <GraduationCap className="h-4 w-4" />
+              BGMIT Students ({bgmitStudents.length})
+            </Button>
+            <Button
+              variant={collegeFilter === 'others' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setCollegeFilter('others');
+                setBranchFilter('all');
+                setSemesterFilter('all');
+              }}
+              className="flex items-center gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Other Colleges ({otherStudents.length})
+            </Button>
+          </div>
+
+          {/* BGMIT Branch and Semester Filters */}
+          {collegeFilter === 'bgmit' && (
+            <div className="mb-6">
+              <Card className="bg-blue-500/5 border-blue-500/20">
+                <CardContent className="p-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Branch Dropdown */}
+                    <div>
+                      <label htmlFor="branch-filter" className="text-sm font-medium text-foreground mb-2 block">
+                        <GraduationCap className="h-4 w-4 inline mr-1" />
+                        Filter by Branch
+                      </label>
+                      <select
+                        id="branch-filter"
+                        value={branchFilter}
+                        onChange={(e) => setBranchFilter(e.target.value)}
+                        className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      >
+                        <option value="all">All Branches ({bgmitStudents.length})</option>
+                        {uniqueBranches.map((branch) => {
+                          const count = bgmitStudents.filter(u => u.course === branch).length;
+                          return (
+                            <option key={branch} value={branch}>
+                              {branch} {count > 0 ? `(${count})` : ''}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+
+                    {/* Semester Dropdown */}
+                    <div>
+                      <label htmlFor="semester-filter" className="text-sm font-medium text-foreground mb-2 block">
+                        <Filter className="h-4 w-4 inline mr-1" />
+                        Filter by Semester
+                      </label>
+                      <select
+                        id="semester-filter"
+                        value={semesterFilter}
+                        onChange={(e) => setSemesterFilter(e.target.value)}
+                        className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      >
+                        <option value="all">All Semesters ({bgmitStudents.length})</option>
+                        {uniqueSemesters.map((semester) => {
+                          const count = bgmitStudents.filter(u => u.semester === semester).length;
+                          return (
+                            <option key={semester} value={semester}>
+                              Semester {semester} {count > 0 ? `(${count})` : ''}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Active Filters Display */}
+                  {(branchFilter !== 'all' || semesterFilter !== 'all') && (
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-muted-foreground">Active filters:</span>
+                      {branchFilter !== 'all' && (
+                        <Badge variant="secondary" className="text-xs">
+                          Branch: {branchFilter}
+                        </Badge>
+                      )}
+                      {semesterFilter !== 'all' && (
+                        <Badge variant="secondary" className="text-xs">
+                          Semester: {semesterFilter}
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setBranchFilter('all');
+                          setSemesterFilter('all');
+                        }}
+                        className="text-xs h-6 px-2"
+                      >
+                        Clear all
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
           {/* Users List */}
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-foreground">All Users</CardTitle>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                {collegeFilter === 'all' && 'All Users'}
+                {collegeFilter === 'bgmit' && (
+                  <>
+                    <GraduationCap className="h-5 w-5 text-blue-600" />
+                    BGMIT Students
+                  </>
+                )}
+                {collegeFilter === 'others' && 'Other Colleges'}
+              </CardTitle>
               <CardDescription>
                 {filteredUsers.length} of {users.length} users
               </CardDescription>
@@ -212,12 +434,34 @@ export default function UserManagement() {
                                 Admin
                               </Badge>
                             )}
+                            {isBGMITStudent(userData.college) && (
+                              <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30 text-xs">
+                                <GraduationCap className="h-3 w-3 mr-1" />
+                                BGMIT
+                              </Badge>
+                            )}
+                            {isBGMITStudent(userData.college) && userData.course && (
+                              <Badge variant="outline" className="text-xs">
+                                {userData.course}
+                              </Badge>
+                            )}
+                            {isBGMITStudent(userData.college) && userData.semester && (
+                              <Badge variant="outline" className="text-xs">
+                                Sem {userData.semester}
+                              </Badge>
+                            )}
                           </div>
                           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                             <span className="flex items-center gap-1 truncate">
                               <Mail className="h-3 w-3 flex-shrink-0" />
                               <span className="truncate">{userData.email}</span>
                             </span>
+                            {userData.college && (
+                              <span className="flex items-center gap-1 truncate">
+                                <GraduationCap className="h-3 w-3 flex-shrink-0" />
+                                <span className="truncate">{isBGMITStudent(userData.college) ? 'BGMIT' : userData.college}</span>
+                              </span>
+                            )}
                             {userData.createdAt && (
                               <span className="flex items-center gap-1 whitespace-nowrap">
                                 <Calendar className="h-3 w-3 flex-shrink-0" />

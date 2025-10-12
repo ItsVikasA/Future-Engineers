@@ -112,6 +112,27 @@ export default function ProfilePage() {
     return nameOrEmail.substring(0, 2).toUpperCase();
   };
 
+  // Helper function to format college name and check if it's BGMIT
+  const formatCollegeName = (college: string): { displayName: string; isBGMIT: boolean } => {
+    if (!college) return { displayName: '', isBGMIT: false };
+    
+    const bgmitVariants = [
+      'biluru gurubasva mahaswamiji institute of technology',
+      'biluru gurubasva mahaswamiji institute of technoly',
+      'bgmit',
+      'b.g.m.i.t',
+      'mudhol'
+    ];
+    
+    const collegeLower = college.toLowerCase();
+    const isBGMIT = bgmitVariants.some(variant => collegeLower.includes(variant));
+    
+    return {
+      displayName: isBGMIT ? 'BGMIT' : college,
+      isBGMIT
+    };
+  };
+
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
@@ -420,10 +441,25 @@ export default function ProfilePage() {
                         {(profileData.college || profileData.course) && (
                           <div className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground mb-2">
                             <GraduationCap className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                            <span className="leading-snug">
+                            <span className="leading-snug flex items-center gap-2 flex-wrap">
                               {profileData.course && <span className="font-medium">{profileData.course}</span>}
                               {profileData.course && profileData.college && <span> • </span>}
-                              {profileData.college && <span>{profileData.college}</span>}
+                              {profileData.college && (
+                                <>
+                                  {formatCollegeName(profileData.college).isBGMIT ? (
+                                    <span className="flex items-center gap-1.5">
+                                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                                        <GraduationCap className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                                      </span>
+                                      <span className="font-semibold text-blue-600 dark:text-blue-400">
+                                        {formatCollegeName(profileData.college).displayName}
+                                      </span>
+                                    </span>
+                                  ) : (
+                                    <span>{profileData.college}</span>
+                                  )}
+                                </>
+                              )}
                             </span>
                           </div>
                         )}
@@ -561,9 +597,20 @@ export default function ProfilePage() {
                           <div className="p-2 rounded-lg bg-blue-500/20">
                             <GraduationCap className="h-4 w-4 text-blue-600" />
                           </div>
-                          <div>
+                          <div className="flex-1">
                             <p className="text-xs text-muted-foreground">College</p>
-                            <p className="font-medium text-sm">{profileData.college}</p>
+                            {formatCollegeName(profileData.college).isBGMIT ? (
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex-shrink-0">
+                                  <GraduationCap className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                                </div>
+                                <p className="font-semibold text-sm text-blue-600 dark:text-blue-400">
+                                  {formatCollegeName(profileData.college).displayName}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="font-medium text-sm">{profileData.college}</p>
+                            )}
                           </div>
                         </div>
                       )}
