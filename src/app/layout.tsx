@@ -6,6 +6,7 @@ import { AuthProvider } from "@/features/auth/AuthProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 import StructuredData from "@/components/StructuredData";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -87,6 +88,7 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system" storageKey="student-notes-theme">
           <QueryProvider>
             <AuthProvider>
+              <AnnouncementBanner />
               <StructuredData />
               {children}
               <Toaster 
